@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import ErrorHandler from '../ErrorHandler';
+import {server} from '../../package.json';
+import { Link } from "react-router-dom";
+import '../styles/login.css';
 
 class Login extends Component {
     constructor(props) {
@@ -9,6 +12,7 @@ class Login extends Component {
         this.state = {
             login: "",
             password: "",
+            loading: false,
             error: null
         }
     }
@@ -19,42 +23,54 @@ class Login extends Component {
         });
     }
 
-    submit(e) {
-        this.setState({error: null});
+    async submit(e) {
+        this.setState({error: null, loading: true});
         e.preventDefault();
-        axios.post("http://localhost:8000/api/auth", this.state)
+        await axios.post(server + "/api/auth", this.state)
         .then(res => {
             localStorage.setItem("Authorization", res.data.token);
         })
         .catch(e => {
-            this.setState({error: ErrorHandler(e)});
+            this.setState({"error": ErrorHandler.processException(e)});
         });
+        this.setState({loading: false});
+    }
+
+    close(e) {
+        e.preventDefault();
+        this.setState({error: false});
     }
 
     render() {
         if(this.state.error) {
             var error = (
-                <div>
-                    <h5>{this.state.error.title}</h5>
-                    <p>{this.state.error.message}</p>
+                <div className="error" onClick={e => this.close(e)}>
+                    <h3>{this.state.error.title}</h3>
+                    <p>{this.state.error.body}</p>
                 </div>
             )
         }
-        return (
-            <div>
-                <h1>Login</h1>
-                <form onSubmit={e => this.submit(e)}>
-                    <label>Login: </label>
-                    <input type="text" name="login" onChange={e => this.change(e)} />
-                    <br/>
-                    <label>Password: </label>
-                    <input type="password" name="password" onChange={e => this.change(e)}/>
-                    <br/>
-                    <button type="submit" value="Submit">Submit</button>
-                </form>
+        if(this.state.loading) {
+            var loading = (
                 <div>
-                    {error}
+                    <img className="loading-image" src={process.env.PUBLIC_URL + '/images/loading.gif'} alt="Loading"/>
                 </div>
+            )
+        }
+        else
+            loading = "Zaloguj";
+        return (
+            <div className="container">
+                <img className="logo" src={process.env.PUBLIC_URL + '/images/logo.svg'} alt="logo"/>
+                <form onSubmit={e => this.submit(e)}>
+                    <input type="text" placeholder="Login" name="login" onChange={e => this.change(e)}/>
+                    <input type="password" placeholder="Hasło" name="password" onChange={e => this.change(e)}/>
+                    <button className="submit" type="submit" value="Submit">{loading}</button>
+                </form>
+                {error}
+                <p className="register">
+                    Nie posiadasz konta? zarejestruj się <Link to="/register">tutaj!</Link>
+                </p>
             </div>
         );
     }
