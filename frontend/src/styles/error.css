@@ -1,0 +1,22 @@
+.error {
+    position: absolute;
+    background-color: #FF9494;
+    text-align: center; 
+    width: 100%;
+    top: 0px;
+    left: 0;
+    right: 0;
+    box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
+}
+
+.error:empty {
+  display: none;
+}
+
+hr {
+    background-color: black;
+    margin: 0px;
+    border: 1px solid black;
+    margin-left: 5px;
+    margin-right: 5px;
+}
