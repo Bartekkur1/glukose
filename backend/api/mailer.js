@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const config = require("../config");
 
 module.exports = {
-    sendEmail:function(mailOptions) {
+    sendEmail:async function(mailOptions) {
         let transporter = nodemailer.createTransport(smtpTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
@@ -12,15 +12,6 @@ module.exports = {
                 pass: config.email_password
             }
         }));
-
-        transporter.sendMail(mailOptions, (error, info) => {
-            if(error) {
-                console.log(error);
-                return next({status: 500, message: "Coś poszło nie tak"});
-            } else {
-                res.sendStatus(200);
-            }
-            console.log('Message sent: %s', info.messageId);
-        });
+        return await transporter.sendMail(mailOptions);
     }
 }

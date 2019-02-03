@@ -8,12 +8,15 @@ app.post("/", async (req,res,next) => {
         .notEmpty().withMessage('Login nie może być pusty')
         .isLength({ min: 5 }).withMessage('Login musi posiadać przynajmniej 5 znaków')
         .isLength({ max: 32 }).withMessage('Login jest za długi')
-    req.check("password")
-        .notEmpty().withMessage('Hasło nie może być puste')
-        .isLength({ min: 8 }).withMessage('Hasło musi posiadać przynajmniej 8 znaków');
     req.check("email")
         .notEmpty().withMessage('Email nie może być pusty')
         .isEmail().withMessage('Podany email jest błędny')
+    req.check("password")
+        .notEmpty().withMessage('Hasło nie może być puste')
+        .isLength({ min: 8 }).withMessage('Hasło musi posiadać przynajmniej 8 znaków')
+        .equals(req.body.confirmPassword).withMessage("Hasła muszą być identyczne");
+    req.check("approved")
+        .equals("true").withMessage("Proszę zapoznać i zakceptować regulamin");
     let errors = req.validationErrors();
     if(errors)
         return next({status: 400, message: errors[0].msg});

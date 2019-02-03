@@ -18,21 +18,21 @@ app.post("/", async (req,res,next) => {
     if(!userFound)
         return next({status: 400, message: "Użytkownik nie istnieje"});
     let data = { id: userFound.id };
-    jwt.sign({data}, config.jwtsign, (err, token) => {
-        try {
-            sendMail({
-                from: "Glukose", 
-                to: userFound.email, 
-                subject: "Nowe hasło do glukose", 
-                text: config.email_header,
-                html: "Link do zmiany hasła : http://" + req.headers.host + "/nowe_haslo/" + token
-            })
-        } 
-        catch(e)
-        {
-            console.log(e);
-        }
-    })
+    let token = await jwt.sign({data}, config.jwtsign);
+    try {
+        let kek = await sendMail({
+            from: "Glukose", 
+            to: userFound.email, 
+            subject: "Nowe hasło do glukose", 
+            text: config.email_header,
+            html: "Link do zmiany hasła : http://" + req.headers.host + "/nowe_haslo/" + token
+        });
+        res.sendStatus(200);
+    }
+    catch(e) {
+        if(e.responseCode == 535)
+            return next({status: 500, message: "Serwer mailowy jest niedostępny"});
+    }
 });
 
 module.exports = app;

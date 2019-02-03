@@ -5,14 +5,13 @@ import {server} from '../../package.json';
 import { Link } from "react-router-dom";
 import '../style.css';
 
-class Login extends Component {
+class PasswordRecovery extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            login: "",
-            password: "",
-            loading: false,
+            loading: null,
+            email: null,
             error: null
         }
     }
@@ -28,11 +27,12 @@ class Login extends Component {
         if(!this.state.loading) {
             this.setState({error: null, loading: true});
             try {
-                let res = await axios.post(server + "/api/auth", {
-                    login: this.state.login,
-                    password: this.state.password
+                let res = await axios.post(server + "/api/resetpassword", {
+                    email: this.state.email
                 });
-                localStorage.setItem("Authorization", res.data.token);
+                res["title"] = "Sukces";
+                res["body"] = "Proszę sprawdzić pocztę email";
+                this.setState({error: res});
             }
             catch(e)
             {
@@ -51,23 +51,22 @@ class Login extends Component {
             )
         }
         else
-            loading = "Zaloguj";
+            loading = "Odzyskaj";
         return (
             <div className="container-fluid p-0">
                 <Error error={this.state.error} close={() => this.setState({error: null})}/>
                 <div className="row login-panel mx-auto">
                     <div className="col-12 text-center">
-                        <img className="logo mt-3 mb-3" src={process.env.PUBLIC_URL + '/images/logo.svg'} alt="logo"/>
+                        <img className="logo mt-3" src={process.env.PUBLIC_URL + '/images/logo.svg'} alt="logo"/>
                         <form onSubmit={e => this.submit(e)}>
-                            <input type="text" className="form-control mb-2" placeholder="Login" onChange={e => this.change(e)}/>
-                            <input type="password" className="form-control mb-3" placeholder="Hasło" onChange={e => this.change(e)}/>
+                            <h5 className="font-weight-light mb-4">
+                                Na podany email zostanie wysłany link do wygenerowania nowego hasła.
+                            </h5>
+                            <input type="text" className="form-control form-control-lg mb-2" name="email" placeholder="Email" onChange={e => this.change(e)}/>
                             <button className="btn glukose-green btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
                         </form>
                         <p className="font-weight-light">
-                            Nie posiadasz konta? zarejestruj się <Link to="/register">tutaj!</Link>
-                        </p>
-                        <p className="font-weight-light">
-                            Zapomniałeś hasła? odzyskaj je <Link to="/password_recovery">tutaj!</Link>
+                            Powrót do logowania <Link to="/login">tutaj!</Link>
                         </p>
                     </div>
                 </div>
@@ -76,4 +75,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default PasswordRecovery;
