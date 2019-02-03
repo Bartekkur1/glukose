@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import Axios from 'axios';
 import Error from './error';
 import {server} from '../../package.json';
 import { Link } from "react-router-dom";
+import Form from './form';
 import '../style.css';
 
 class Login extends Component {
@@ -28,7 +29,7 @@ class Login extends Component {
         if(!this.state.loading) {
             this.setState({error: null, loading: true});
             try {
-                let res = await axios.post(server + "/api/auth", {
+                let res = await Axios.post(server + "/api/auth", {
                     login: this.state.login,
                     password: this.state.password
                 });
@@ -42,6 +43,11 @@ class Login extends Component {
         }
     }
 
+    componentDidMount() {
+        if(this.props.location.state)
+            this.setState({error: this.props.location.state.error});
+    }
+
     render() {
         if(this.state.loading) {
             var loading = (
@@ -52,17 +58,19 @@ class Login extends Component {
         }
         else
             loading = "Zaloguj";
+
         return (
-            <div className="container-fluid p-0">
-                <Error error={this.state.error} close={() => this.setState({error: null})}/>
-                <div className="row login-panel mx-auto">
-                    <div className="col-12 text-center">
-                        <img className="logo mt-3 mb-3" src={process.env.PUBLIC_URL + '/images/logo.svg'} alt="logo"/>
-                        <form onSubmit={e => this.submit(e)}>
-                            <input type="text" className="form-control mb-2" placeholder="Login" onChange={e => this.change(e)}/>
-                            <input type="password" className="form-control mb-3" placeholder="Hasło" onChange={e => this.change(e)}/>
-                            <button className="btn glukose-green btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
-                        </form>
+            <Form
+                error = {<Error error={this.state.error} close={() => this.setState({error: null})}/>}
+                form = {
+                    <form onSubmit={e => this.submit(e)}>
+                        <input type="text" className="form-control mb-2 mt-3" placeholder="Login" name="login" onChange={e => this.change(e)}/>
+                        <input type="password" className="form-control mb-3" placeholder="Hasło" name="password" onChange={e => this.change(e)}/>
+                        <button className="btn glukose-green btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
+                    </form>
+                }
+                link = {
+                    <div>
                         <p className="font-weight-light">
                             Nie posiadasz konta? zarejestruj się <Link to="/register">tutaj!</Link>
                         </p>
@@ -70,8 +78,8 @@ class Login extends Component {
                             Zapomniałeś hasła? odzyskaj je <Link to="/password_recovery">tutaj!</Link>
                         </p>
                     </div>
-                </div>
-            </div>
+                }
+            />
         );
     }
 }
