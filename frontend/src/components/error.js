@@ -13,20 +13,12 @@ class Error extends Component {
     }
 
     processException(e) {
-        if(typeof(e) == "string")
-            return this.setError(e);
-        else {
-            if(e.toString() === "Error: Network Error")
-                return this.setError("Wystąpił błąd serwera", "Problem z połączeniem", 400);
-            else if(e.status && e.status === 200)
-                    return this.setError(e.title, "", 200);
-            else if(e.response && e.response.data && e.response.data.message)
-                return this.setError(e.response.data.title, e.response.data.message, e.response.status);
-            else if(e.response && e.response.status)
-                return this.setError(`Nieznany błąd ${e.response.status}`, e, e.response.status);
-            else
-                return this.setError("Nieznany błąd", e.toString(), e.response.status);
-        }
+        if(e.toString() === "Error: Network Error")
+            return this.setError("Wystąpił błąd serwera", "Problem z połączeniem", 400);
+        else if(e.response && e.response.data && e.response.data.message)
+            return this.setError(e.response.data.title, e.response.data.message, e.response.status);
+        else if(e.data === "OK")
+            return this.setError("Sukces", e.title, e.status);
     }
     
     render() {

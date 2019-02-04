@@ -34,6 +34,7 @@ class Login extends Component {
                     password: this.state.password
                 });
                 localStorage.setItem("Authorization", res.data.token);
+                this.props.history.push('/');
             }
             catch(e)
             {
@@ -46,6 +47,8 @@ class Login extends Component {
     componentDidMount() {
         if(this.props.location.state)
             this.setState({error: this.props.location.state.error});
+        if(localStorage.getItem("Authorization"))
+            this.props.history.push('/');
     }
 
     render() {

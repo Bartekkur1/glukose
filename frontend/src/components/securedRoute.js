@@ -9,7 +9,8 @@ class SecuredRoutes extends Component {
         super(props);
 
         this.state = {
-            error: null
+            error: null,
+            user: null
         }
     }
 
@@ -27,19 +28,25 @@ class SecuredRoutes extends Component {
         }
         catch(e)
         {
-            console.log(e);
-            this.setState({error: <Redirect to={{
-                pathname: "/login",
-                state: { error: {
-                    response: {
-                        data: {
-                            title: e.response.data.title,
-                            message: e.response.data.message,
-                            status: 401
+            localStorage.clear();
+            if(e.toString() === "Error: Network Error")
+                this.setState({error: <Redirect to={{
+                    pathname: "/login",
+                    state: { error: e.toString() }}}
+                />})
+            else
+                this.setState({error: <Redirect to={{
+                    pathname: "/login",
+                    state: { error: {
+                        response: {
+                            data: {
+                                title: e.response.data.title,
+                                message: e.response.data.message,
+                                status: 401
+                            }
                         }
-                    }
-                }}
-            }} />});
+                    }}
+                }} />});
         }
     }
 
