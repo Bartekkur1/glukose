@@ -15,7 +15,7 @@ class App extends Component {
 					<Route path="/register" exact component={Register}/>
 					<Route path="/password_recovery" exact component={PasswordRecovery}/>
 					<SecuredRoutes>
-						<Route path="/" exact component={Index}/>
+						<Route path="/" component={Index}/>
 					</SecuredRoutes>
 					<Redirect to="/"/>
 				</Switch>

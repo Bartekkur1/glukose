@@ -26,6 +26,10 @@ body {
     background-color: #64e864;
 }
 
+.glukose-gray {
+    background-color: #cad2d5;
+}
+
 .loading-gif {
     height: 24px;
 }
@@ -52,19 +56,32 @@ body {
     margin-bottom: auto !important;
 }
 
-.wrapper {
-    display: flex;
-    width: 100%;
-    align-items: stretch;
+.sidebar-content {
+    width: 250px;
 }
 
-.wrapper {
-    display: flex;
-    align-items: stretch;
+.logout {
+    font-size: 15px;
 }
 
-.sidebar {
-    min-width: 250px;
-    max-width: 250px;
-    min-height: 100vh;
+.sidebar-button {
+    position: absolute;
+    width: 40px;
+    height: 100vh;
+}
+
+.sidebar-link {
+    font-size: 20px;
+    text-align: left;
+}
+
+.sidebar-logo {
+    margin-left: 15px !important;
+    margin-right: 15px !important;
+}
+
+@media screen and (max-device-width: 800px) {
+    .sidebar-small {
+        padding-left: 55px;
+    }
 }
