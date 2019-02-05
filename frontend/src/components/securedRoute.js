@@ -9,7 +9,7 @@ class SecuredRoutes extends Component {
         super(props);
 
         this.state = {
-            error: null,
+            redirect: null,
             user: null
         }
     }
@@ -18,52 +18,30 @@ class SecuredRoutes extends Component {
         let jwt = localStorage.getItem("Authorization");
         if(!jwt)
             jwt = "";
+        Axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
         try {
-            let res = await Axios.post(server + "/api/auth/check", {}, {
-                headers: {
-                    authorization: "Bearer " + jwt
-                }
-            })
+            let res = await Axios.post(server + "/api/auth/check");
             this.setState({user: res.data});
         }
         catch(e)
         {
+            console.log(e);
             localStorage.clear();
-            if(e.toString() === "Error: Network Error")
-                this.setState({error: <Redirect to={{
-                    pathname: "/login",
-                    state: { error: e.toString() }}}
-                />})
-            else
-                this.setState({error: <Redirect to={{
-                    pathname: "/login",
-                    state: { error: {
-                        response: {
-                            data: {
-                                title: e.response.data.title,
-                                message: e.response.data.message,
-                                status: 401
-                            }
-                        }
-                    }}
-                }} />});
+            this.setState({redirect: <Redirect to={{
+                pathname: "/login"}}/>})
         }
     }
 
     render() {
-        if(this.state.error)
-            return (this.state.error)
+        if(this.state.redirect)
+            return this.state.redirect;
         if(!this.state.user)
             return (
                 <div className="row m-0 h-100 glukose-green">
-                    <img className="mx-auto my-auto" src={process.env.PUBLIC_URL + '/images/loading.gif'} alt="Loading"/>
+                    <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading.gif'} alt="Loading"/>
                 </div>
             )
-        return (
-            <div>
-                {this.props.children}
-            </div>
-        )
+        return this.props.children;
     }
 }
 

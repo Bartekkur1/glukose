@@ -39,16 +39,15 @@ class Login extends Component {
             catch(e)
             {
                 this.setState({error: e});
+                this.setState({loading: false});
             }
-            this.setState({loading: false});
         }
     }
 
     componentDidMount() {
-        if(this.props.location.state)
-            this.setState({error: this.props.location.state.error});
         if(localStorage.getItem("Authorization"))
             this.props.history.push('/');
+        Axios.defaults.headers.common['Authorization'] = null;
     }
 
     render() {

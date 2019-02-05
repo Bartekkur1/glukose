@@ -41,7 +41,30 @@ body {
     top: 0px;
 }
 
+.loading-page {
+    height: 15vh;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 .my-auto {
     margin-top: auto !important;
     margin-bottom: auto !important;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
 }

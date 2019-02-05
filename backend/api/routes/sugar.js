@@ -4,20 +4,20 @@ const sugar = require("../sequelize").sugar;
 
 // TODO : filter somehow
 app.get("/", (req,res,next) => {
-    req.check("dateFrom")
-        .notEmpty().withMessage("Data 'od' nie może być pusta");
-    req.check("dateTo")
-        .notEmpty().withMessage("Data 'do' nie może być pusta");
-    let errors = req.validationErrors();
-    if(errors)
-        return next({status: 400, message: errors[0].msg});
-    // sugar.findAndCountAll({
-    //     order: [["date", "DESC"]],
-    //     attributes: ['id', 'amount', 'date'],
-    //     offset: parseInt(req.query.offset),
-    //     limit: parseInt(req.query.limit),
-    //     where: { user_id: req.userId }
-    // }).then(response => res.json(response));
+    // req.check("dateFrom")
+    //     .notEmpty().withMessage("Data 'od' nie może być pusta");
+    // req.check("dateTo")
+    //     .notEmpty().withMessage("Data 'do' nie może być pusta");
+    // let errors = req.validationErrors();
+    // if(errors)
+    //     return next({status: 400, message: errors[0].msg});
+    sugar.findAndCountAll({
+        order: [["date", "DESC"]],
+        attributes: ['id', 'amount', 'date'],
+        // offset: parseInt(req.query.offset),
+        // limit: parseInt(req.query.limit),
+        where: { user_id: req.userId }
+    }).then(response => res.json(response));
     
 });
 
