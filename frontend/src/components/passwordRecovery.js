@@ -62,7 +62,7 @@ class PasswordRecovery extends Component {
                             Na podany email zostanie wysłany link do wygenerowania nowego hasła.
                         </h5>
                         <input type="text" className="form-control form-control-lg mb-2" name="email" placeholder="Email" onChange={e => this.change(e)}/>
-                        <button className="btn glukose-green btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
+                        <button className="btn glukose-main btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
                     </form>
                 }
                 link = {

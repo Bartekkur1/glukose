@@ -74,7 +74,7 @@ class Register extends Component {
                                 Akceptuje regulamin
                             </label>
                         </div>
-                        <button className="btn glukose-green btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
+                        <button className="btn glukose-main btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
                     </form>
                 }
                 link = {

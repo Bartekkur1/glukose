@@ -3,8 +3,10 @@ import Axios from 'axios';
 import Sidebar from 'react-sidebar';
 import { server } from '../../package.json';
 import { Route, Redirect } from 'react-router-dom';
-import SidebarButton from './sidebarButton';
 import Sugar from './sugar';
+import SidebarGroup from './sidebarGroup';
+import { Link } from 'react-router-dom';
+import UserInfo from './userinfo.js';
 
 const mql = window.matchMedia(`(min-width: 800px)`);
 
@@ -14,13 +16,18 @@ class Index extends Component {
         this.state = {
             sidebarDocked: mql.matches,
             sidebarOpen: false,
-            redirect: null
+            redirect: null,
+            path: null
         };
     
         this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
         this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     }
     
+    componentDidMount() {
+        this.setState({path: this.props.location.pathname})
+    }
+
     componentWillMount() {
         mql.addListener(this.mediaQueryChanged);
     }
@@ -48,23 +55,35 @@ class Index extends Component {
         console.log(res);
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.props.location.pathname !== prevProps.location.pathname 
+            && this.state.sidebarOpen && !this.state.sidebarDocked) {
+            this.setState({sidebarOpen: false})
+        }
+    }
+
     render() {
         if(this.state.redirect)
             return this.state.redirect;
         var sidebar = (
             <div className="sidebar-content container">
-                <div className="row">
+                <div className="row h-100">
                     <div className="col-12 p-0">
                         <img className="mx-auto mt-2 sidebar-logo" width="220px" height="60px" 
                         src={process.env.PUBLIC_URL + '/images/logo2.svg'} alt="logo"/>
                         <button className="btn mb-2 mx-auto p-0 logout w-100"
                         onClick={() => this.logout()}>
-                        <i className="pr-2 fa fas fa-power-off"></i>Wyloguj
-                        </button>
+                        <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button><hr/>
+                        <SidebarGroup name="Statystyka" links={["/sugar", "/insulin", "/meal"]} 
+                        names={["Cukry", "Insulina", "Posiłki"]} icon="p-0 fa fa-bar-chart"/>
+                        <SidebarGroup name="Ustawienia" links={["/account", "/userinfo"]} 
+                        names={["Konto", "Moje informacje"]} icon="p-0 fa fas fa-cog"/>
+                        <Link className="sidebar-link2 glukose-main" to="/add_record">
+                        <i className="mr-2 fa fas fa-plus"></i>Dodaj rekord</Link>
+                    </div>
+                    <div className="col-12 mt-auto footer">
                         <hr/>
-                        <SidebarButton name="Cukry" icon="pr-2 fa fa-area-chart"/>
-                        <SidebarButton name="Insulina" icon="pr-2 fa fas fa-syringe"/>
-                        <SidebarButton name="Posiłki" icon="pr-2 fas fa-utensils"/>
+                        <p>Glukose 1.0</p>
                     </div>
                 </div>
             </div>
@@ -75,15 +94,16 @@ class Index extends Component {
                 children={
                     <div>
                         <button style={this.state.sidebarDocked ? {display: "none"} : {display: "inline-block"}} 
-                        className="btn glukose-green sidebar-button p-0" type="submit" 
+                        className="btn glukose-main sidebar-button p-0" type="submit" 
                         onClick={() => this.setState({sidebarOpen: true})}>
                         <i className="fa fa-2x fas fa-arrow-right"></i>
                         </button>
                             <Route path="/sugar" exact component={Sugar} />
+                            <Route path="/userinfo" exact component={UserInfo} />
                     </div>
                 }
                 sidebarClassName={
-                    "glukose-green"
+                    "glukose-main"
                 }
                 open={this.state.sidebarOpen}
                 docked={this.state.sidebarDocked}

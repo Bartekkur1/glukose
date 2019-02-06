@@ -37,7 +37,7 @@ class SecuredRoutes extends Component {
             return this.state.redirect;
         if(!this.state.user)
             return (
-                <div className="row m-0 h-100 glukose-green">
+                <div className="row m-0 h-100 glukose-main">
                     <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading.gif'} alt="Loading"/>
                 </div>
             )

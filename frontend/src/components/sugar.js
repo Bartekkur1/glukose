@@ -8,6 +8,11 @@ class Sugar extends Component {
                     <div className="col-12 p-0">
                         <h1 className="text-center">This is sugar component</h1>
                     </div>
+                </div>                
+                <div className="row">
+                    <div className="col-12 p-0">
+                        <h1 className="text-center">Here you can beat my meat nibba</h1>
+                    </div>
                 </div>
             </div>
         )

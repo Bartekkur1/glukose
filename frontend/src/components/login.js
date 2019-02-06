@@ -68,7 +68,7 @@ class Login extends Component {
                     <form onSubmit={e => this.submit(e)}>
                         <input type="text" className="form-control mb-2 mt-3" placeholder="Login" name="login" onChange={e => this.change(e)}/>
                         <input type="password" className="form-control mb-3" placeholder="Hasło" name="password" onChange={e => this.change(e)}/>
-                        <button className="btn glukose-green btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
+                        <button className="btn glukose-main btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
                     </form>
                 }
                 link = {

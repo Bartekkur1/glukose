@@ -13,7 +13,6 @@ body {
 }
 
 .login-background {
-    background-color: white;
     box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
     border-radius: 10px;
 }
@@ -22,12 +21,20 @@ body {
     height: 100% !important;
 }
 
-.glukose-green {
+.glukose-main {
     background-color: #64e864;
 }
 
 .glukose-gray {
-    background-color: #cad2d5;
+    background-color: #41c641;
+}
+
+.glukose-light {
+    background-color: #a6f2a6;
+}
+
+.glukose-off {
+    background-color: #f2f2f2;
 }
 
 .loading-gif {
@@ -65,7 +72,9 @@ body {
 }
 
 .sidebar-button {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 40px;
     height: 100vh;
 }
@@ -73,6 +82,38 @@ body {
 .sidebar-link {
     font-size: 20px;
     text-align: left;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: block;
+    text-decoration: none !important;
+    color: black;
+    font-weight: 400;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    cursor: default;
+}
+
+.sidebar-link2 {
+    display: block;
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-bottom: 10px;
+    text-decoration: none !important;
+    color: black;
+    font-size: 22px;
+    cursor: default;
+    font-weight: 400;
+}
+
+hr {
+    margin: 4px;
+}
+
+.sidebar-title {
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: default;
 }
 
 .sidebar-logo {
@@ -80,8 +121,44 @@ body {
     margin-right: 15px !important;
 }
 
+.sidebar-group h4 {
+    display: block;
+    user-select: none;
+}
+
+.sidebar-group i {
+    max-width: 28px;
+    text-align: center;
+    margin-right: 15px;
+}
+
+.sidebar-link:hover {
+    border: 0;
+    text-decoration: none;
+}
+
+.sidebar-link2:hover {
+    border: 0;
+    text-decoration: none;
+}
+
+.sidebar-link:focus {
+    border: 0;
+    text-decoration: none;
+}
+
+.footer {
+    font-size: 14px;
+    text-align: center;
+}
+
 @media screen and (max-device-width: 800px) {
     .sidebar-small {
         padding-left: 55px;
     }
+}
+
+.userinfo-panel {
+    max-width: 500px;
+    font-size: 22px;
 }
