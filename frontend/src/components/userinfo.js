@@ -8,7 +8,7 @@ class UserInfo extends Component {
         super(props)
 
         this.state = {
-            age: 19,
+            age: null,
             gender: "Mężczyzna",
             height: 187,
             weight: 80,
@@ -75,10 +75,16 @@ class UserInfo extends Component {
     }
 
     render() {
+        if(!this.state.age || this.state.loading)
+            return (                
+            <div className="row m-0 h-100 glukose-off">
+                <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
+            </div>)
         return (
             <div className="container-fluid sidebar-small mt-5">
-                <Error error={this.state.error} close={() => this.setState({error: null})} />
                 <div className="row">
+                    <Error error={this.state.error} close={() => this.setState({error: false})} />
+
                     <div className="col-12 p-0">
                         <h1 className="text-center">Dane użytkownika</h1>
                     </div>

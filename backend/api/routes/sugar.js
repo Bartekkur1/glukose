@@ -12,7 +12,7 @@ app.get("/", (req,res,next) => {
     // if(errors)
     //     return next({status: 400, message: errors[0].msg});
     sugar.findAndCountAll({
-        order: [["date", "DESC"]],
+        order: [["date", "ASC"]],
         attributes: ['id', 'amount', 'date'],
         // offset: parseInt(req.query.offset),
         // limit: parseInt(req.query.limit),

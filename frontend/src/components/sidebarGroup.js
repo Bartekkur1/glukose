@@ -18,7 +18,7 @@ class SidebarGroup extends Component {
                 </div>
                 <div className="sidebar-content glukose-off">
                     {this.state.open ? this.props.links.map((link, i) => {     
-                        return <Link key={i} className="sidebar-link" to={link}>{this.props.names[i]}<hr/></Link>
+                        return <Link key={i} className="sidebar-link" to={link}>{this.props.names[i]}</Link>
                     }) : null}
                 </div>
             </div>

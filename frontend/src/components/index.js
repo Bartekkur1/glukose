@@ -92,7 +92,7 @@ class Index extends Component {
             <Sidebar
                 sidebar={sidebar}
                 children={
-                    <div>
+                    <div className="h-100">
                         <button style={this.state.sidebarDocked ? {display: "none"} : {display: "inline-block"}} 
                         className="btn glukose-main sidebar-button p-0" type="submit" 
                         onClick={() => this.setState({sidebarOpen: true})}>
