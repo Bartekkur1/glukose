@@ -18,7 +18,6 @@ app.get("/", (req,res,next) => {
         // limit: parseInt(req.query.limit),
         where: { user_id: req.userId }
     }).then(response => res.json(response));
-    
 });
 
 app.delete("/", async(req,res,next) => {

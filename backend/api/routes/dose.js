@@ -4,20 +4,20 @@ const dose = require("../sequelize").dose;
 
 // TODO : filter somehow
 app.get("/", (req,res,next) => {
-    req.check("offset")
-        .notEmpty().withMessage("Offset nie może pusty")
-        .isDecimal().withMessage("Offset musi być liczbą");
-    req.check("limit")
-        .notEmpty().withMessage("Limit nie może pusty")
-        .isDecimal().withMessage("Limit musi być liczbą");
-    let errors = req.validationErrors();
-    if(errors)
-        return next({status: 400, message: errors[0].msg});
+    // req.check("offset")
+    //     .notEmpty().withMessage("Offset nie może pusty")
+    //     .isDecimal().withMessage("Offset musi być liczbą");
+    // req.check("limit")
+    //     .notEmpty().withMessage("Limit nie może pusty")
+    //     .isDecimal().withMessage("Limit musi być liczbą");
+    // let errors = req.validationErrors();
+    // if(errors)
+    //     return next({status: 400, message: errors[0].msg});
     dose.findAndCountAll({
         order: [["date", "DESC"]],
         attributes: [ 'id', 'amount', 'date' ],
-        offset: parseInt(req.query.offset),
-        limit: parseInt(req.query.limit),
+        // offset: parseInt(req.query.offset),
+        // limit: parseInt(req.query.limit),
         where: { user_id: req.userId }
     }).then(found => res.json(found));
 });

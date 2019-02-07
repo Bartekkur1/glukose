@@ -11,12 +11,10 @@ const resetpasswordApi = require("./routes/resetpassword");
 const jwtcheck = require("./middleware/jwtcheck").jwtcheck;
 const connectionCheck = require("./sequelize").connectionCheck;
 const expressValidator = require("express-validator");
-const swagger = require("./swagger");
 
 router.use(expressValidator());
 router.use(connectionCheck);
 router.use("/auth", authApi);
-router.use("/", swagger);
 router.use("/register", registerApi);
 router.use("/resetpassword", resetpasswordApi);
 router.use(jwtcheck);
