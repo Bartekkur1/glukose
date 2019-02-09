@@ -4,6 +4,7 @@ import Sidebar from 'react-sidebar';
 import { server } from '../../package.json';
 import { Route, Redirect } from 'react-router-dom';
 import Statistics from './statistics';
+import NewRecord from './newRecord';
 import SidebarGroup from './sidebarGroup';
 import { Link } from 'react-router-dom';
 import UserInfo from './userinfo.js';
@@ -110,6 +111,7 @@ class Index extends Component {
                         </button>
                             <Route path="/statistics" exact component={Statistics} />
                             <Route path="/userinfo" exact component={UserInfo} />
+                            <Route path="/add_record" exact component={NewRecord} />
                     </div>
                 }
                 sidebarClassName={

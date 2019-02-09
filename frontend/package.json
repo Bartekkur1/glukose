@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "server": "http://192.168.0.103:8000",
+  "server": "http://192.168.0.105:8000",
   "dependencies": {
     "axios": "^0.18.0",
     "chart.js": "^2.7.3",

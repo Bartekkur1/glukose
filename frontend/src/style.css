@@ -167,3 +167,18 @@ hr {
 .sugar-content {
     max-width: 1400px;
 }
+
+.record-header {
+    font-size: 16px;
+    height: 40px;
+    padding-top: 10px !important;
+    cursor: default;
+}
+
+.record-panel {
+    font-size: 22px;
+}
+
+.record-checkbox{
+    transform: scale(1.4);
+}
