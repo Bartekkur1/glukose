@@ -3,7 +3,7 @@ import Axios from 'axios';
 import Sidebar from 'react-sidebar';
 import { server } from '../../package.json';
 import { Route, Redirect } from 'react-router-dom';
-import Sugar from './sugar';
+import Statistics from './statistics';
 import SidebarGroup from './sidebarGroup';
 import { Link } from 'react-router-dom';
 import UserInfo from './userinfo.js';
@@ -55,7 +55,17 @@ class Index extends Component {
         console.log(res);
     }
 
-    componentDidUpdate(prevProps) {
+    async componentDidUpdate(prevProps) {
+        try {
+            await Axios.post(server + "/api/auth/check");
+        }
+        catch(e)
+        {
+            console.log(e);
+            localStorage.clear();
+            this.setState({redirect: <Redirect to={{
+                pathname: "/login"}}/>})
+        }
         if (this.props.location.pathname !== prevProps.location.pathname 
             && this.state.sidebarOpen && !this.state.sidebarDocked) {
             this.setState({sidebarOpen: false})
@@ -74,8 +84,8 @@ class Index extends Component {
                         <button className="btn mb-2 mx-auto p-0 logout w-100"
                         onClick={() => this.logout()}>
                         <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button><hr/>
-                        <SidebarGroup name="Statystyka" links={["/sugar", "/insulin", "/meal"]} 
-                        names={["Cukry", "Insulina", "Posiłki"]} icon="p-0 fa fa-bar-chart"/>
+                        <Link className="sidebar-link2 glukose-main" to="/statistics">
+                        <i className="mr-2 fa fa-bar-chart"></i>Statystyka</Link>
                         <SidebarGroup name="Ustawienia" links={["/account", "/userinfo"]} 
                         names={["Konto", "Moje informacje"]} icon="p-0 fa fas fa-cog"/>
                         <Link className="sidebar-link2 glukose-main" to="/add_record">
@@ -98,7 +108,7 @@ class Index extends Component {
                         onClick={() => this.setState({sidebarOpen: true})}>
                         <i className="fa fa-2x fas fa-arrow-right"></i>
                         </button>
-                            <Route path="/sugar" exact component={Sugar} />
+                            <Route path="/statistics" exact component={Statistics} />
                             <Route path="/userinfo" exact component={UserInfo} />
                     </div>
                 }
