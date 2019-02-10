@@ -14,7 +14,7 @@ class SidebarGroup extends Component {
         return (
             <div className="glukose-main sidebar-group">
                 <div className="sidebar-title" onClick={() => this.setState({open: !this.state.open})}>
-                    <h3><i className={"mr-3" + this.props.icon}></i>{this.props.name}</h3>
+                    <p className="m-0"><i className={"mr-3" + this.props.icon}></i>{this.props.name}</p>
                 </div>
                 <div className="sidebar-content glukose-off">
                     {this.state.open ? this.props.links.map((link, i) => {     

@@ -114,6 +114,7 @@ hr {
     padding-left: 15px;
     padding-top: 10px;
     padding-bottom: 10px;
+    max-height: 53px;
     cursor: default;
 }
 
@@ -125,6 +126,10 @@ hr {
 .sidebar-group h4 {
     display: block;
     user-select: none;
+}
+
+.sidebar-group {
+    font-size: 22px;
 }
 
 .sidebar-group i {
@@ -161,7 +166,7 @@ hr {
 
 .userinfo-panel {
     max-width: 500px;
-    font-size: 22px;
+    font-size: 14px;
 }
 
 .sugar-content {
@@ -176,7 +181,8 @@ hr {
 }
 
 .record-panel {
-    font-size: 22px;
+    font-size: 14px;
+    max-width: 400px;
 }
 
 .record-checkbox{

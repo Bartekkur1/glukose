@@ -84,7 +84,6 @@ class UserInfo extends Component {
             <div className="container-fluid sidebar-small mt-5">
                 <div className="row">
                     <Error error={this.state.error} close={() => this.setState({error: false})} />
-
                     <div className="col-12 p-0">
                         <h1 className="text-center">Dane użytkownika</h1>
                     </div>
@@ -92,7 +91,7 @@ class UserInfo extends Component {
                 <div className="row">
                     <div className="col-12 p-2">
                         <h4 className="text-center">
-                        Podane dane są potrzebne do lepszego przewidywania zachowań cukrzycy
+                            Podane dane są potrzebne do lepszego przewidywania zachowań cukrzycy
                         </h4>
                     </div>
                 </div>

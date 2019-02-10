@@ -36,7 +36,7 @@ app.delete("/", async(req,res,next) => {
 
 app.post("/", (req,res,next) => {
     req.check("amount")
-        .notEmpty().withMessage('Ilość nie może być pusta')
+        .notEmpty().withMessage('Ilość cukru nie może być pusta')
         .isDecimal().withMessage('Ilość musi być liczbą')
         .isInt({min: 0}).withMessage("Ilość nie może być mniejsza niż 0 ");
         let errors = req.validationErrors();
