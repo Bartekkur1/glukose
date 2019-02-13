@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Line } from 'react-chartjs-2';
 import Axios from 'axios';
 import {server} from '../../package.json';
+import Error from "./error";
 
 class Statistics extends Component {
     constructor(props) {
@@ -10,6 +11,7 @@ class Statistics extends Component {
         this.state = {
             loading: false,
             data: null,
+            date: new Date().toISOString().substring(0,10),
             count: 0,
             sugar: {
                 count: null,
@@ -28,9 +30,9 @@ class Statistics extends Component {
 
     async componentDidMount() {
         try {
-            let sugar = await Axios.get(server + "/api/sugar");
-            let meal = await Axios.get(server + "/api/meal");
-            let dose = await Axios.get(server + "/api/dose");
+            let meal = await Axios.get(server + "/api/meal/" + this.state.date);
+            let dose = await Axios.get(server + "/api/dose/" + this.state.date);
+            let sugar = await Axios.get(server + "/api/sugar/" + this.state.date);
             this.setState({
                 sugar: {
                     data: sugar.data.rows.map((row) => {
@@ -61,6 +63,9 @@ class Statistics extends Component {
         return (
             <div className="container-fluid sidebar-small h-100">
                 <div className="row">
+                    <Error error={this.state.error} close={() => this.setState({error: false})} />
+                </div>
+                <div className="row mt-5">
                     <div className="col-12 p-0">
                         <h3 className="text-center">Wykres przedstawia informacje z dnia: .</h3>
                     </div>

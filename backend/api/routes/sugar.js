@@ -2,21 +2,27 @@ const express = require("express");
 const app = express();
 const sugar = require("../sequelize").sugar;
 
-// TODO : filter somehow
-app.get("/", (req,res,next) => {
-    // req.check("dateFrom")
-    //     .notEmpty().withMessage("Data 'od' nie może być pusta");
-    // req.check("dateTo")
-    //     .notEmpty().withMessage("Data 'do' nie może być pusta");
-    // let errors = req.validationErrors();
-    // if(errors)
-    //     return next({status: 400, message: errors[0].msg});
+app.get("/:date", (req,res,next) => {
+    var dFrom = new Date(req.params.date + " 01:00:00");
+    var dTo = new Date(req.params.date + " 23:59:59");
+    dTo.setTime(dTo.getTime() + dTo.getTimezoneOffset() * -1 * 60 * 1000);
+    req.check("date")
+        .notEmpty().withMessage("Data nie może być pusta");
+    let errors = req.validationErrors();
+    if(errors)
+        return next({status: 400, message: errors[0].msg});
     sugar.findAndCountAll({
         order: [["date", "ASC"]],
         attributes: ['id', 'amount', 'date'],
-        // offset: parseInt(req.query.offset),
-        // limit: parseInt(req.query.limit),
-        where: { user_id: req.userId }
+        where: { 
+            user_id: req.userId, 
+            date: {
+                $and: {
+                    $gt: dFrom.toLocaleString(),
+                    $lt: dTo.toLocaleString()
+                }
+            }
+        }
     }).then(response => res.json(response));
 });
 

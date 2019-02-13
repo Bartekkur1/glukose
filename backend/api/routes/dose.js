@@ -2,24 +2,28 @@ const express = require("express");
 const app = express();
 const dose = require("../sequelize").dose;
 
-// TODO : filter somehow
-app.get("/", (req,res,next) => {
-    // req.check("offset")
-    //     .notEmpty().withMessage("Offset nie może pusty")
-    //     .isDecimal().withMessage("Offset musi być liczbą");
-    // req.check("limit")
-    //     .notEmpty().withMessage("Limit nie może pusty")
-    //     .isDecimal().withMessage("Limit musi być liczbą");
-    // let errors = req.validationErrors();
-    // if(errors)
-    //     return next({status: 400, message: errors[0].msg});
+app.get("/:date", (req,res,next) => {
+    var dFrom = new Date(req.params.date + " 01:00:00");
+    var dTo = new Date(req.params.date + " 23:59:59");
+    dTo.setTime(dTo.getTime() + dTo.getTimezoneOffset() * -1 * 60 * 1000);
+    req.check("date")
+        .notEmpty().withMessage("Data nie może być pusta");
+    let errors = req.validationErrors();
+    if(errors)
+        return next({status: 400, message: errors[0].msg});
     dose.findAndCountAll({
-        order: [["date", "DESC"]],
-        attributes: [ 'id', 'amount', 'date' ],
-        // offset: parseInt(req.query.offset),
-        // limit: parseInt(req.query.limit),
-        where: { user_id: req.userId }
-    }).then(found => res.json(found));
+        order: [["date", "ASC"]],
+        attributes: ['id', 'amount', 'date'],
+        where: { 
+            user_id: req.userId, 
+            date: {
+                $and: {
+                    $gt: dFrom.toLocaleString(),
+                    $lt: dTo.toLocaleString()
+                }
+            }
+        }
+    }).then(response => res.json(response));
 });
 
 app.delete("/:id", async (req,res,next) => {

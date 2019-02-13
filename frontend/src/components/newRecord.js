@@ -51,6 +51,7 @@ class NewRecord extends Component {
         this.state = {
             segment: "Cukier",
             fats: 0,
+            carbohydrates: 0,
             loading: false,
             error: null
         }
@@ -62,6 +63,7 @@ class NewRecord extends Component {
         this.setState({ 
             [e.target.name]: e.target.value
         });
+        console.log(this.state);
     }
 
     async submit(e) {
@@ -81,6 +83,7 @@ class NewRecord extends Component {
         else if(this.state.segment === "Posiłek") {
             payload["kcal"] = this.state.kcal;
             payload["fats"] = this.state.fats;
+            this.setState({carbohydrates: 100 - this.state.fats});
             payload["carbohydrates"] = this.state.carbohydrates;
             api = "/api/meal";
         }
@@ -162,7 +165,7 @@ class NewRecord extends Component {
                                             <input type="number" name="kcal" className="form-control" onChange={e => this.change(e)}/>
                                         </div>
                                         <div className="form-group">
-                                            <label>Procentowa zawartość tłuszczy:</label>
+                                            <label>Procentowa zawartość białek i tłuszczy:</label>
                                             <input type="number" name="fats" min="0" max="100" value={this.state.fats} className="form-control" onChange={e => this.change(e)}/>
                                         </div>
                                         <div className="form-group">
