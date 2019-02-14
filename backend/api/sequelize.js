@@ -9,7 +9,7 @@ const MealModel = require("../database/models/Meal");
 const sequelize = new Sequelize(config.database, config.username, config.password, {
   host: config.host,
   dialect: config.dialect,
-  // logging: false,
+  logging: false,
   pool: {
     max: 10,
     min: 0,

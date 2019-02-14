@@ -35,7 +35,7 @@ body {
 }
 
 .glukose-off {
-    background-color: #f2f2f2;
+    background-color: #e9ecef;
 }
 
 .loading-gif {
@@ -187,4 +187,9 @@ hr {
 
 .record-checkbox{
     transform: scale(1.4);
+}
+
+.stats-input {
+    background-color: #f2f2f2;
+    border: 0px;
 }

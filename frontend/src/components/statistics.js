@@ -7,47 +7,83 @@ import Error from "./error";
 class Statistics extends Component {
     constructor(props) {
         super(props);
-
+        var d = new Date();
+        d.setTime(d.getTime() + d.getTimezoneOffset() * -1 * 60 * 1000);
         this.state = {
             loading: false,
             data: null,
-            date: new Date().toISOString().substring(0,10),
+            date: d.toISOString().substring(0,10),
             count: 0,
             sugar: {
                 count: null,
-                data: null
+                data: null,
+                avg: null,
+                max: null,
+                min: null,
+                values: null,
+                amount: null
             },
             dose: {
                 count: null,
-                data: null  
+                data: null,
+                avg: null,
+                max: null,
+                min: null,
+                values: null,
+                amount: null
             },
             meal: {
                 count: null,
-                data: null
+                data: null,
+                avg: null,
+                sum: null,
+                values: null,
+                amount: null
             }
         }
     }
 
-    async componentDidMount() {
+    change(e) {
+        this.setState({
+            [e.target.name]: e.target.value
+        });
+        if(e.target.name === "date")
+            this.getData();
+    }
+
+    async getData() {
         try {
-            let meal = await Axios.get(server + "/api/meal/" + this.state.date);
+            await new Promise(resolve => setTimeout(resolve, 100));
             let dose = await Axios.get(server + "/api/dose/" + this.state.date);
+            let meal = await Axios.get(server + "/api/meal/" + this.state.date);
             let sugar = await Axios.get(server + "/api/sugar/" + this.state.date);
             this.setState({
                 sugar: {
+                    count: sugar.data.count,
                     data: sugar.data.rows.map((row) => {
                         return {x: row.date, y: row.amount}
-                    })
+                    }),
+                    values: sugar.data.rows.map((row) => {
+                        return row.amount
+                    }),
                 },
                 meal: {
+                    count: meal.data.count,
                     data: meal.data.rows.map((row) => {
                         return {x: row.date, y: row.kcal}
-                    })   
+                    }),
+                    values: meal.data.rows.map((row) => {
+                        return row.kcal
+                    }),
                 },
                 dose: {
+                    count: dose.data.count,
                     data: dose.data.rows.map((row) => {
                         return {x: row.date, y: row.amount}
-                    })
+                    }),
+                    values: dose.data.rows.map((row) => {
+                        return row.amount
+                    }),
                 }
             })
         }
@@ -56,22 +92,29 @@ class Statistics extends Component {
             this.setState({error: e});
             this.setState({loading: false});
         }  
-        console.log(this.state);
+    }
+
+    async componentDidMount() {
+        this.getData();
     }
     
     render() {
         return (
-            <div className="container-fluid sidebar-small h-100">
+            <div className="container-fluid sidebar-small">
                 <div className="row">
                     <Error error={this.state.error} close={() => this.setState({error: false})} />
                 </div>
                 <div className="row mt-5">
                     <div className="col-12 p-0">
-                        <h3 className="text-center">Wykres przedstawia informacje z dnia: .</h3>
+                        <p className="text-center pl-5" style={{fontSize: "24px", fontWeight: "bold"}}>
+                            Statystyka z dnia:
+                            <input type="date" className="stats-input ml-1" value={this.state.date}
+                            name="date" onChange={e => this.change(e)}/>
+                        </p>
                     </div>
                 </div>                
-                <div className="row h-50">
-                    <div className="col-12 sugar-content mx-auto">
+                <div className="row">
+                    <div className="col-12 sugar-content mx-auto pl-5 pr-5">
                         <Line
                             data={{
                                 datasets: [
@@ -120,7 +163,7 @@ class Statistics extends Component {
                                         },
                                         ticks: {
                                             min: 40,
-                                            max: 600
+                                            max: 600,
                                         }
                                     }, {
                                         id: "Posiłek",
@@ -147,8 +190,8 @@ class Statistics extends Component {
                                     xAxes: [{
                                         type: 'time',
                                         time: {
-                                            min: "2018-12-05T00:00:00.000Z",
-                                            max: "2018-12-06T00:00:00.000Z",
+                                            min: this.state.date + "T00:00:00.000Z",
+                                            max: this.state.date + "T23:59:59.000Z",
                                             displayFormats: {
                                                 minutes: 'h:mm a'
                                             }
@@ -156,7 +199,7 @@ class Statistics extends Component {
                                     }],
                                 },
                                 responsive: true,
-                                maintainAspectRatio: false,
+                                maintainAspectRatio: true,
                                 legend: {
                                     position: "bottom",
                                     labels: {
@@ -165,8 +208,43 @@ class Statistics extends Component {
                                 }
                             }}
                         />
-                        <div className="jumbotron mt-5">
-                            <h1>kek</h1>
+                        <div className="jumbotron mt-3 p-0">
+                            <div className="row pl-3 pt-3">
+                                <div className="col-4">
+                                    <h3>Cukry</h3>
+                                    <ul>
+                                        <li>Średni pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
+                                        ? Math.round(this.state.sugar.values.reduce((a,b) => a + b) / this.state.sugar.count) : 0}</li>
+                                        <li>Największy pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
+                                        ? Math.max.apply(null, this.state.sugar.values) : 0}</li>
+                                        <li>Najmniejszy pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
+                                        ? Math.min.apply(null, this.state.sugar.values) : 0}</li>
+                                        <li>Ilość pomiarów: {this.state.sugar.count}</li>
+                                    </ul>
+                                </div>
+                                <div className="col-4">
+                                    <h3>Posiłki</h3>
+                                    <ul>
+                                        <li>Ilość kalorii: {this.state.meal.values && this.state.meal.values.length > 0 
+                                        ? this.state.meal.values.reduce((a,b) => a + b) : 0}</li>
+                                        <li>Średnia ilość kalorii: {this.state.meal.values && this.state.meal.values.length > 0 
+                                        ? Math.round(this.state.meal.values.reduce((a,b) => a + b) / this.state.meal.count) : 0}</li>
+                                        <li>Ilość posiłków: {this.state.meal.count}</li>
+                                    </ul>
+                                </div>
+                                <div className="col-4">
+                                    <h3>Insulina</h3>
+                                    <ul>
+                                        <li>Średnia dawka: {this.state.dose.values && this.state.dose.values.length > 0 
+                                        ? Math.round(this.state.dose.values.reduce((a,b) => a + b) / this.state.dose.count) : 0}</li>
+                                        <li>Największa dawka: {this.state.dose.values && this.state.dose.values.length > 0 
+                                        ? Math.max.apply(null, this.state.dose.values) : 0}</li>
+                                        <li>Najmniejsza dawka: {this.state.dose.values && this.state.dose.values.length > 0 
+                                        ? Math.min.apply(null, this.state.dose.values) : 0}</li>
+                                        <li>Ilość dawek: {this.state.dose.count}</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

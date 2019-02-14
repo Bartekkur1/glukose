@@ -78,17 +78,20 @@ class NewRecord extends Component {
         }
         else if(this.state.segment === "Insulina") {
             payload["amount"] = this.state.insulinAmount;
+            payload["type"] = "Humalog";
             api = "/api/dose";
         }
         else if(this.state.segment === "Posiłek") {
             payload["kcal"] = this.state.kcal;
             payload["fats"] = this.state.fats;
-            this.setState({carbohydrates: 100 - this.state.fats});
-            payload["carbohydrates"] = this.state.carbohydrates;
+            payload["carbohydrates"] = 100 - this.state.fats;
             api = "/api/meal";
         }
-        if(this.state.date)
-            payload["date"] = this.state.date
+        if(this.state.date) {
+            var d = new Date(this.state.date);
+            d.setTime(d.getTime() + d.getTimezoneOffset() * -1 * 60 * 1000);
+            payload["date"] = d.toString();
+        }
         try {
             let res = await Axios.post(server + api, payload);
             console.log(res);

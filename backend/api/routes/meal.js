@@ -56,8 +56,11 @@ app.post("/", (req,res,next) => {
     let errors = req.validationErrors();
     if(errors)
         return next({status: 400, message: errors[0].msg});
-    if(!req.body.date)
-        req.body.date = new Date();
+    if(!req.body.date) {
+        var d = new Date();
+        d.setTime(d.getTime() + d.getTimezoneOffset() * -1 * 60 * 1000);
+        req.body.date = d.toString();
+    }
     meal.create({
         "user_id": req.userId,
         "kcal": req.body.kcal,
