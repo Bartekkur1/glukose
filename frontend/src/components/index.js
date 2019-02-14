@@ -3,11 +3,13 @@ import Axios from 'axios';
 import Sidebar from 'react-sidebar';
 import { server } from '../../package.json';
 import { Route, Redirect } from 'react-router-dom';
-import Statistics from './statistics';
+import DailyStatistics from './dailyStatistics';
 import NewRecord from './newRecord';
 import SidebarGroup from './sidebarGroup';
 import { Link } from 'react-router-dom';
 import UserInfo from './userinfo.js';
+import Account from './account.js';
+import Statistics from './statistics.js';
 
 const mql = window.matchMedia(`(min-width: 800px)`);
 
@@ -85,8 +87,8 @@ class Index extends Component {
                         <button className="btn mb-2 mx-auto p-0 logout w-100"
                         onClick={() => this.logout()}>
                         <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button><hr/>
-                        <Link className="sidebar-link2 glukose-main" to="/statistics">
-                        <i className="mr-2 fa fa-bar-chart"></i>Statystyka</Link>
+                        <SidebarGroup name="Statystyka" links={["/dailystats", "/stats"]} 
+                        names={["Dzienna", "Ogólna"]} icon="p-0 fa fa-bar-chart"/>
                         <SidebarGroup name="Ustawienia" links={["/account", "/userinfo"]} 
                         names={["Konto", "Moje informacje"]} icon="p-0 fa fas fa-cog"/>
                         <Link className="sidebar-link2 glukose-main" to="/add_record">
@@ -109,9 +111,11 @@ class Index extends Component {
                         onClick={() => this.setState({sidebarOpen: true})}>
                         <i className="fa fa-2x fas fa-arrow-right"></i>
                         </button>
-                            <Route path="/statistics" exact component={Statistics} />
+                            <Route path="/dailystats" exact component={DailyStatistics} />
                             <Route path="/userinfo" exact component={UserInfo} />
                             <Route path="/add_record" exact component={NewRecord} />
+                            <Route path="/account" exact component={Account}/>
+                            <Route path="/stats" exact component={Statistics}/>
                     </div>
                 }
                 sidebarClassName={

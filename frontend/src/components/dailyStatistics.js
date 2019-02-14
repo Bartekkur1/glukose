@@ -4,12 +4,42 @@ import Axios from 'axios';
 import {server} from '../../package.json';
 import Error from "./error";
 
-class Statistics extends Component {
+class DailyStatistics extends Component {
     constructor(props) {
         super(props);
+        var d = new Date();
+        d.setTime(d.getTime() + d.getTimezoneOffset() * -1 * 60 * 1000);
         this.state = {
             loading: true,
             data: null,
+            date: d.toISOString().substring(0,10),
+            count: 0,
+            sugar: {
+                count: null,
+                data: null,
+                avg: null,
+                max: null,
+                min: null,
+                values: null,
+                amount: null
+            },
+            dose: {
+                count: null,
+                data: null,
+                avg: null,
+                max: null,
+                min: null,
+                values: null,
+                amount: null
+            },
+            meal: {
+                count: null,
+                data: null,
+                avg: null,
+                sum: null,
+                values: null,
+                amount: null
+            }
         }
     }
 
@@ -20,15 +50,43 @@ class Statistics extends Component {
         if(e.target.name === "date")
             this.getData();
     }
-    // SELECT AVG(`amount`) FROM `sugars` WHERE DATE_FORMAT(`date`, '%k') >= 0 AND DATE_FORMAT(`date`, '%k') < 1
+
     async getData() {
         try {
-            let res = await Axios.get(server + "/api/stats");
+            await new Promise(resolve => setTimeout(resolve, 100));
+            let dose = await Axios.get(server + "/api/dose/" + this.state.date);
+            let meal = await Axios.get(server + "/api/meal/" + this.state.date);
+            let sugar = await Axios.get(server + "/api/sugar/" + this.state.date);
             this.setState({
+                sugar: {
+                    count: sugar.data.count,
+                    data: sugar.data.rows.map((row) => {
+                        return {x: row.date, y: row.amount}
+                    }),
+                    values: sugar.data.rows.map((row) => {
+                        return row.amount
+                    }),
+                },
+                meal: {
+                    count: meal.data.count,
+                    data: meal.data.rows.map((row) => {
+                        return {x: row.date, y: row.kcal}
+                    }),
+                    values: meal.data.rows.map((row) => {
+                        return row.kcal
+                    }),
+                },
+                dose: {
+                    count: dose.data.count,
+                    data: dose.data.rows.map((row) => {
+                        return {x: row.date, y: row.amount}
+                    }),
+                    values: dose.data.rows.map((row) => {
+                        return row.amount
+                    }),
+                },
                 loading: false,
-                data: res.data
             })
-            console.log(res);
             console.log(this.state);
         }
         catch(e)
@@ -56,7 +114,9 @@ class Statistics extends Component {
                 <div className="row mt-5">
                     <div className="col-12 p-0">
                         <p className="text-center pl-5" style={{fontSize: "24px", fontWeight: "bold"}}>
-                            Statystyka ogólna
+                            Statystyka z dnia:
+                            <input type="date" className="stats-input ml-1" value={this.state.date}
+                            name="date" onChange={e => this.change(e)}/>
                         </p>
                     </div>
                 </div>                
@@ -69,7 +129,7 @@ class Statistics extends Component {
                                         label: 'Cukier',
                                         type:'line',
                                         yAxisID: 'Cukier',
-                                        data: this.state.data.sugars,
+                                        data: this.state.sugar.data,
                                         fill: false,
                                         borderColor: 'rgba(255,0,0,0.4)',
                                         backgroundColor: 'rgba(255,0,0,1)',
@@ -80,7 +140,7 @@ class Statistics extends Component {
                                         label: 'Insulina',
                                         type:'line',
                                         yAxisID: 'Insulina',
-                                        data: this.state.data.doses,
+                                        data: this.state.dose.data,
                                         fill: false,
                                         borderColor: 'rgba(0,255,0,0.6)',
                                         backgroundColor: 'rgba(0,255,0,1)',
@@ -91,7 +151,7 @@ class Statistics extends Component {
                                         label: 'Posiłek',
                                         type:'line',
                                         yAxisID: 'Posiłek',
-                                        data: this.state.data.meals,
+                                        data: this.state.meal.data,
                                         fill: false,
                                         borderColor: 'rgba(0,0,255,0.6)',
                                         backgroundColor: 'rgba(0,0,255,1)',
@@ -137,8 +197,8 @@ class Statistics extends Component {
                                     xAxes: [{
                                         type: 'time',
                                         time: {
-                                            min: "00:00:00",
-                                            max: "23:59:59",
+                                            min: this.state.date + "T00:00:00.000Z",
+                                            max: this.state.date + "T23:59:59.000Z",
                                             displayFormats: {
                                                 minutes: 'h:mm a'
                                             }
@@ -146,7 +206,7 @@ class Statistics extends Component {
                                     }],
                                 },
                                 responsive: true,
-                                maintainAspectRatio: true,
+                                maintainAspectRatio: false,
                                 legend: {
                                     position: "bottom",
                                     labels: {
@@ -155,6 +215,44 @@ class Statistics extends Component {
                                 }
                             }}
                         />
+                        <div className="jumbotron mt-3 p-0">
+                            <div className="row pl-3 pt-3">
+                                <div className="col-4">
+                                    <h3>Cukry</h3>
+                                    <ul>
+                                        <li>Średni pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
+                                        ? Math.round(this.state.sugar.values.reduce((a,b) => a + b) / this.state.sugar.count) : 0}</li>
+                                        <li>Największy pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
+                                        ? Math.max.apply(null, this.state.sugar.values) : 0}</li>
+                                        <li>Najmniejszy pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
+                                        ? Math.min.apply(null, this.state.sugar.values) : 0}</li>
+                                        <li>Ilość pomiarów: {this.state.sugar.count}</li>
+                                    </ul>
+                                </div>
+                                <div className="col-4">
+                                    <h3>Posiłki</h3>
+                                    <ul>
+                                        <li>Ilość kalorii: {this.state.meal.values && this.state.meal.values.length > 0 
+                                        ? this.state.meal.values.reduce((a,b) => a + b) : 0}</li>
+                                        <li>Średnia ilość kalorii: {this.state.meal.values && this.state.meal.values.length > 0 
+                                        ? Math.round(this.state.meal.values.reduce((a,b) => a + b) / this.state.meal.count) : 0}</li>
+                                        <li>Ilość posiłków: {this.state.meal.count}</li>
+                                    </ul>
+                                </div>
+                                <div className="col-4">
+                                    <h3>Insulina</h3>
+                                    <ul>
+                                        <li>Średnia dawka: {this.state.dose.values && this.state.dose.values.length > 0 
+                                        ? Math.round(this.state.dose.values.reduce((a,b) => a + b) / this.state.dose.count) : 0}</li>
+                                        <li>Największa dawka: {this.state.dose.values && this.state.dose.values.length > 0 
+                                        ? Math.max.apply(null, this.state.dose.values) : 0}</li>
+                                        <li>Najmniejsza dawka: {this.state.dose.values && this.state.dose.values.length > 0 
+                                        ? Math.min.apply(null, this.state.dose.values) : 0}</li>
+                                        <li>Ilość dawek: {this.state.dose.count}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -162,4 +260,4 @@ class Statistics extends Component {
     }
 }
 
-export default Statistics;
+export default DailyStatistics;

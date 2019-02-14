@@ -8,30 +8,33 @@ class UserInfo extends Component {
         super(props)
 
         this.state = {
-            age: null,
-            gender: "Mężczyzna",
-            height: 187,
-            weight: 80,
+            age: 0,
+            gender: "Kobieta",
+            height: 0,
+            weight: 0,
             insulinType: "Humalog",
             dailyInsulinType: "Lantus",
-            dailyInsulinAmount: 24,
+            dailyInsulinAmount: 0,
             loading: false,
-            error: null
+            error: null,
+            change: false
         }
     }
 
     async componentDidMount() {
         try {
             let res = await Axios.get(server + "/api/userinfo");
-            this.setState({
-                age: res.data.age,
-                gender: res.data.gender,
-                height: res.data.height,
-                weight: res.data.weight,
-                insulinType: res.data.insulinType,
-                dailyInsulinType: res.data.dailyInsulinType,
-                dailyInsulinAmount: res.data.dailyInsulinAmount
-            })
+            if(res.data) {
+                this.setState({
+                    age: res.data.age,
+                    gender: res.data.gender,
+                    height: res.data.height,
+                    weight: res.data.weight,
+                    insulinType: res.data.insulinType,
+                    dailyInsulinType: res.data.dailyInsulinType,
+                    dailyInsulinAmount: res.data.dailyInsulinAmount
+                })
+            }
         }
         catch(e)
         {
@@ -42,7 +45,7 @@ class UserInfo extends Component {
 
     async submit(e) {
         e.preventDefault();
-        if(!this.state.loading) {
+        if(!this.state.loading && this.state.change) {
             this.setState({error: null, loading: true});
             try {
                 let res = await Axios.post(server + "/api/userinfo", {
@@ -72,10 +75,14 @@ class UserInfo extends Component {
         this.setState({
             [e.target.name]: e.target.value
         });
+        if(!this.state.change)
+            this.setState({
+                change: true
+            });
     }
 
     render() {
-        if(!this.state.age || this.state.loading)
+        if(this.state.loading)
             return (                
             <div className="row m-0 h-100 glukose-off">
                 <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>

@@ -3,7 +3,7 @@ const passwordHash = require("password-hash");
 const app = express();
 const user = require("../sequelize").user;
 
-app.patch("/", async (req,res,next) => {
+app.post("/", async (req,res,next) => {
     let data = {};
     if(req.body.email) {
         req.check("email")
@@ -15,7 +15,8 @@ app.patch("/", async (req,res,next) => {
     }
     if(req.body.password) {
         req.check("password")
-            .len({min: "6"}).withMessage("Nowe hasło powinno posiadać przynajmniej 6 znaków")
+            .len({min: 8}).withMessage("Nowe hasło powinno posiadać przynajmniej 8 znaków")
+            .equals(req.body.confirmPassword).withMessage("Hasła muszą być identyczne");            
         data["password"] = passwordHash.generate(req.body.password);
     }
     let errors = req.validationErrors();
