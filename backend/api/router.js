@@ -7,6 +7,7 @@ const sugarApi = require("./routes/sugar");
 const doseApi = require("./routes/dose");
 const mealApi = require("./routes/meal");
 const userApi = require("./routes/user");
+const dataApi = require("./routes/data");
 const statsApi = require("./routes/statistics");
 const resetpasswordApi = require("./routes/resetpassword");
 const jwtcheck = require("./middleware/jwtcheck").jwtcheck;
@@ -25,5 +26,6 @@ router.use("/sugar", sugarApi);
 router.use("/dose", doseApi);
 router.use("/meal", mealApi);
 router.use("/stats", statsApi);
+router.use("/data", dataApi);
 
 module.exports = router;

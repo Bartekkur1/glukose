@@ -63,7 +63,6 @@ class NewRecord extends Component {
         this.setState({ 
             [e.target.name]: e.target.value
         });
-        console.log(this.state);
     }
 
     async submit(e) {
@@ -94,7 +93,6 @@ class NewRecord extends Component {
         }
         try {
             let res = await Axios.post(server + api, payload);
-            console.log(res);
             res["title"] = "rekord dodany pomyślnie";
             this.setState({
                 error: res,

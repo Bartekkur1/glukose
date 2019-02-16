@@ -49,7 +49,6 @@ class Account extends Component {
                     payload["confirmPassword"] = this.state.confirmPassword
                 }
                 let res = await Axios.post(server + "/api/user", payload);
-                console.log(res);
                 res["title"] = "informacje zaktualizowano pomyślnie";
                 this.setState({
                     error: res,

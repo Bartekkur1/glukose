@@ -8,11 +8,11 @@ class DailyStatistics extends Component {
     constructor(props) {
         super(props);
         var d = new Date();
-        d.setTime(d.getTime() + d.getTimezoneOffset() * -1 * 60 * 1000);
         this.state = {
             loading: true,
             data: null,
             date: d.toISOString().substring(0,10),
+            backupDate: d.toISOString().substring(0,10),
             count: 0,
             sugar: {
                 count: null,
@@ -44,9 +44,14 @@ class DailyStatistics extends Component {
     }
 
     change(e) {
-        this.setState({
-            [e.target.name]: e.target.value
-        });
+        if(e.target.value)
+            this.setState({
+                [e.target.name]: e.target.value
+            });
+        else
+            this.setState({
+                date: this.state.backupDate
+            })
         if(e.target.name === "date")
             this.getData();
     }
@@ -87,7 +92,6 @@ class DailyStatistics extends Component {
                 },
                 loading: false,
             })
-            console.log(this.state);
         }
         catch(e)
         {
@@ -197,8 +201,8 @@ class DailyStatistics extends Component {
                                     xAxes: [{
                                         type: 'time',
                                         time: {
-                                            min: this.state.date + "T00:00:00.000Z",
-                                            max: this.state.date + "T23:59:59.000Z",
+                                            min: `${this.state.date}T00:00:00`,
+                                            max: `${this.state.date}T24:00:00`,
                                             displayFormats: {
                                                 minutes: 'h:mm a'
                                             }
@@ -206,7 +210,7 @@ class DailyStatistics extends Component {
                                     }],
                                 },
                                 responsive: true,
-                                maintainAspectRatio: false,
+                                maintainAspectRatio: true,
                                 legend: {
                                     position: "bottom",
                                     labels: {

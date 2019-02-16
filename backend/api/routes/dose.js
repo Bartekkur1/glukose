@@ -18,8 +18,8 @@ app.get("/:date", (req,res,next) => {
             user_id: req.userId, 
             date: {
                 $and: {
-                    $gt: dFrom.toLocaleString(),
-                    $lt: dTo.toLocaleString()
+                    $gt: dFrom,
+                    $lt: dTo
                 }
             }
         }

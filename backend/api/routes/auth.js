@@ -18,10 +18,27 @@ app.post("/", (req,res,next) => {
     }).then((foundUser) => {
         if(foundUser && passwordHash.verify(req.body.password, foundUser.password)) {
             jwt.sign({userId: foundUser.id}, jwtsign, {expiresIn: 60 * 30 }, (err, token) => {
+                foundUser.update({
+                    token: token
+                });
                 res.json({ token });
             });
         } else
             next({status: 400, message: "Zły login lub hasło"});
+    });
+});
+
+app.post("/logout", (req,res,next) => {
+    const token = req.headers['authorization'].split(' ')[1];
+    jwt.verify(token, jwtsign, (err, authData) => {
+        user.findOne({
+            where: { id: authData.userId}
+        }).then((foundUser) => {
+            if(foundUser.token)
+                foundUser.update({
+                    token: ""
+                });
+        });
     });
 });
 
@@ -35,13 +52,15 @@ app.post("/check", (req,res,next) => {
         user.findOne({
             where: { id: authData.userId}
         }).then((foundUser) => {
-            res.json({
-                id: foundUser.id,
-                login: foundUser.login,
-                email: foundUser.email,
-                avatarUrl: `https://www.gravatar.com/avatar/${crypto.createHash('md5').update(foundUser.email).digest("hex")}`,
-                isAdmin: foundUser.isAdmin                
-            });
+            if(foundUser.token && foundUser.token == token)
+                res.json({
+                    id: foundUser.id,
+                    login: foundUser.login,
+                    email: foundUser.email,
+                    isAdmin: foundUser.isAdmin                
+                });
+            else
+                res.sendStatus(401);
         });
     });
 });

@@ -15,7 +15,8 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
         allowNull: false
-      }
+      },
+      token: Sequelize.STRING,
     });
   },
   down: (queryInterface, Sequelize) => {

@@ -25,7 +25,6 @@ class SecuredRoutes extends Component {
         }
         catch(e)
         {
-            console.log(e);
             localStorage.clear();
             this.setState({redirect: <Redirect to={{
                 pathname: "/login"}}/>})

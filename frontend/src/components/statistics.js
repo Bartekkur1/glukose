@@ -7,9 +7,11 @@ import Error from "./error";
 class Statistics extends Component {
     constructor(props) {
         super(props);
+        var d = new Date();
         this.state = {
             loading: true,
             data: null,
+            date: d.toISOString().substring(0,10),
         }
     }
 
@@ -20,7 +22,7 @@ class Statistics extends Component {
         if(e.target.name === "date")
             this.getData();
     }
-    // SELECT AVG(`amount`) FROM `sugars` WHERE DATE_FORMAT(`date`, '%k') >= 0 AND DATE_FORMAT(`date`, '%k') < 1
+
     async getData() {
         try {
             let res = await Axios.get(server + "/api/stats");
@@ -28,8 +30,6 @@ class Statistics extends Component {
                 loading: false,
                 data: res.data
             })
-            console.log(res);
-            console.log(this.state);
         }
         catch(e)
         {
@@ -137,12 +137,10 @@ class Statistics extends Component {
                                     xAxes: [{
                                         type: 'time',
                                         time: {
-                                            min: "00:00:00",
-                                            max: "23:59:59",
                                             displayFormats: {
                                                 minutes: 'h:mm a'
                                             }
-                                        }
+                                        },
                                     }],
                                 },
                                 responsive: true,
@@ -151,6 +149,13 @@ class Statistics extends Component {
                                     position: "bottom",
                                     labels: {
                                         boxWidth: 50
+                                    }
+                                },
+                                tooltips: {
+                                    callbacks: {
+                                        title: function(t, d) {
+                                            return t[0].xLabel.substring(12,17)
+                                        }
                                     }
                                 }
                             }}

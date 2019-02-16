@@ -7,6 +7,7 @@ module.exports = {
             password: passwordHash.generate('123'),
             email: 'Bartekkur1@gmail.com',
             isAdmin: true,
+            token: "",
         }], {});
     },
     down: (queryInterface, Sequelize) => {

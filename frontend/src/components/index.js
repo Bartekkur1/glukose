@@ -5,11 +5,12 @@ import { server } from '../../package.json';
 import { Route, Redirect } from 'react-router-dom';
 import DailyStatistics from './dailyStatistics';
 import NewRecord from './newRecord';
-import SidebarGroup from './sidebarGroup';
-import { Link } from 'react-router-dom';
+import SidebarButton from './sidebarButton';
+import SidebarTitle from './sidebarTitle';
 import UserInfo from './userinfo.js';
 import Account from './account.js';
 import Statistics from './statistics.js';
+import Export from './export.js';
 
 const mql = window.matchMedia(`(min-width: 800px)`);
 
@@ -50,12 +51,8 @@ class Index extends Component {
 
     logout() {
         localStorage.clear();
+        Axios.post(server + "/api/auth/logout");
         this.setState({redirect: <Redirect to="/login"/>});
-    }
-
-    async apiTest() {
-        let res = await Axios.get(server + "/api/sugar");
-        console.log(res);
     }
 
     async componentDidUpdate(prevProps) {
@@ -64,7 +61,6 @@ class Index extends Component {
         }
         catch(e)
         {
-            console.log(e);
             localStorage.clear();
             this.setState({redirect: <Redirect to={{
                 pathname: "/login"}}/>})
@@ -84,15 +80,23 @@ class Index extends Component {
                     <div className="col-12 p-0">
                         <img className="mx-auto mt-2 sidebar-logo" width="220px" height="60px" 
                         src={process.env.PUBLIC_URL + '/images/logo2.svg'} alt="logo"/>
-                        <button className="btn mb-2 mx-auto p-0 logout w-100"
+                        <button className="btn mb-3 mx-auto p-0 logout w-100"
                         onClick={() => this.logout()}>
-                        <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button><hr/>
-                        <SidebarGroup name="Statystyka" links={["/dailystats", "/stats"]} 
-                        names={["Dzienna", "Ogólna"]} icon="p-0 fa fa-bar-chart"/>
-                        <SidebarGroup name="Ustawienia" links={["/account", "/userinfo"]} 
-                        names={["Konto", "Moje informacje"]} icon="p-0 fa fas fa-cog"/>
-                        <Link className="sidebar-link2 glukose-main" to="/add_record">
-                        <i className="mr-2 fa fas fa-plus"></i>Dodaj rekord</Link>
+                        <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button>
+                        <hr className="hr-light"/>
+                        <SidebarButton name="Strona główna" link="/" icon="fa fas fa-home"/>
+                        <hr className="hr-title" />
+                        <SidebarTitle name="Statystyka" />
+                        <SidebarButton name="Dzienna" link="/dailystats" icon="fa fas fa-bar-chart"/>
+                        <SidebarButton name="Ogólna" link="/stats" icon="fa fas fa-bar-chart"/>
+                        <hr className="hr-title" />
+                        <SidebarTitle name="Ustawienia" />
+                        <SidebarButton name="Konto" link="/account" icon="fa fas fa-cog"/>
+                        <SidebarButton name="Użytkownik" link="/userinfo" icon="fa fas fa-user"/>
+                        <hr className="hr-title" />
+                        <SidebarTitle name="Dane" />
+                        <SidebarButton name="Eksport" link="/export" icon="fa fas fa-download"/>
+                        <SidebarButton name="Import" link="/import" icon="fa fas fa-upload"/>
                     </div>
                     <div className="col-12 mt-auto footer">
                         <hr/>
@@ -107,7 +111,7 @@ class Index extends Component {
                 children={
                     <div className="h-100">
                         <button style={this.state.sidebarDocked ? {display: "none"} : {display: "inline-block"}} 
-                        className="btn glukose-main sidebar-button p-0" type="submit" 
+                        className="btn glukose-main sidebar-slide p-0" type="submit" 
                         onClick={() => this.setState({sidebarOpen: true})}>
                         <i className="fa fa-2x fas fa-arrow-right"></i>
                         </button>
@@ -116,6 +120,7 @@ class Index extends Component {
                             <Route path="/add_record" exact component={NewRecord} />
                             <Route path="/account" exact component={Account}/>
                             <Route path="/stats" exact component={Statistics}/>
+                            <Route path="/export" exact component={Export}/>
                     </div>
                 }
                 sidebarClassName={

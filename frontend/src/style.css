@@ -1,6 +1,7 @@
 body {
     background-color: #f2f2f2;
     height: 100%;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 .logo {
@@ -72,7 +73,7 @@ body {
     font-size: 15px;
 }
 
-.sidebar-button {
+.sidebar-slide {
     position: fixed;
     top: 0;
     left: 0;
@@ -80,42 +81,13 @@ body {
     height: 100vh;
 }
 
-.sidebar-link {
-    font-size: 20px;
-    text-align: left;
-    padding-left: 20px;
-    padding-right: 20px;
-    display: block;
-    text-decoration: none !important;
-    color: black;
-    font-weight: 400;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    cursor: default;
+.hr-title {
+    margin-top: 0px;
+    margin-bottom: 10px;
 }
 
-.sidebar-link2 {
-    display: block;
-    padding-top: 10px;
-    padding-left: 15px;
-    padding-bottom: 10px;
-    text-decoration: none !important;
-    color: black;
-    font-size: 22px;
-    cursor: default;
-    font-weight: 400;
-}
-
-hr {
-    margin: 4px;
-}
-
-.sidebar-title {
-    padding-left: 15px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    max-height: 53px;
-    cursor: default;
+.hr-light {
+    margin: 0px;
 }
 
 .sidebar-logo {
@@ -123,32 +95,33 @@ hr {
     margin-right: 15px !important;
 }
 
-.sidebar-group h4 {
-    display: block;
-    user-select: none;
+.sidebar-title {
+    font-size: 13px;
+    font-weight: bold;
 }
 
-.sidebar-group {
-    font-size: 22px;
+.sidebar-button {
+    font-size: 18px;
+    width: 100%;
+    color: black;
+    font-weight: 445;
 }
 
-.sidebar-group i {
+.sidebar-button i {
     max-width: 28px;
+    width: 15px;
+    height: 15px;
     text-align: center;
-    margin-right: 15px;
+    margin-right: 10px;
 }
 
-.sidebar-link:hover {
+.sidebar-button:hover {
     border: 0;
     text-decoration: none;
+    color: black;
 }
 
-.sidebar-link2:hover {
-    border: 0;
-    text-decoration: none;
-}
-
-.sidebar-link:focus {
+.sidebar-button:focus {
     border: 0;
     text-decoration: none;
 }
