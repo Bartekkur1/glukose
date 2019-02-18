@@ -2,16 +2,17 @@ const express = require("express");
 const app = express();
 const dose = require("../sequelize").dose;
 
-app.get("/:date", (req,res,next) => {
+app.get("/:date", async (req,res,next) => {
     var dFrom = new Date(req.params.date + " 01:00:00");
     var dTo = new Date(req.params.date + " 23:59:59");
+    var payLoad = {};
     dTo.setTime(dTo.getTime() + dTo.getTimezoneOffset() * -1 * 60 * 1000);
     req.check("date")
         .notEmpty().withMessage("Data nie może być pusta");
     let errors = req.validationErrors();
     if(errors)
         return next({status: 400, message: errors[0].msg});
-    dose.findAndCountAll({
+    var values = await dose.findAndCountAll({
         order: [["date", "ASC"]],
         attributes: ['id', 'amount', 'date'],
         where: { 
@@ -23,7 +24,17 @@ app.get("/:date", (req,res,next) => {
                 }
             }
         }
-    }).then(response => res.json(response));
+    });
+    payLoad["values"] = values.rows;
+    payLoad["count"] = values.count;
+    payLoad["sum"] = await dose.sum("amount", {where: { 
+        user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}});
+    payLoad["max"] = await dose.max("amount", {where: { 
+        user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}});
+    payLoad["min"] = await dose.min("amount", {where: { 
+        user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}});
+    payLoad["avg"] = payLoad["sum"]/payLoad["count"];
+    res.json(payLoad);
 });
 
 app.delete("/:id", async (req,res,next) => {

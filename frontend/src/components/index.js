@@ -11,6 +11,7 @@ import UserInfo from './userinfo.js';
 import Account from './account.js';
 import Statistics from './statistics.js';
 import Export from './export.js';
+import Home from './home';
 
 const mql = window.matchMedia(`(min-width: 800px)`);
 
@@ -90,6 +91,9 @@ class Index extends Component {
                         <SidebarButton name="Dzienna" link="/dailystats" icon="fa fas fa-bar-chart"/>
                         <SidebarButton name="Ogólna" link="/stats" icon="fa fas fa-bar-chart"/>
                         <hr className="hr-title" />
+                        <SidebarTitle name="Rekordy" />
+                        <SidebarButton name="Dodaj rekod" link="/add_record" icon="fa fas fa-plus"/>
+                        <hr className="hr-title" />
                         <SidebarTitle name="Ustawienia" />
                         <SidebarButton name="Konto" link="/account" icon="fa fas fa-cog"/>
                         <SidebarButton name="Użytkownik" link="/userinfo" icon="fa fas fa-user"/>
@@ -115,6 +119,7 @@ class Index extends Component {
                         onClick={() => this.setState({sidebarOpen: true})}>
                         <i className="fa fa-2x fas fa-arrow-right"></i>
                         </button>
+                            <Route path="/" exact component={Home} />
                             <Route path="/dailystats" exact component={DailyStatistics} />
                             <Route path="/userinfo" exact component={UserInfo} />
                             <Route path="/add_record" exact component={NewRecord} />

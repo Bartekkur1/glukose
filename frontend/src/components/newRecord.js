@@ -53,7 +53,8 @@ class NewRecord extends Component {
             fats: 0,
             carbohydrates: 0,
             loading: false,
-            error: null
+            error: null,
+            sugarAmount: 110,
         }
     }
 
@@ -111,14 +112,14 @@ class NewRecord extends Component {
         return (
             <div className="container-fluid sidebar-small h-100">
                 <div className="row">
-                <Error error={this.state.error} close={() => this.setState({error: false})} />
+                    <Error error={this.state.error} close={() => this.setState({error: false})} />
                     <div className="col-12 text-center mt-5">
                         <h3>Tutaj możesz dodać nowy rekord</h3>
                         <h5>Dodane rekordy można zobaczyć w zakładce statystyki</h5>
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-9 mx-auto record-panel">
+                    <div className="col-sm-12 col-md-6 col-xl-4 mx-auto record-panel">
                         <div className="jumbotron pt-0 mt-5 pl-3 pr-3 pb-3 mb-0">
                             <div className="row text-center">
                                 <RecordTitle name="Cukier" segment={this.state.segment} 
@@ -135,11 +136,10 @@ class NewRecord extends Component {
                                 formSubmit={(e) => this.submit(e)}
                                 change={(e) => this.change(e)}
                                 form={(
-                                    <div>
-                                        <div className="form-group">
-                                            <label>Ilość cukru:</label>
-                                            <input type="number" name="sugarAmount" className="form-control" onChange={e => this.change(e)}/>
-                                        </div>
+                                    <div className="form-group">
+                                        <label>Ilość cukru:</label>
+                                        <input type="number" name="sugarAmount" className="form-control" 
+                                        placeholder={this.state.sugarAmount} onChange={e => this.change(e)}/>
                                     </div>
                                 )} /> : null}
                                 {this.state.segment === "Insulina" ? 
@@ -147,11 +147,9 @@ class NewRecord extends Component {
                                 formSubmit={(e) => this.submit(e)}
                                 change={(e) => this.change(e)}
                                 form={(
-                                    <div>
-                                        <div className="form-group">
-                                            <label>Ilość j. insuliny:</label>
-                                            <input type="number" name="insulinAmount" className="form-control" onChange={e => this.change(e)}/>
-                                        </div>
+                                    <div className="form-group">
+                                        <label>Ilość j. insuliny:</label>
+                                        <input type="number" name="insulinAmount" className="form-control" onChange={e => this.change(e)}/>
                                     </div>
                                 )}
                                 /> : null}

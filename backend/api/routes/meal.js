@@ -2,16 +2,17 @@ const express = require("express");
 const app = express();
 const meal = require("../sequelize").meal;
 
-app.get("/:date", (req,res,next) => {
+app.get("/:date", async (req,res,next) => {
     var dFrom = new Date(req.params.date + " 01:00:00");
     var dTo = new Date(req.params.date + " 23:59:59");
+    var payLoad = {};
     dTo.setTime(dTo.getTime() + dTo.getTimezoneOffset() * -1 * 60 * 1000);
     req.check("date")
         .notEmpty().withMessage("Data nie może być pusta");
     let errors = req.validationErrors();
     if(errors)
         return next({status: 400, message: errors[0].msg});
-    meal.findAndCountAll({
+    var values = await meal.findAndCountAll({
         order: [["date", "ASC"]],
         attributes: ['id', 'kcal', 'fats', 'carbohydrates', 'date'],
         where: { 
@@ -23,7 +24,17 @@ app.get("/:date", (req,res,next) => {
                 }
             }
         }
-    }).then(response => res.json(response));
+    });
+    payLoad["values"] = values.rows;
+    payLoad["count"] = values.count;
+    payLoad["sum"] = await meal.sum("kcal", {where: { 
+        user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}});
+    payLoad["fats"] = await meal.sum("fats", {where: { 
+        user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}})/payLoad["count"];
+    payLoad["carbohydrates"] = await meal.sum("carbohydrates", {where: { 
+        user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}})/payLoad["count"];
+    payLoad["avg"] = payLoad["sum"]/payLoad["count"];
+    res.json(payLoad);
 });
 
 app.delete("/", async(req,res,next) => {

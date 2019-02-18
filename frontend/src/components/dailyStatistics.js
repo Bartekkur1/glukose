@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Doughnut } from 'react-chartjs-2';
+import ContentFrame from './contentFrame';
 import Axios from 'axios';
 import {server} from '../../package.json';
 import Error from "./error";
@@ -14,32 +15,9 @@ class DailyStatistics extends Component {
             date: d.toISOString().substring(0,10),
             backupDate: d.toISOString().substring(0,10),
             count: 0,
-            sugar: {
-                count: null,
-                data: null,
-                avg: null,
-                max: null,
-                min: null,
-                values: null,
-                amount: null
-            },
-            dose: {
-                count: null,
-                data: null,
-                avg: null,
-                max: null,
-                min: null,
-                values: null,
-                amount: null
-            },
-            meal: {
-                count: null,
-                data: null,
-                avg: null,
-                sum: null,
-                values: null,
-                amount: null
-            }
+            sugar: null,
+            dose: null,
+            meal: null
         }
     }
 
@@ -63,35 +41,11 @@ class DailyStatistics extends Component {
             let meal = await Axios.get(server + "/api/meal/" + this.state.date);
             let sugar = await Axios.get(server + "/api/sugar/" + this.state.date);
             this.setState({
-                sugar: {
-                    count: sugar.data.count,
-                    data: sugar.data.rows.map((row) => {
-                        return {x: row.date, y: row.amount}
-                    }),
-                    values: sugar.data.rows.map((row) => {
-                        return row.amount
-                    }),
-                },
-                meal: {
-                    count: meal.data.count,
-                    data: meal.data.rows.map((row) => {
-                        return {x: row.date, y: row.kcal}
-                    }),
-                    values: meal.data.rows.map((row) => {
-                        return row.kcal
-                    }),
-                },
-                dose: {
-                    count: dose.data.count,
-                    data: dose.data.rows.map((row) => {
-                        return {x: row.date, y: row.amount}
-                    }),
-                    values: dose.data.rows.map((row) => {
-                        return row.amount
-                    }),
-                },
-                loading: false,
-            })
+                sugar: sugar.data,
+                dose: dose.data,
+                meal: meal.data,
+                loading: false
+            });
         }
         catch(e)
         {
@@ -115,149 +69,181 @@ class DailyStatistics extends Component {
                 <div className="row">
                     <Error error={this.state.error} close={() => this.setState({error: false})} />
                 </div>
-                <div className="row mt-5">
-                    <div className="col-12 p-0">
-                        <p className="text-center pl-5" style={{fontSize: "24px", fontWeight: "bold"}}>
-                            Statystyka z dnia:
-                            <input type="date" className="stats-input ml-1" value={this.state.date}
-                            name="date" onChange={e => this.change(e)}/>
-                        </p>
-                    </div>
-                </div>                
-                <div className="row">
-                    <div className="col-12 sugar-content mx-auto pl-5 pr-5" style={{maxHeight: "400px"}}>
-                        <Line
-                            data={{
-                                datasets: [
-                                    {
-                                        label: 'Cukier',
-                                        type:'line',
-                                        yAxisID: 'Cukier',
-                                        data: this.state.sugar.data,
-                                        fill: false,
-                                        borderColor: 'rgba(255,0,0,0.4)',
-                                        backgroundColor: 'rgba(255,0,0,1)',
-                                        borderWidth: 4,
-                                        lineTension: 0.3
-                                    },
-                                    {
-                                        label: 'Insulina',
-                                        type:'line',
-                                        yAxisID: 'Insulina',
-                                        data: this.state.dose.data,
-                                        fill: false,
-                                        borderColor: 'rgba(0,255,0,0.6)',
-                                        backgroundColor: 'rgba(0,255,0,1)',
-                                        borderWidth: 4,
-                                        lineTension: 0.3
-                                    },
-                                    {
-                                        label: 'Posiłek',
-                                        type:'line',
-                                        yAxisID: 'Posiłek',
-                                        data: this.state.meal.data,
-                                        fill: false,
-                                        borderColor: 'rgba(0,0,255,0.6)',
-                                        backgroundColor: 'rgba(0,0,255,1)',
-                                        borderWidth: 4,
-                                        lineTension: 0.3
-                                    },
-                                ],
-                            }}
-                            options={{
-                                scales: {
-                                    yAxes: [{
-                                        id: "Cukier",
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'Ilośc cukru',
+                <div className="row pl-3 pr-3 mt-3">
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-11 mx-auto"
+                        title={
+                            <div>
+                                <span>Statystyka z dnia:</span>     
+                                <input type="date" className="stats-input pl-2" value={this.state.date}
+                                name="date" onChange={e => this.change(e)}/>
+                            </div>
+                        }>
+                        <div className="p-4">
+                            <Line
+                                height="500vh"
+                                data={{
+                                    datasets: [
+                                        {
+                                            label: 'Cukier',
+                                            type:'line',
+                                            yAxisID: 'Cukier',
+                                            data: this.state.sugar.values.map((row) => {
+                                                return {x: row.date, y: row.amount}
+                                            }),
+                                            fill: false,
+                                            borderColor: 'rgba(255,0,0,0.4)',
+                                            backgroundColor: 'rgba(255,0,0,1)',
+                                            borderWidth: 4,
+                                            lineTension: 0.3
                                         },
-                                        ticks: {
-                                            min: 40,
-                                            max: 600,
-                                        }
-                                    }, {
-                                        id: "Posiłek",
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'Ilość kalorii',
+                                        {
+                                            label: 'Insulina',
+                                            type:'line',
+                                            yAxisID: 'Insulina',
+                                            data: this.state.dose.values.map((row) => {
+                                                return {x: row.date, y: row.amount}
+                                            }),
+                                            fill: false,
+                                            borderColor: 'rgba(0,255,0,0.6)',
+                                            backgroundColor: 'rgba(0,255,0,1)',
+                                            borderWidth: 4,
+                                            lineTension: 0.3
                                         },
-                                        ticks: {
-                                            min: 0,
-                                            max: 900
-                                        }
-                                    }, {
-                                        id: "Insulina",
-                                        position: 'right',
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'Ilość jednostek',
+                                        {
+                                            label: 'Posiłek',
+                                            type:'line',
+                                            yAxisID: 'Posiłek',
+                                            data: this.state.meal.values.map((row) => {
+                                                return {x: row.date, y: row.kcal}
+                                            }),
+                                            fill: false,
+                                            borderColor: 'rgba(0,0,255,0.6)',
+                                            backgroundColor: 'rgba(0,0,255,1)',
+                                            borderWidth: 4,
+                                            lineTension: 0.3
                                         },
-                                        ticks: {
-                                            min: 0,
-                                            max: 15
-                                        }
-                                    }],
-                                    xAxes: [{
-                                        type: 'time',
-                                        time: {
-                                            min: `${this.state.date}T00:00:00`,
-                                            max: `${this.state.date}T24:00:00`,
-                                            displayFormats: {
-                                                minutes: 'h:mm a'
+                                    ],
+                                }}
+                                options={{
+                                    scales: {
+                                        yAxes: [{
+                                            id: "Cukier",
+                                            scaleLabel: {
+                                                display: true,
+                                                labelString: 'Ilośc cukru',
+                                            },
+                                            ticks: {
+                                                min: 40,
+                                                max: 600,
                                             }
+                                        }, {
+                                            id: "Posiłek",
+                                            scaleLabel: {
+                                                display: true,
+                                                labelString: 'Ilość kalorii',
+                                            },
+                                            ticks: {
+                                                min: 0,
+                                                max: 900
+                                            }
+                                        }, {
+                                            id: "Insulina",
+                                            position: 'right',
+                                            scaleLabel: {
+                                                display: true,
+                                                labelString: 'Ilość jednostek',
+                                            },
+                                            ticks: {
+                                                min: 0,
+                                                max: 15
+                                            }
+                                        }],
+                                        xAxes: [{
+                                            type: 'time',
+                                            time: {
+                                                min: `${this.state.date}T00:00:00`,
+                                                max: `${this.state.date}T24:00:00`,
+                                                displayFormats: {
+                                                    minutes: 'h:mm a'
+                                                }
+                                            }
+                                        }],
+                                    },
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    legend: {
+                                        position: "bottom",
+                                        labels: {
+                                            boxWidth: 50
                                         }
-                                    }],
-                                },
-                                responsive: true,
-                                maintainAspectRatio: true,
-                                legend: {
-                                    position: "bottom",
-                                    labels: {
-                                        boxWidth: 50
                                     }
-                                }
-                            }}
-                        />
-                        <div className="jumbotron mt-3 p-0">
-                            <div className="row pl-3 pt-3">
-                                <div className="col-4">
+                                }}
+                            />
+                        </div>
+                    </ContentFrame>
+                </div>
+                <div className="row pl-3 pr-3 justify-content-center mt-5">   
+                    <ContentFrame col="col-sm-12 col-md-6 col-xl-6"
+                        title="Informacje">
+                            <div className="row p-3 stats-info">
+                                <div className="col-lg-12 col-xl-4">
                                     <h3>Cukry</h3>
                                     <ul>
-                                        <li>Średni pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
-                                        ? Math.round(this.state.sugar.values.reduce((a,b) => a + b) / this.state.sugar.count) : 0}</li>
-                                        <li>Największy pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
-                                        ? Math.max.apply(null, this.state.sugar.values) : 0}</li>
-                                        <li>Najmniejszy pomiar: {this.state.sugar.values && this.state.sugar.values.length > 0 
-                                        ? Math.min.apply(null, this.state.sugar.values) : 0}</li>
+                                        <li>Średni pomiar: {this.state.sugar.avg}</li>
+                                        <li>Największy pomiar: {this.state.sugar.max}</li>
+                                        <li>Najmniejszy pomiar: {this.state.sugar.min}</li>
                                         <li>Ilość pomiarów: {this.state.sugar.count}</li>
                                     </ul>
                                 </div>
-                                <div className="col-4">
+                                <div className="col-lg-12 col-xl-4">
                                     <h3>Posiłki</h3>
                                     <ul>
-                                        <li>Ilość kalorii: {this.state.meal.values && this.state.meal.values.length > 0 
-                                        ? this.state.meal.values.reduce((a,b) => a + b) : 0}</li>
-                                        <li>Średnia ilość kalorii: {this.state.meal.values && this.state.meal.values.length > 0 
-                                        ? Math.round(this.state.meal.values.reduce((a,b) => a + b) / this.state.meal.count) : 0}</li>
+                                        <li>Ilość kalorii: {this.state.meal.sum}</li>
+                                        <li>Średnia ilość kalorii: {this.state.meal.avg}</li>
                                         <li>Ilość posiłków: {this.state.meal.count}</li>
                                     </ul>
                                 </div>
-                                <div className="col-4">
+                                <div className="col-lg-12 col-xl-4">
                                     <h3>Insulina</h3>
                                     <ul>
-                                        <li>Średnia dawka: {this.state.dose.values && this.state.dose.values.length > 0 
-                                        ? Math.round(this.state.dose.values.reduce((a,b) => a + b) / this.state.dose.count) : 0}</li>
-                                        <li>Największa dawka: {this.state.dose.values && this.state.dose.values.length > 0 
-                                        ? Math.max.apply(null, this.state.dose.values) : 0}</li>
-                                        <li>Najmniejsza dawka: {this.state.dose.values && this.state.dose.values.length > 0 
-                                        ? Math.min.apply(null, this.state.dose.values) : 0}</li>
+                                        <li>Średnia dawka: {this.state.dose.avg}</li>
+                                        <li>Największa dawka: {this.state.dose.max}</li>
+                                        <li>Najmniejsza dawka: {this.state.dose.min}</li>
                                         <li>Ilość dawek: {this.state.dose.count}</li>
                                     </ul>
                                 </div>
                             </div>
+                    </ContentFrame>
+                    <ContentFrame col="col-sm-12 col-md-6 col-xl-5 content-padding"
+                        title="Posiłki" fill={true}>
+                        <div className="mt-3">
+                            <Doughnut 
+                                data={{
+                                    labels: ["Tłuszcze/Białka", "Węglowodany"],
+                                    datasets: [
+                                        {
+                                            label: "Zawartość",
+                                            backgroundColor: ["#FFC870", "#F7464A"],
+                                            data: [this.state.meal.fats || 50, this.state.meal.carbohydrates || 50]
+                                        }
+                                    ],
+                                    options: {
+                                        title: {
+                                            display: true,
+                                            text: 'Predicted world population (millions) in 2050'
+                                        }
+                                    },
+                                    responsive: false,
+                                    maintainAspectRatio: false,
+                                }}/>
                         </div>
-                    </div>
+                    </ContentFrame>
+                </div>
+                <div className="row pl-3 pr-3 m-5">
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-11 mx-auto"
+                        title="Cukry">
+                        <h1>XD</h1>
+                    </ContentFrame>
                 </div>
             </div>
         )
