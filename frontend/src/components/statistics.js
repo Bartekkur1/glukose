@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import Axios from 'axios';
 import {server} from '../../package.json';
 import Error from "./error";
@@ -13,6 +13,8 @@ class Statistics extends Component {
             loading: true,
             data: null,
             date: d.toISOString().substring(0,10),
+            avgDose: null,
+            avgSugars: null
         }
     }
 
@@ -24,6 +26,38 @@ class Statistics extends Component {
             this.getData();
     }
 
+    avgArray(arr) {
+        var ans = [0, 0, 0, 0];
+        arr.forEach((element, idx) => {
+            if(idx >= 6 && idx <= 10)
+                ans[0] += element.y
+            if(idx >= 10 && idx <= 14)
+                ans[1] += element.y
+            if(idx >= 14 && idx <= 17)
+                ans[2] += element.y
+            if(idx >= 17 && idx <= 21)
+                ans[3] += element.y
+        });
+        return ans
+    }
+
+    avgDose(meals, doses, sugars) {
+        var mealsAvg = this.avgArray(meals)
+        var dosesAvg = this.avgArray(doses)
+        var sugarsAvg = this.avgArray(sugars);
+        var avgDose  = [0, 0, 0, 0];
+        avgDose.forEach((e, idx) => {
+            avgDose[idx] = Math.round((dosesAvg[idx] / (mealsAvg[idx]/100))*100)/100
+        });
+        sugarsAvg.forEach((element, idx) => {
+            sugarsAvg[idx] = Math.round(100*(element/4))/100
+        })
+        this.setState({
+            avgDose: avgDose,
+            avgSugars: sugarsAvg
+        });
+    }
+
     async getData() {
         try {
             let res = await Axios.get(server + "/api/stats");
@@ -31,6 +65,8 @@ class Statistics extends Component {
                 loading: false,
                 data: res.data
             })
+            this.avgDose(this.state.data.meals, this.state.data.doses,
+                this.state.data.sugars);
         }
         catch(e)
         {
@@ -54,11 +90,12 @@ class Statistics extends Component {
                 <div className="row">
                     <Error error={this.state.error} close={() => this.setState({error: false})} />
                 </div>            
-                <div className="row mt-5 pl-5 pr-5">
-                    <ContentFrame col="col-sm-12 col-md-12 col-xl-9 mx-auto"
+                <div className="row mt-3 pl-3 pr-3">
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-11 mx-auto" //col="col-sm-12 col-md-12 col-xl-9 mx-auto"
                         title="Statystyka ogólna">
                         <div className="p-4">
                             <Line
+                                height={500}
                                 data={{
                                     datasets: [
                                         {
@@ -140,7 +177,7 @@ class Statistics extends Component {
                                         }],
                                     },
                                     responsive: true,
-                                    maintainAspectRatio: true,
+                                    maintainAspectRatio: false,
                                     legend: {
                                         position: "bottom",
                                         labels: {
@@ -157,6 +194,65 @@ class Statistics extends Component {
                                 }}
                             />      
                         </div>
+                    </ContentFrame>
+                </div>
+                <div className="row pl-3 pr-3 mt-5">
+                    <ContentFrame col="col-sm-12 col-md-5 col-xl-6 mx-auto"
+                        title="Ilość insuliny">
+                            <div className="row m-2 text-center">
+                                <div className="col-12 text-center mb-3">
+                                    Wykres przedstawia średnią ilość insuliny (na 100kcal) i cukru w przedziałach czasowych
+                                </div>
+                                <div className="col-12 text-center">
+                                    <Bar
+                                        data={{
+                                            labels: ["6:00-10:00", "10:00-14:00", "14:00-17:00", "17:00-21:00"],
+                                            datasets: [
+                                              {
+                                                label: 'kcal',
+                                                yAxisID: 'kcal',
+                                                backgroundColor: ["#64e864", "#64e864","#64e864","#64e864"],
+                                                data: this.state.avgDose,
+                                              },
+                                              {
+                                                label: 'sugar',
+                                                yAxisID: 'sugar',
+                                                backgroundColor: ["#ff0000", "#ff0000", "#ff0000", "#ff0000"],
+                                                data: this.state.avgSugars
+                                              }
+                                            ]
+                                        }}
+                                        options={{
+                                            scales: {
+                                                yAxes: [{
+                                                    id: "sugar",
+                                                    scaleLabel: {
+                                                        display: true,
+                                                        labelString: 'Ilośc cukru',
+                                                    },
+                                                    ticks: {
+                                                        min: 50,
+                                                        max: 250,
+                                                    }
+                                                }, {
+                                                    id: "kcal",
+                                                    scaleLabel: {
+                                                        display: true,
+                                                        labelString: 'Ilośc cukru',
+                                                    },
+                                                    ticks: {
+                                                        min: 0,
+                                                        max: 3,
+                                                    }
+                                                }
+                                            ],}
+                                        }}
+                                        legend={{
+                                            display: null
+                                        }}
+                                    />
+                                </div>
+                            </div>
                     </ContentFrame>
                 </div>
             </div>

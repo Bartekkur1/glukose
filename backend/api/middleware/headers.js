@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Authorization, authorization, Origin, X-Requested-With, Content-Type, Accept");
-
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+    
     if ('OPTIONS' === req.method) {
         res.sendStatus(200);
     }

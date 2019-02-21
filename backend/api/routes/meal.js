@@ -33,6 +33,10 @@ app.get("/:date", async (req,res,next) => {
         user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}})/payLoad["count"];
     payLoad["carbohydrates"] = await meal.sum("carbohydrates", {where: { 
         user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}})/payLoad["count"];
+    payLoad["max"] = await meal.max("kcal", {where: { 
+        user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}});
+    payLoad["min"] = await meal.min("kcal", {where: { 
+        user_id: req.userId, date: {$and: {$gt: dFrom, $lt: dTo}}}});
     payLoad["avg"] = payLoad["sum"]/payLoad["count"];
     res.json(payLoad);
 });

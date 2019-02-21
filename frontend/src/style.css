@@ -146,7 +146,7 @@ body {
 
 @media screen and (min-device-width: 800px) {
     .content-padding {
-        padding-left: 48px !important;
+        padding-left: 50px;
     }
 }
 
@@ -231,6 +231,21 @@ input::-webkit-datetime-edit-year-field:focus {
     outline: none;
 }
 
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
 .stats-info {
+    font-size: 1.2rem;
+}
+
+.stats-table th {
+    font-size: 1.3rem;
+}
+
+td input[type="number"] {
+    border: 0px;
+    width: 50px;
+    text-align: center;
     font-size: 1.2rem;
 }

@@ -17,8 +17,23 @@ class DailyStatistics extends Component {
             count: 0,
             sugar: null,
             dose: null,
-            meal: null
+            meal: null,
+            error: null
         }
+    }
+
+    componentWillMount() {
+        var d = new Date(this.state.date);
+        window.addEventListener("keydown", (key) => {
+            if(key.code === "ArrowRight") {
+                d.setDate(d.getDate() + 1);
+                this.setState({date: d.toISOString().substring(0,10)});
+            } else if(key.code === "ArrowLeft") {
+                d.setDate(d.getDate() - 1);
+                this.setState({date: d.toISOString().substring(0,10)});
+            }
+            this.getData();
+        }, false);
     }
 
     change(e) {
@@ -32,6 +47,22 @@ class DailyStatistics extends Component {
             })
         if(e.target.name === "date")
             this.getData();
+    }
+
+    async sugarUpdate(amount, id) {
+        try {
+            await Axios.patch(server + "/api/sugar", {
+                amount: amount,
+                id: id
+            });
+            console.log("Updated");
+            this.getData();
+        }
+        catch(e) {
+            this.setState({
+                error: e,
+            })
+        }
     }
 
     async getData() {
@@ -65,7 +96,7 @@ class DailyStatistics extends Component {
                     <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
                 </div>)
         return (
-            <div className="container-fluid sidebar-small">
+            <div className="container-fluid sidebar-small" onKeyDown={() => {console.log("xd")}}>
                 <div className="row">
                     <Error error={this.state.error} close={() => this.setState({error: false})} />
                 </div>
@@ -80,7 +111,7 @@ class DailyStatistics extends Component {
                         }>
                         <div className="p-4">
                             <Line
-                                height="500vh"
+                                height={500}
                                 data={{
                                     datasets: [
                                         {
@@ -185,38 +216,50 @@ class DailyStatistics extends Component {
                 <div className="row pl-3 pr-3 justify-content-center mt-5">   
                     <ContentFrame col="col-sm-12 col-md-6 col-xl-6"
                         title="Informacje">
-                            <div className="row p-3 stats-info">
-                                <div className="col-lg-12 col-xl-4">
-                                    <h3>Cukry</h3>
-                                    <ul>
-                                        <li>Średni pomiar: {this.state.sugar.avg}</li>
-                                        <li>Największy pomiar: {this.state.sugar.max}</li>
-                                        <li>Najmniejszy pomiar: {this.state.sugar.min}</li>
-                                        <li>Ilość pomiarów: {this.state.sugar.count}</li>
-                                    </ul>
-                                </div>
-                                <div className="col-lg-12 col-xl-4">
-                                    <h3>Posiłki</h3>
-                                    <ul>
-                                        <li>Ilość kalorii: {this.state.meal.sum}</li>
-                                        <li>Średnia ilość kalorii: {this.state.meal.avg}</li>
-                                        <li>Ilość posiłków: {this.state.meal.count}</li>
-                                    </ul>
-                                </div>
-                                <div className="col-lg-12 col-xl-4">
-                                    <h3>Insulina</h3>
-                                    <ul>
-                                        <li>Średnia dawka: {this.state.dose.avg}</li>
-                                        <li>Największa dawka: {this.state.dose.max}</li>
-                                        <li>Najmniejsza dawka: {this.state.dose.min}</li>
-                                        <li>Ilość dawek: {this.state.dose.count}</li>
-                                    </ul>
-                                </div>
+                            <div className="table-responsive row p-3 stats-info">
+                                <table className="table text-center stats-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Średnia</th>
+                                        <th scope="col">Max</th>
+                                        <th scope="col">Min</th>
+                                        <th scope="col">Ilość</th>
+                                        <th scope="col">Suma</th>
+                                    </tr>
+                                </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">Cukry</th>
+                                            <td>{this.state.sugar.avg || 0}</td>
+                                            <td>{this.state.sugar.max || 0}</td>
+                                            <td>{this.state.sugar.min || 0}</td>
+                                            <td>{this.state.sugar.min || 0}</td>
+                                            <td>#</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Posiłki</th>
+                                            <td>{this.state.meal.avg || 0}</td>
+                                            <td>{this.state.meal.max || 0}</td>
+                                            <td>{this.state.meal.min || 0}</td>
+                                            <td>{this.state.meal.count || 0}</td>
+                                            <td>{this.state.meal.sum || 0}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Insulina</th>
+                                            <td>{this.state.dose.avg || 0}</td>
+                                            <td>{this.state.dose.max || 0}</td>
+                                            <td>{this.state.dose.min || 0}</td>
+                                            <td>{this.state.dose.count || 0}</td>
+                                            <td>{this.state.dose.sum || 0}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                     </ContentFrame>
                     <ContentFrame col="col-sm-12 col-md-6 col-xl-5 content-padding"
                         title="Posiłki" fill={true}>
-                        <div className="mt-3">
+                        <div className="mt-3 text-center" style={{maxHeight: "40vh"}}>
                             <Doughnut 
                                 data={{
                                     labels: ["Tłuszcze/Białka", "Węglowodany"],
@@ -227,22 +270,98 @@ class DailyStatistics extends Component {
                                             data: [this.state.meal.fats || 50, this.state.meal.carbohydrates || 50]
                                         }
                                     ],
-                                    options: {
-                                        title: {
-                                            display: true,
-                                            text: 'Predicted world population (millions) in 2050'
-                                        }
-                                    },
-                                    responsive: false,
-                                    maintainAspectRatio: false,
+                                    responsive: true,
+                                    maintainAspectRatio: true,
                                 }}/>
+                            <h1 className="pt-2">{this.state.meal.fats || 50}/{this.state.meal.carbohydrates || 50}</h1>
                         </div>
                     </ContentFrame>
                 </div>
-                <div className="row pl-3 pr-3 m-5">
-                    <ContentFrame col="col-sm-12 col-md-12 col-xl-11 mx-auto"
-                        title="Cukry">
-                        <h1>XD</h1>
+                <div className="row pl-3 pr-3 mt-5 justify-content-center">
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-5"
+                        title="Edycja danych">
+                        <div className="p-4 table-responsive">
+                        <h1>Cukry:</h1>
+                        <table className="table text-center">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style={{width: "5%"}}>#</th>
+                                    <th scope="col" style={{width: "25%"}}>Data</th>
+                                    <th scope="col" style={{width: "15%"}}>Ilość</th>
+                                    <th scope="col" style={{width: "1%"}}></th>
+                                    <th scope="col" style={{width: "1%"}}></th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                    {this.state.sugar.values.map((row) => {
+                                        var date = new Date(row.date);
+                                        return (<tr key={row.id}>
+                                            <th scope="row">{row.id}</th>
+                                            <td>{date.toLocaleString()}</td>
+                                            <td><input type="number" placeholder={row.amount} onChange={e => {this.sugarUpdate(e.target.value, row.id)}}/></td>
+                                            <td><button type="button" data-toggle="modal" data-target="#exampleModalLong" className="btn btn-danger">Usuń</button></td>
+                                        </tr>)
+                                    })}
+                                </tbody>
+                            </table>
+                        <h1>Insulina:</h1>
+                        <table className="table text-center">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style={{width: "5%"}}>#</th>
+                                    <th scope="col" style={{width: "25%"}}>Data</th>
+                                    <th scope="col" style={{width: "15%"}}>Ilość</th>
+                                    <th scope="col" style={{width: "1%"}}></th>
+                                    <th scope="col" style={{width: "1%"}}></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.state.dose.values.map((row) => {
+                                    var date = new Date(row.date);
+                                    return (<tr key={row.id}>
+                                        <th scope="row">{row.id}</th>
+                                        <td>{date.toLocaleString()}</td>
+                                        <td>{row.amount}</td>
+                                        <td><button type="button" className="btn btn-info">Edytuj</button></td>
+                                        <td><button type="button" className="btn btn-danger">Usuń</button></td>
+                                    </tr>)
+                                })}
+                            </tbody>
+                            </table>
+                        </div>
+                    </ContentFrame>
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-6 content-padding"
+                        title="Edycja danych">
+                        <div className="p-4 table-responsive">
+                        <h1>Posiłki:</h1>
+                        <table className="table text-center">
+                            <thead>
+                                <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Data</th>
+                                <th scope="col">Kcal</th>
+                                <th scope="col">Tłuscze/białka</th>
+                                <th scope="col">Węglowodany</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.state.meal.values.map((row) => {
+                                    var date = new Date(row.date);
+                                    return (<tr key={row.id}>
+                                        <th scope="row">{row.id}</th>
+                                        <td>{date.toLocaleString()}</td>
+                                        <td>{row.kcal}</td>
+                                        <td>{row.fats}</td>
+                                        <td>{row.carbohydrates}</td>
+                                        <td><button type="button" className="btn btn-info">Edytuj</button></td>
+                                        <td><button type="button" className="btn btn-danger">Usuń</button></td>
+                                    </tr>)
+                                })}
+                            </tbody>
+                            </table>
+                        </div>
                     </ContentFrame>
                 </div>
             </div>
