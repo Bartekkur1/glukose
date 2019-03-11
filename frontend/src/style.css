@@ -134,20 +134,20 @@ body {
     .sidebar-small {
         padding-left: 55px;
     }
-
+/* 
     .content-padding {
         padding-left: 15px !important;
     }
 
     .cFrame {
         padding-top: 48px;
-    }
+    } */
 }
 
 @media screen and (min-device-width: 800px) {
-    .content-padding {
+    /* .content-padding {
         padding-left: 50px;
-    }
+    } */
 }
 
 .userinfo-panel {
@@ -187,13 +187,12 @@ body {
 .cFrame-title {
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
+    box-shadow: 5px 10px 10px 10px #d5cfcf;
     font-size: 2rem;
 }
 
-.cFrame {
+.cFrame-shadow {
     box-shadow: 5px 10px 10px 10px #d5cfcf;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
 }
 
 .cFrame-content {
@@ -240,7 +239,7 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .stats-table th {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 }
 
 td input[type="number"] {

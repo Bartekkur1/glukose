@@ -104,7 +104,7 @@ class Index extends Component {
                     </div>
                     <div className="col-12 mt-auto footer">
                         <hr/>
-                        <p>Glukose 1.0</p>
+                        <p>Glukose 1.1a</p>
                     </div>
                 </div>
             </div>

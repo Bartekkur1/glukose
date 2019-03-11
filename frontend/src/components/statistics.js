@@ -90,7 +90,7 @@ class Statistics extends Component {
                 <div className="row">
                     <Error error={this.state.error} close={() => this.setState({error: false})} />
                 </div>            
-                <div className="row mt-3 pl-3 pr-3">
+                <div className="row mt-3">
                     <ContentFrame col="col-sm-12 col-md-12 col-xl-11 mx-auto" //col="col-sm-12 col-md-12 col-xl-9 mx-auto"
                         title="Statystyka ogólna">
                         <div className="p-4">
@@ -196,11 +196,11 @@ class Statistics extends Component {
                         </div>
                     </ContentFrame>
                 </div>
-                <div className="row pl-3 pr-3 mt-5">
+                <div className="row mt-5">
                     <ContentFrame col="col-sm-12 col-md-5 col-xl-6 mx-auto"
                         title="Ilość insuliny">
-                            <div className="row m-2 text-center">
-                                <div className="col-12 text-center mb-3">
+                            <div className="row text-center">
+                                <div className="col-12 text-center">
                                     Wykres przedstawia średnią ilość insuliny (na 100kcal) i cukru w przedziałach czasowych
                                 </div>
                                 <div className="col-12 text-center">
@@ -238,11 +238,11 @@ class Statistics extends Component {
                                                     id: "kcal",
                                                     scaleLabel: {
                                                         display: true,
-                                                        labelString: 'Ilośc cukru',
+                                                        labelString: 'Ilość insuliny',
                                                     },
                                                     ticks: {
                                                         min: 0,
-                                                        max: 3,
+                                                        max: 4,
                                                     }
                                                 }
                                             ],}
