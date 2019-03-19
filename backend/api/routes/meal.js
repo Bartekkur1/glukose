@@ -41,7 +41,7 @@ app.get("/:date", async (req,res,next) => {
     res.json(payLoad);
 });
 
-app.delete("/", async(req,res,next) => {
+app.delete("/:id", async(req,res,next) => {
     req.check("id")
         .notEmpty().withMessage("id nie może być puste")
         .isDecimal().withMessage("id musi byc liczbą");
@@ -86,18 +86,6 @@ app.post("/", (req,res,next) => {
 });
 
 app.patch("/", async (req,res,next) => {
-    req.check("kcal")
-        .notEmpty().withMessage('Ilość kalorii nie może być pusta')
-        .isDecimal().withMessage('Ilość kalorii musi być liczbą')
-        .isInt({min: 0}).withMessage("Ilość kalorii nie może być mniejsza niż 0");
-    req.check("fats")
-        .notEmpty().withMessage('Ilość tłuszczy nie może być pusta')
-        .isDecimal().withMessage('Ilość tłuszczy musi być liczbą')
-        .isInt({min: 0}).withMessage("Ilość tłuszczy nie może być mniejsza niż 0");
-    req.check("carbohydrates")
-        .notEmpty().withMessage('Ilość węglowodanów nie może być pusta')
-        .isDecimal().withMessage('Ilość węglowodanów musi być liczbą')
-        .isInt({min: 0}).withMessage("Ilość węglowodanów musi być liczbą");
     req.check("id")
         .notEmpty().withMessage('Id nie może być puste');  
     let errors = req.validationErrors();
@@ -106,11 +94,14 @@ app.patch("/", async (req,res,next) => {
     let foundMeal = await meal.findOne({where: { id: req.body.id }});
     if(!foundMeal)
         return next({status: 400, message: "Podany rekord nie istnieje"});
-    foundMeal.update({
-        "kcal": req.body.kcal,
-        "fats": req.body.fats,
-        "carbohydrates": req.body.carbohydrates
-    }).then(success => res.sendStatus(200));
+    var data = {}
+    if(req.body.kcal)
+        data["kcal"] = req.body.kcal
+    if(req.body.fats)
+        data["fats"] = req.body.fats
+    if(req.body.carbohydrates)
+        data["carbohydrates"] = req.body.carbohydrates
+    foundMeal.update(data).then(success => res.sendStatus(200));
 });
 
 module.exports = app;

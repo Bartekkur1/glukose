@@ -196,14 +196,14 @@ class Statistics extends Component {
                         </div>
                     </ContentFrame>
                 </div>
-                <div className="row mt-5">
-                    <ContentFrame col="col-sm-12 col-md-5 col-xl-6 mx-auto"
-                        title="Ilość insuliny">
+                <div className="row mt-5 mb-5">
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-11 mx-auto"
+                        title="Ilość insuliny"> 
                             <div className="row text-center">
                                 <div className="col-12 text-center">
                                     Wykres przedstawia średnią ilość insuliny (na 100kcal) i cukru w przedziałach czasowych
                                 </div>
-                                <div className="col-12 text-center">
+                                <div className="col-7 text-center">
                                     <Bar
                                         data={{
                                             labels: ["6:00-10:00", "10:00-14:00", "14:00-17:00", "17:00-21:00"],
@@ -251,6 +251,10 @@ class Statistics extends Component {
                                             display: null
                                         }}
                                     />
+                                </div>
+                                <div className="col-5">
+                                    <h4 className="pt-5">Ilość jednostek insuliny na dzień:</h4>
+                                    <span style={{"fontSize": "5em"}}>27.5</span>
                                 </div>
                             </div>
                     </ContentFrame>

@@ -14,4 +14,17 @@ app.post("/", async (req,res,next) => {
     res.json(payload);
 })
 
+app.get("/", async(req,res,next) => {
+    var response = await sugar.findOne({
+        where: {
+            user_id: req.userId
+        },
+        order: [[ 'date', 'DESC' ]]
+    })
+    if(response)
+        res.json(response)
+    else
+        res.sendStatus(200)
+})
+
 module.exports = app;

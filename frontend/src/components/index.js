@@ -100,7 +100,7 @@ class Index extends Component {
                         <hr className="hr-title" />
                         <SidebarTitle name="Dane" />
                         <SidebarButton name="Eksport" link="/export" icon="fa fas fa-download"/>
-                        <SidebarButton name="Import" link="/import" icon="fa fas fa-upload"/>
+                        {/* <SidebarButton name="Import" link="/import" icon="fa fas fa-upload"/> */}
                     </div>
                     <div className="col-12 mt-auto footer">
                         <hr/>

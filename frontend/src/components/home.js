@@ -58,13 +58,13 @@ class Home extends Component {
         return (
             <div className="container-fluid sidebar-small">
                 <div className="row pl-3 pr-3 mt-3">
-                    <ContentFrame title="Witaj w glukose!" col="col-sm-12 col-md-6 mx-auto">
+                    <ContentFrame title="Witaj w glukose!" col="col-sm-12 col-md-8 mx-auto">
+                        <img className="logo mx-auto" src={process.env.PUBLIC_URL + '/images/logo.svg'} alt="logo"/>
                         <h3 className="text-center pt-3">Miłego dnia i dobrych cukrów</h3>
                         <h1 className="text-center pb-5">
                             {this.state.response ? 
-                                <h2 className="text-center pt-5">Ostatni pomiar cukru:</h2>+
-                                this.state.days > 0 ? this.state.days + " d " : "" +
-                                this.state.hours > 0 ? this.state.hours + " h " : "" +
+                                "Ostatni pomiar cukru: " +
+                                this.state.hours + " h " +
                                 this.state.minutes + " m " + 
                                 this.state.seconds + " s temu"
                             : ""}

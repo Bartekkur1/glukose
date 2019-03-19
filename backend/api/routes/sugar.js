@@ -37,7 +37,7 @@ app.get("/:date", async (req,res,next) => {
     res.json(payLoad);
 });
 
-app.delete("/", async(req,res,next) => {
+app.delete("/:id", async(req,res,next) => {
     req.check("id")
         .notEmpty().withMessage("id nie może być puste")
         .isDecimal().withMessage("id musi być liczbą");
