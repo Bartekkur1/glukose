@@ -14,7 +14,8 @@ class Login extends Component {
             login: "",
             password: "",
             loading: false,
-            error: null
+            error: null,
+            hightlight: null
         }
     }
 
@@ -27,10 +28,10 @@ class Login extends Component {
     async submit(e) {
         e.preventDefault();
         if(!this.state.loading) {
-            this.setState({error: null, loading: true});
+            this.setState({error: null, loading: true, hightlight: null});
             try {
-                let res = await Axios.post(server + "/api/auth", {
-                    login: this.state.login,
+                let res = await Axios.post(server + "auth/login", {
+                    username: this.state.login,
                     password: this.state.password
                 });
                 localStorage.setItem("Authorization", res.data.token);
@@ -39,6 +40,10 @@ class Login extends Component {
             catch(e)
             {
                 this.setState({error: e});
+                // console.log(e.response);
+                if(e.response)
+                    if(e.response.data.name)
+                        this.setState({"hightlight": e.response.data.name});
                 this.setState({loading: false});
             }
         }
@@ -63,12 +68,14 @@ class Login extends Component {
 
         return (
             <Form
-                error = {<Error error={this.state.error} close={() => this.setState({error: null})}/>}
                 form = {
                     <form onSubmit={e => this.submit(e)}>
-                        <input type="text" className="form-control mb-2 mt-3" placeholder="Login" name="login" onChange={e => this.change(e)}/>
-                        <input type="password" className="form-control mb-3" placeholder="Hasło" name="password" onChange={e => this.change(e)}/>
+                        <input type="text" className="form-control mb-2 mt-3" style={this.state.hightlight === "username" ? {"borderColor": "Red"} : {}} 
+                            placeholder="Login" name="login" onChange={e => this.change(e)}/>
+                        <input type="password" className="form-control mb-3" style={this.state.hightlight === "password" ? {"borderColor": "Red"} : {}} 
+                            placeholder="Hasło" name="password" onChange={e => this.change(e)}/>
                         <button className="btn glukose-main btn-lg mb-3 btn-block" type="submit" value="Submit">{loading}</button>
+                        <Error error={this.state.error} close={() => this.setState({error: null})}/>
                     </form>
                 }
                 link = {

@@ -24,14 +24,6 @@ body {
     background-color: #64e864;
 }
 
-.glukose-gray {
-    background-color: #41c641;
-}
-
-.glukose-light {
-    background-color: #a6f2a6;
-}
-
 .glukose-off {
     background-color: #e9ecef;
 }
@@ -45,11 +37,13 @@ body {
     box-shadow:none;
 }
 
+.home_box {
+    background-color: white;
+    -webkit-box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
 .alert {
-    position: absolute;
-    width: 100%;
-    top: 0px;
-    z-index:1000;
+    font-size: 16px;
 }
 
 .loading-page {
@@ -72,11 +66,7 @@ body {
 }
 
 .sidebar-slide {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 40px;
-    height: 100vh;
+    position: absolute;
 }
 
 .hr-title {
@@ -94,13 +84,13 @@ body {
 }
 
 .sidebar-title {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
     cursor: default;
 }
 
 .sidebar-button {
-    font-size: 18px;
+    font-size: 19px;
     width: 100%;
     color: black;
     font-weight: 445;
@@ -130,25 +120,15 @@ body {
     text-align: center;
 }
 
-@media screen and (max-device-width: 800px) {
+/* @media screen and (max-device-width: 800px) {
     .sidebar-small {
         padding-left: 55px;
     }
-/* 
-    .content-padding {
-        padding-left: 15px !important;
-    }
-
-    .cFrame {
-        padding-top: 48px;
-    } */
 }
 
 @media screen and (min-device-width: 800px) {
-    /* .content-padding {
-        padding-left: 50px;
-    } */
-}
+
+} */
 
 .userinfo-panel {
     max-width: 500px;
@@ -165,14 +145,13 @@ body {
     cursor: default;
 }
 
-.record-panel {
-    font-size: 1.3rem;
-}
-
 .record-panel input[type="number"] {
-    font-size: 2rem !important;
     text-align: center; 
     height: auto;
+}
+
+.box-shadow {
+  -webkit-box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
 }
 
 .record-panel input[type="datetime-local"] {
@@ -184,26 +163,13 @@ body {
     transform: scale(1.4);
 }
 
-.cFrame-title {
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    box-shadow: 5px 10px 10px 10px #d5cfcf;
-    font-size: 2rem;
-}
-
-.cFrame-shadow {
-    box-shadow: 5px 10px 10px 10px #d5cfcf;
-}
-
-.cFrame-content {
-    background-color: white;
-}
-
 [type="date"]::-webkit-inner-spin-button {
     display: none;
 }
 [type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
+    width: 20px;
+    height: 20px;
 }
 input[type="date"] {
     background: transparent url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png)  97% 50% no-repeat !important;
@@ -235,16 +201,21 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .stats-info {
-    font-size: 1.2rem;
+    font-size: 1.7rem;
 }
 
 .stats-table th {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
 }
 
 td input[type="number"] {
+    /* height: 50px; */
+    max-width: 100px;
     border: 0px;
-    width: 50px;
     text-align: center;
+    font-size: 1.5rem;
+}
+
+table {
     font-size: 1.2rem;
 }

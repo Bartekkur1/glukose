@@ -28,7 +28,7 @@ class PasswordRecovery extends Component {
         if(!this.state.loading) {
             this.setState({error: null, loading: true});
             try {
-                let res = await Axios.post(server + "/api/resetpassword", {
+                let res = await Axios.post(server + "resetpassword", {
                     email: this.state.email
                 });
                 res["title"] = "Sukces";

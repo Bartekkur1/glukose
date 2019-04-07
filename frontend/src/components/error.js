@@ -7,7 +7,7 @@ class Error extends Component {
         return (
             <div className={`alert alert-dismissible text-center ${status === 200 ? "alert-success" : "alert-danger"}`}>
                 <button type="button" className="close" onClick={this.props.close}>&times;</button>
-                <strong>{title}</strong> {body}
+                <strong>{body}</strong>
             </div>
         )
     }
@@ -17,10 +17,14 @@ class Error extends Component {
             return this.setError("Wystąpił błąd serwera", "Problem z połączeniem", 400);
         else if(e.toString() === "Error: Request failed with status code 401")
             return this.setError("Wymagane zalogowanie", "Proszę się zalogować", 401);
-        else if(e.response && e.response.data && e.response.data.message)
-            return this.setError(e.response.data.title, e.response.data.message, e.response.status);
-        else if(e.data === "OK")
+        else if(e.response && e.response.data.error)
+            return this.setError("Wystąpił błąd", e.response.data.error, e.response.status);
+        else if(e.status === 200)
+            return this.setError("", e.title, e.status);
+        else if(e.data === "OK")    
             return this.setError("Sukces", e.title, e.status);
+        else
+            return this.setError("", "Wystąpił nieznany błąd", 400);
     }
     
     render() {

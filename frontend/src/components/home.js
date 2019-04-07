@@ -1,78 +1,81 @@
 import React, { Component } from 'react';
-import ContentFrame from './contentFrame';
 import Axios from 'axios';
 import { server } from "../../package.json";
-import moment from 'moment';
+import moment, { now } from 'moment';
 
 class Home extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            message: ""
+            message: "",
+            loading: true,
         }
     }
 
     async componentDidMount() {
         try {
-            var res = await Axios.get(server + "/api/data")
-            const now = moment(res.data.date);
-            const expiration = moment(Date.now());
-            expiration.add(1, "hour");
-            const diff = expiration.diff(now);
-            const diffDuration = moment.duration(diff);
-            this.setState({
-                days: diffDuration.days(),
-                hours: diffDuration.hours(),
-                minutes: diffDuration.minutes(),
-                seconds: diffDuration.seconds(),
-                response: res.data.date
-            })
-            if(!this.state.response)
-                this.setState({
-                    message: "Zmierz cukier!"
-                })
-            console.log(this.state);
+            var res = await Axios.get(server + "find_record/sugar/latest")
+            var duration = moment.duration(moment(now()).diff(moment(res.data.date)));
+            // console.log(duration);
+            duration.add(moment.duration("-01:00:00"))
         }
         catch(e) {
-            console.log(e)
+            // console.log(e)
         }
-        setInterval(() => { 
-            if(this.state.seconds <= 60)
-                this.setState({
-                    seconds: this.state.seconds + 1
-                })
-            else
-                this.setState({
-                    minutes: this.state.minutes + 1,
-                    seconds: 0
-                })
-        }, 1000);
-        if(this.state.hours > 4) {
+        var d = moment.duration(this.state.duration)
+        if(d.get("hours") > 4)
+        {
             this.setState({
-                message: "Zmierz cukier!"
-            })
+                message: "Zmierz cukier!!"
+            });
         }
+        setInterval(() => {
+            this.setState({
+                duration: new Date(duration.add(moment.duration("00:00:01"))).toLocaleTimeString(),
+                loading: false,
+            })
+            var d = moment.duration(this.state.duration)
+            if(d.get("hours") > 4 || duration.get("days") > 0)
+            {
+                this.setState({
+                    message: "Zmierz cukier!!"
+                });
+            }
+        }, 1000);
     }
 
     render() {
+        if(this.state.loading)
+            return (                
+            <div className="row m-0 h-100 glukose-off">
+                <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
+            </div>)
         return (
-            <div className="container-fluid sidebar-small">
-                <div className="row pl-3 pr-3 mt-3">
-                    <ContentFrame title="Witaj w glukose!" col="col-sm-12 col-md-8 mx-auto">
-                        <img className="logo mx-auto" src={process.env.PUBLIC_URL + '/images/logo.svg'} alt="logo"/>
-                        <h3 className="text-center pt-3">Miłego dnia i dobrych cukrów</h3>
-                        <h1 className="text-center pb-5">
-                            {this.state.response ? 
-                                "Ostatni pomiar cukru: " +
-                                this.state.hours + " h " +
-                                this.state.minutes + " m " + 
-                                this.state.seconds + " s temu"
-                            : ""}
-                        </h1>
-                        <p className="text-center" style={{fontSize: "100px", color: "red", fontWeight: "bold"}}>
-                            {this.state.message}
-                        </p>
-                    </ContentFrame>    
+            <div className="container-fluid sidebar-small h-100">
+                <div className="row text-center p-2">
+                    <div className="col-sm-12 col-md-9 col-lg-8 col-xl-9 mt-5 mx-auto"
+                        style={{"color": "gray"}}>
+                        <h1>Witaj w Glukose!</h1>
+                        <h4>Miłego dnia i dobrych cukrów!</h4>
+                    </div>
+                </div>
+                <div className="row text-center p-2" style={{"height": "70vh"}}>
+                    <div className="col-sm-12 col-lg-9 col-md-9 col-xl-4 mx-auto my-auto">
+                            {this.state.message ?
+                            <div className="home_box pb-4 pt-5" style={{"fontSize": "5vh", "color": "red", "fontWeight": "bold"}}>
+                                <i className="fa fa-2x fas fa-exclamation-triangle"></i>
+                                <p className="m-0">{this.state.message}</p>
+                            </div>
+                            :
+                            <div className="home_box p-4">
+                                <span style={{"fontWeight": "bold", "fontSize": "10vh"}}>
+                                    {this.state.duration}
+                                </span>
+                                <h4>
+                                    Od ostatniego pomiaru cukru
+                                </h4>
+                            </div>}
+                    </div>
                 </div>
             </div>
         )

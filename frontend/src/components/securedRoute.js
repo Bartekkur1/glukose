@@ -20,14 +20,13 @@ class SecuredRoutes extends Component {
             jwt = "";
         Axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
         try {
-            let res = await Axios.post(server + "/api/auth/check");
+            let res = await Axios.post(server + "auth/check");
             this.setState({user: res.data});
         }
         catch(e)
         {
             localStorage.clear();
-            this.setState({redirect: <Redirect to={{
-                pathname: "/login"}}/>})
+            this.setState({redirect: <Redirect to={{pathname: "/login"}}/>})
         }
     }
 
