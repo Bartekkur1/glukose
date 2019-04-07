@@ -15,7 +15,7 @@ class UserInfo extends Component {
             insulinType: "Humalog",
             dailyInsulinType: "Lantus",
             dailyInsulinAmount: 0,
-            loading: true,
+            loading: false,
             error: null,
             change: false
         }
@@ -23,7 +23,7 @@ class UserInfo extends Component {
 
     async componentDidMount() {
         try {
-            let res = await Axios.get(server + "userinfo");
+            let res = await Axios.get(server + "/api/userinfo");
             if(res.data) {
                 this.setState({
                     age: res.data.age,
@@ -32,14 +32,14 @@ class UserInfo extends Component {
                     weight: res.data.weight,
                     insulinType: res.data.insulinType,
                     dailyInsulinType: res.data.dailyInsulinType,
-                    dailyInsulinAmount: res.data.dailyInsulinAmount,
-                    loading: false,
-                });
+                    dailyInsulinAmount: res.data.dailyInsulinAmount
+                })
             }
         }
         catch(e)
         {
             this.setState({error: e});
+            this.setState({loading: false});
         }  
     }
 
@@ -48,7 +48,7 @@ class UserInfo extends Component {
         if(!this.state.loading && this.state.change) {
             this.setState({error: null, loading: true});
             try {
-                let res = await Axios.post(server + "userinfo", {
+                let res = await Axios.post(server + "/api/userinfo", {
                     age: this.state.age,
                     gender: this.state.gender,
                     height: this.state.height,
@@ -90,6 +90,7 @@ class UserInfo extends Component {
         return (
             <div className="container-fluid sidebar-small mt-5">
                 <div className="row">
+                    <Error error={this.state.error} close={() => this.setState({error: false})} />
                     <div className="col-12 p-0">
                         <h1 className="text-center">Dane użytkownika</h1>
                     </div>
@@ -102,9 +103,8 @@ class UserInfo extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-9 mx-auto userinfo-panel box-shadow mt-5 mb-5 pl-0 pr-0">
-                        <div className="jumbotron pt-3 pb-3 mb-0"
-                            style={{"backgroundColor": "white"}}>
+                    <div className="col-9 p-2 mx-auto userinfo-panel">
+                        <div className="jumbotron pt-3 pb-3 mb-0">
                         <form onSubmit={e => this.submit(e)}>
                             <div className="form-group">
                                 <label>Wiek:</label>
@@ -142,7 +142,6 @@ class UserInfo extends Component {
                                 <input type="number" name="dailyInsulinAmount" className="form-control" placeholder={this.state.dailyInsulinAmount} onChange={e => this.change(e)}/>
                             </div>
                             <button className="btn glukose-main btn-lg mb-3 btn-block" type="submit" value="Submit">Zapisz</button>
-                            <Error error={this.state.error} close={() => this.setState({error: false})} />
                         </form>
                         </div>
                     </div>

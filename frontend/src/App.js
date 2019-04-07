@@ -4,7 +4,7 @@ import Login from './components/login';
 import Register from './components/register';
 import PasswordRecovery from './components/passwordRecovery';
 import SecuredRoutes from './components/securedRoute';
-import Sidebar from './components/sidebar';
+import Index from './components/index';
 
 class App extends Component {
   render() {
@@ -15,7 +15,7 @@ class App extends Component {
 					<Route path="/register" exact component={Register}/>
 					<Route path="/password_recovery" exact component={PasswordRecovery}/>
 					<SecuredRoutes>
-						<Route path="/" component={Sidebar}/>
+						<Route path="/" component={Index}/>
 					</SecuredRoutes>
 					<Redirect to="/"/>
 				</Switch>

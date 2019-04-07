@@ -1,58 +1,39 @@
 import React, { Component } from 'react';
+import { Line, Doughnut } from 'react-chartjs-2';
+import ContentFrame from './contentFrame';
 import Axios from 'axios';
 import {server} from '../../package.json';
 import Error from "./error";
-import { Line, Doughnut } from 'react-chartjs-2';
-import { now } from 'moment';
-import moment from 'moment';
 
 class DailyStatistics extends Component {
     constructor(props) {
         super(props);
-        // console.log(moment(now()).set({hours: 24, minute:0, seconds: 0}).format("YYYY-MM-DD HH:mm:ss"));
+        var d = new Date();
         this.state = {
-            // console.log(moment(now()).format("YYYY-MM-DD"));
-            date: moment(now()).format("YYYY-MM-DD"),
-            range: moment(now()).format("YYYY-MM-DD"),
-            loading: false,
-            miniloading: false,
-            sugars: [],
-            doses: [],
-            meals: [],
-            avg: {
-                sugar: 0,
-                dose: 0,
-                meal: 0
-            },
-            max: {
-                sugar: {
-                    value: 0
-                },
-                dose: {
-                    value: 0
-                },
-                meal: {
-                    value: 0
-                },
-            },
-            min: {
-                sugar: {
-                    value: 0
-                },
-                dose: {
-                    value: 0
-                },
-                meal: {
-                    value: 0
-                },
-            },
-            donut: {
-                low: 0,
-                mid: 0,
-                high: 0
-            },
+            loading: true,
+            data: null,
+            date: d.toISOString().substring(0,10),
+            backupDate: d.toISOString().substring(0,10),
+            count: 0,
+            sugar: null,
+            dose: null,
+            meal: null,
             error: null
         }
+    }
+
+    componentWillMount() {
+        var d = new Date(this.state.date);
+        window.addEventListener("keydown", (key) => {
+            if(key.code === "ArrowRight") {
+                d.setDate(d.getDate() + 1);
+                this.setState({date: d.toISOString().substring(0,10)});
+            } else if(key.code === "ArrowLeft") {
+                d.setDate(d.getDate() - 1);
+                this.setState({date: d.toISOString().substring(0,10)});
+            }
+            this.getData();
+        }, false);
     }
 
     change(e) {
@@ -64,8 +45,66 @@ class DailyStatistics extends Component {
             this.setState({
                 date: this.state.backupDate
             })
-        if(e.target.name === "date" || e.target.name === "range")
+        if(e.target.name === "date")
             this.getData();
+    }
+
+    async sugarUpdate(amount, id) {
+        try {
+            await Axios.patch(server + "/api/sugar", {
+                amount: amount,
+                id: id
+            });
+            console.log("Updated");
+            this.getData();
+        }
+        catch(e) {
+            this.setState({
+                error: e,
+            })
+        }
+    }
+
+    async sugarDelete(id) {
+        try {
+            await Axios.delete(server + "/api/sugar/" + id);
+            console.log("Deleted");
+            this.getData();
+        }
+        catch(e) {
+            this.setState({
+                error: e,
+            })
+        }
+    }
+
+    async doseUpdate(amount, id) {
+        try {
+            await Axios.patch(server + "/api/dose", {
+                amount: amount,
+                id: id
+            });
+            console.log("Updated");
+            this.getData();
+        }
+        catch(e) {
+            this.setState({
+                error: e,
+            })
+        }
+    }
+
+    async doseDelete(id) {
+        try {
+            await Axios.delete(server + "/api/dose/" + id);
+            console.log("Deleted");
+            this.getData();
+        }
+        catch(e) {
+            this.setState({
+                error: e,
+            })
+        }
     }
 
     async mealUpdate(type, value, id) {
@@ -78,7 +117,8 @@ class DailyStatistics extends Component {
             data["carbohydrates"] = value
         data["id"] = id
         try {
-            await Axios.patch(server + "meal", data);
+            await Axios.patch(server + "/api/meal", data);
+            console.log("Updated");
             this.getData();
         }
         catch(e) {
@@ -88,52 +128,10 @@ class DailyStatistics extends Component {
         }
     }
 
-    async doseUpdate(amount, type, id) {
+    async mealDelete(id) {
         try {
-            await Axios.patch(server + "dose", {
-                amount: amount,
-                type: type,
-                id: id
-            });
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
-    async doseDelete(id) {
-        try {
-            await Axios.delete(server + "delete_record/dose/" + id);
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
-    async sugarUpdate(amount, id) {
-        try {
-            await Axios.patch(server + "sugar", {
-                amount: amount,
-                id: id
-            });
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
-    async sugarDelete(id) {
-        try {
-            await Axios.delete(server + "delete_record/sugar/" + id);
+            await Axios.delete(server + "/api/meal/" + id);
+            console.log("Deleted");
             this.getData();
         }
         catch(e) {
@@ -144,75 +142,23 @@ class DailyStatistics extends Component {
     }
 
     async getData() {
-        this.setState({
-            miniloading: true
-        })
         try {
             await new Promise(resolve => setTimeout(resolve, 100));
-            let dose = await Axios.get(server + "find_record/dose/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
-            let meal = await Axios.get(server + "find_record/meal/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
-            let sugar = await Axios.get(server + "find_record/sugar/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
+            let dose = await Axios.get(server + "/api/dose/" + this.state.date);
+            let meal = await Axios.get(server + "/api/meal/" + this.state.date);
+            let sugar = await Axios.get(server + "/api/sugar/" + this.state.date);
             this.setState({
-                sugars: sugar.data.values,
-                doses: dose.data.values,
-                meals: meal.data.values,
-                avg: {
-                    sugar: sugar.data.avg,
-                    dose: dose.data.avg,
-                    meal: meal.data.avg
-                },
-                min: {
-                    sugar: sugar.data.min,
-                    dose: dose.data.min,
-                    meal: meal.data.min
-                },
-                max: {
-                    sugar: sugar.data.max,
-                    dose: dose.data.max,
-                    meal: meal.data.max
-                },
-            });
-            var low = 0;
-            var mid = 0;
-            var high = 0;
-            this.state.sugars.forEach(record => {
-                if(record.amount < 70 && record.amount > 0)
-                    low++;
-                if(record.amount < 140 && record.amount > 70)
-                    mid++;
-                if(record.amount > 140)
-                    high++;
-            });
-            this.setState({
-                donut: {
-                    low: low,
-                    mid: mid,
-                    high: high
-                }
+                sugar: sugar.data,
+                dose: dose.data,
+                meal: meal.data,
+                loading: false
             });
         }
         catch(e)
         {
-            // console.log(e.response);
             this.setState({error: e});
             this.setState({loading: false});
         }  
-        this.setState({
-            loading: false,
-            miniloading: false
-        });
-    }
-
-    sumArray(arr)
-    {
-        var sum = 0;
-        arr.forEach(element => {
-            if(element.amount)
-                sum = sum + element.amount
-            if(element.kcal)
-                sum = sum + element.kcal
-        });
-        return sum;
     }
 
     componentDidMount() {
@@ -230,139 +176,124 @@ class DailyStatistics extends Component {
                 <div className="row">
                     <Error error={this.state.error} close={() => this.setState({error: false})} />
                 </div>
-                    <h1 className="pt-4 text-center">STATYSTYKA DZIENNA</h1>
-                {this.state.miniloading ?
-                        <div className="row m-0 h-100">
-                            <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
-                        </div>
-                    :
-                <div>
-                <div className="row">
-                    <div className="col-12 p-4 mx-auto">
-                        <div className="row text-center">
-                            <div className="col-sm-12 col-lg-6 col-md-6 col-xl-6">
-                                <span>od: </span>
-                                <input type="date" className="stats-input" value={this.state.date}
-                                        name="date" onChange={e => this.change(e)}/>
+                <div className="row mt-3">
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-11 mx-auto"
+                        title={
+                            <div>
+                                <span>Statystyka z dnia:</span>     
+                                <input type="date" className="stats-input pl-2" value={this.state.date}
+                                name="date" onChange={e => this.change(e)}/>
                             </div>
-                            <div className="col-sm-12 col-lg-6 col-md-6 col-xl-6">
-                                <span>do: </span>
-                                <input type="date" className="stats-input" value={this.state.range}
-                                    name="range" onChange={e => this.change(e)}/>
-                            </div>
+                        }>
+                        <div className="p-4">
+                            <Line
+                                height={500}
+                                data={{
+                                    datasets: [
+                                        {
+                                            label: 'Cukier',
+                                            type:'line',
+                                            yAxisID: 'Cukier',
+                                            data: this.state.sugar.values.map((row) => {
+                                                return {x: row.date, y: row.amount}
+                                            }),
+                                            fill: false,
+                                            borderColor: 'rgba(255,0,0,0.4)',
+                                            backgroundColor: 'rgba(255,0,0,1)',
+                                            borderWidth: 4,
+                                            lineTension: 0.3
+                                        },
+                                        {
+                                            label: 'Insulina',
+                                            type:'line',
+                                            yAxisID: 'Insulina',
+                                            data: this.state.dose.values.map((row) => {
+                                                return {x: row.date, y: row.amount}
+                                            }),
+                                            fill: false,
+                                            borderColor: 'rgba(0,255,0,0.6)',
+                                            backgroundColor: 'rgba(0,255,0,1)',
+                                            borderWidth: 4,
+                                            lineTension: 0.3
+                                        },
+                                        {
+                                            label: 'Posiłek',
+                                            type:'line',
+                                            yAxisID: 'Posiłek',
+                                            data: this.state.meal.values.map((row) => {
+                                                return {x: row.date, y: row.kcal}
+                                            }),
+                                            fill: false,
+                                            borderColor: 'rgba(0,0,255,0.6)',
+                                            backgroundColor: 'rgba(0,0,255,1)',
+                                            borderWidth: 4,
+                                            lineTension: 0.3
+                                        },
+                                    ],
+                                }}
+                                options={{
+                                    scales: {
+                                        yAxes: [{
+                                            id: "Cukier",
+                                            scaleLabel: {
+                                                display: true,
+                                                labelString: 'Ilośc cukru',
+                                            },
+                                            ticks: {
+                                                min: 40,
+                                                max: 600,
+                                            }
+                                        }, {
+                                            id: "Posiłek",
+                                            scaleLabel: {
+                                                display: true,
+                                                labelString: 'Ilość kalorii',
+                                            },
+                                            ticks: {
+                                                min: 0,
+                                                max: 900
+                                            }
+                                        }, {
+                                            id: "Insulina",
+                                            position: 'right',
+                                            scaleLabel: {
+                                                display: true,
+                                                labelString: 'Ilość jednostek',
+                                            },
+                                            ticks: {
+                                                min: 0,
+                                                max: 15
+                                            }
+                                        }],
+                                        xAxes: [{
+                                            type: 'time',
+                                            time: {
+                                                min: `${this.state.date}T00:00:00`,
+                                                max: `${this.state.date}T24:00:00`,
+                                                displayFormats: {
+                                                    minutes: 'h:mm a'
+                                                }
+                                            }
+                                        }],
+                                    },
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    legend: {
+                                        position: "bottom",
+                                        labels: {
+                                            boxWidth: 50
+                                        }
+                                    }
+                                }}
+                            />
                         </div>
-
-                        <Line
-                            height={parseInt("130vh")}
-                            data={{
-                                datasets: [
-                                    {
-                                        label: "Cukier",
-                                        type:'line',
-                                        yAxisID: 'Cukier',
-                                        data: this.state.sugars.map((row) => {
-                                            return {x: row.date, y: row.amount}
-                                        }),
-                                        fill: false,
-                                        borderColor: 'rgba(255,0,0,0.4)',
-                                        backgroundColor: 'rgba(255,0,0,1)',
-                                        borderWidth: 4,
-                                        lineTension: 0.3,
-                                        pointRadius: 7,
-                                        pointHoverRadius: 10
-                                    },
-                                    {
-                                        label: "Insulina",
-                                        type:'line',
-                                        yAxisID: 'Insulina',
-                                        data: this.state.doses.map((row) => {
-                                            return {x: row.date, y: row.amount}
-                                        }),
-                                        fill: false,
-                                        borderColor: 'rgba(0,255,0,0.4)',
-                                        backgroundColor: 'rgba(0,255,0,1)',
-                                        borderWidth: 4,
-                                        lineTension: 0.3,
-                                        pointRadius: 7,
-                                        pointHoverRadius: 10
-                                    },
-                                    {
-                                        label: "Posiłki",
-                                        type:'line',
-                                        yAxisID: 'Posiłek',
-                                        data: this.state.meals.map((row) => {
-                                            return {x: row.date, y: row.kcal}
-                                        }),
-                                        fill: false,
-                                        borderColor: 'rgba(0,0,255,0.4)',
-                                        backgroundColor: 'rgba(0,0,255,1)',
-                                        borderWidth: 4,
-                                        lineTension: 0.3,
-                                        pointRadius: 7,
-                                        pointHoverRadius: 10
-                                    },
-                                ],
-                            }}
-                            options={{
-                                hover: {
-                                    mode: 'point'
-                                },
-                                tooltips: {
-                                    titleFontSize: 14,
-                                    bodyFontSize: 14,
-                                },
-                                scales: {
-                                    yAxes: [{
-                                        id: "Cukier",
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'Ilośc cukru',
-                                        },
-                                        ticks: {
-                                            min: 0,
-                                            max: parseInt(this.state.max.sugar.value) + 30,
-                                        }
-                                    }, {
-                                        id: "Posiłek",
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'Ilość kalorii',
-                                        },
-                                        ticks: {
-                                            min: 0,
-                                            max: parseInt(this.state.max.meal.value) + 50,
-                                        }
-                                    }, {
-                                        id: "Insulina",
-                                        position: 'right',
-                                        scaleLabel: {
-                                            display: true,
-                                            labelString: 'Ilość jednostek',
-                                        },
-                                        ticks: {
-                                            min: 0,
-                                            max: parseInt(this.state.max.dose.value) + 3,
-                                        }
-                                    }],
-                                    xAxes: [{
-                                        type: 'time',
-                                        time: {
-                                            min: moment(this.state.date).set({hours: 0, minuts: 0, seconds: 0}).format("YYYY-MM-DD HH:mm:ss"),
-                                            max: moment(this.state.range).set({hours: 23, minute: 59, seconds: 59}).format("YYYY-MM-DD HH:mm:ss"),
-                                        }
-                                    }],
-                                },
-                                responsive: true,
-                                maintainAspectRatio: true,
-                            }}
-                        />
-                    </div>
+                    </ContentFrame>
                 </div>
-                <hr></hr>
-                <div className="row">
-                    <div className="col-sm-12 col-lg-7 col-md-7 col-xl-7">
-                        <div className="table-responsive row p-3 stats-info">
-                            <table className="table text-center stats-table">
+                <div className="row mt-5 justify-content-center">   
+                    <ContentFrame col="col-sm-12 col-md-6 col-xl-6"
+                        title="Informacje">
+                            <div className="table-responsive row p-3 stats-info">
+                                <table className="table text-center stats-table">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -376,59 +307,58 @@ class DailyStatistics extends Component {
                                     <tbody>
                                         <tr>
                                             <th scope="row">Cukry</th>
-                                            <td>{Math.round(this.state.avg.sugar.value * 10)/10 || 0}</td>
-                                            <td>{this.state.max.sugar.value || 0}</td>
-                                            <td>{this.state.min.sugar.value || 0}</td>
-                                            <td>{this.state.sugars.length}</td>
+                                            <td>{Math.round(this.state.sugar.avg) || 0}</td>
+                                            <td>{Math.round(this.state.sugar.max) || 0}</td>
+                                            <td>{Math.round(this.state.sugar.min) || 0}</td>
+                                            <td>{Math.round(this.state.sugar.count) || 0}</td>
                                             <td>#</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Posiłki</th>
-                                            <td>{Math.round(this.state.avg.meal.value * 10)/10 || 0}</td>
-                                            <td>{this.state.max.meal.value || 0}</td>
-                                            <td>{this.state.min.meal.value || 0}</td>
-                                            <td>{this.state.meals.length}</td>
-                                            <td>{this.sumArray(this.state.meals) || 0}</td>
+                                            <td>{Math.round(this.state.meal.avg) || 0}</td>
+                                            <td>{Math.round(this.state.meal.max) || 0}</td>
+                                            <td>{Math.round(this.state.meal.min) || 0}</td>
+                                            <td>{Math.round(this.state.meal.count) || 0}</td>
+                                            <td>{Math.round(this.state.meal.sum) || 0}</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Insulina</th>
-                                            <td>{Math.round(this.state.avg.dose.value * 10)/10 || 0}</td>
-                                            <td>{this.state.max.dose.value || 0}</td>
-                                            <td>{this.state.min.dose.value || 0}</td>
-                                            <td>{this.state.doses.length}</td>
-                                            <td>{this.sumArray(this.state.doses) || 0}</td>
+                                            <td>{Math.round(this.state.dose.avg) || 0}</td>
+                                            <td>{Math.round(this.state.dose.max) || 0}</td>
+                                            <td>{Math.round(this.state.dose.min) || 0}</td>
+                                            <td>{Math.round(this.state.dose.count) || 0}</td>
+                                            <td>{Math.round(this.state.dose.sum) || 0}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+                    </ContentFrame>
+                    <ContentFrame col="col-sm-12 col-md-6 col-xl-5 content-padding"
+                        title="Posiłki">
+                        <div className="text-center" style={{maxHeight: "40vh"}}>
+                            <Doughnut 
+                                data={{
+                                    labels: ["Tłuszcze/Białka", "Węglowodany"],
+                                    datasets: [
+                                        {
+                                            label: "Zawartość",
+                                            backgroundColor: ["#FFC870", "#F7464A"],
+                                            data: [ this.state.meal.fats || 50, this.state.meal.carbohydrates || 50]
+                                        }
+                                    ],
+                                    responsive: true,
+                                    maintainAspectRatio: true,
+                                }}/>
+                            <h1 className="pt-2">{ Math.round(this.state.meal.fats) || 50}/{Math.round(this.state.meal.carbohydrates) || 50}</h1>
                         </div>
-                        <div className="col-sm-12 col-lg-5 col-md-5 col-xl-5 text-center">
-                            <h4>Pomiary</h4>
-                            <div>
-                                <Doughnut
-                                    height={parseInt("90vh")}
-                                    data={{
-                                        labels: ["Niskie", "Poprawne", "Wysokie"],
-                                        datasets: [
-                                            {
-                                                label: "Ilość",
-                                                backgroundColor: ["yellow", "green", "red"],
-                                                data: [this.state.donut.low,  this.state.donut.mid, this.state.donut.high]
-                                            }
-                                        ],
-                                    }}
-                                    options={{
-                                        responsive: true
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                <hr></hr>
-                <div className="row">
-                    <div className="col-sm-12 col-lg-6 col-md-6 col-xl-6 text-center table-responsive">
-                        <h2>Cukry:</h2>
-                        <table className="table">
+                    </ContentFrame>
+                </div>
+                <div className="row mt-5 justify-content-center">
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-5"
+                        title="Edycja danych">
+                        <div className="p-4 table-responsive">
+                        <h1>Cukry:</h1>
+                        <table className="table text-center">
                             <thead>
                                 <tr>
                                     <th scope="col" style={{width: "5%"}}>#</th>
@@ -438,90 +368,84 @@ class DailyStatistics extends Component {
                                     <th scope="col" style={{width: "1%"}}></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {this.state.sugars.map((row, idx) => {
-                                    return (
-                                        <tr key={idx}>
+                                <tbody>
+                                    {this.state.sugar.values.map((row, idx) => {
+                                        var date = new Date(row.date);
+                                        return (<tr key={row.id}>
                                             <th scope="row">{idx+1}</th>
-                                            <td>{moment(row.date).format("YYYY-MM-DD HH:mm:ss")}</td>
+                                            <td>{date.toLocaleString()}</td>
                                             <td><input type="number" placeholder={row.amount} 
-                                            onBlur={e => {this.sugarUpdate(e.target.value, row.id)}}/></td>
+                                            onChange={e => {this.sugarUpdate(e.target.value, row.id)}}/></td>
                                             <td><button type="button" onClick={() => this.sugarDelete(row.id)}
                                             className="btn glukose-main">Usuń</button></td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="col-sm-12 col-lg-6 col-md-6 col-xl-6 text-center table-responsive">
-                        <h2>Insulina:</h2>
+                                        </tr>)
+                                    })}
+                                </tbody>
+                            </table>
+                        <h1>Insulina:</h1>
                         <table className="table text-center">
                             <thead>
                                 <tr>
                                     <th scope="col" style={{width: "5%"}}>#</th>
                                     <th scope="col" style={{width: "25%"}}>Data</th>
                                     <th scope="col" style={{width: "15%"}}>Ilość</th>
-                                    <th scope="col" style={{width: "15%"}}>Typ</th>
                                     <th scope="col" style={{width: "1%"}}></th>
                                     <th scope="col" style={{width: "1%"}}></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.state.doses.map((row, idx) => {
-                                    return (
-                                        <tr key={row.id}>
-                                            <th scope="row">{idx+1}</th>
-                                            <td>{moment(row.date).format("YYYY-MM-DD HH:mm:ss")}</td>
-                                            <td><input type="number" placeholder={row.amount} 
-                                            onBlur={e => {this.doseUpdate(e.target.value, row.type, row.id)}}/></td>
-                                            <td>{row.type}</td>
-                                            <td><button type="button" onClick={() => this.doseDelete(row.id)}
-                                            className="btn glukose-main">Usuń</button></td>
-                                        </tr>
-                                    )
+                                {this.state.dose.values.map((row, idx) => {
+                                    var date = new Date(row.date);
+                                    return (<tr key={row.id}>
+                                        <th scope="row">{idx+1}</th>
+                                        <td>{date.toLocaleString()}</td>
+                                        <td><input type="number" placeholder={row.amount} 
+                                        onChange={e => {this.doseUpdate(e.target.value, row.id)}}/></td>
+                                        <td><button type="button" onClick={() => this.doseDelete(row.id)}
+                                        className="btn glukose-main">Usuń</button></td>
+                                    </tr>)
                                 })}
                             </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-sm-12 col-lg-7 col-md-7 col-xl-7 text-center table-responsive">
-                        <h2>Posiłki:</h2>
+                            </table>
+                        </div>
+                    </ContentFrame>
+                    <ContentFrame col="col-sm-12 col-md-12 col-xl-6"
+                        title="Edycja danych">
+                        <div className="p-4 table-responsive">
+                        <h1>Posiłki:</h1>
                         <table className="table text-center">
                             <thead>
                                 <tr>
-                                <th scope="col" style={{width: "5%"}}>#</th>
-                                <th scope="col" style={{width: "20%"}}>Data</th>
-                                <th scope="col" style={{width: "15%"}}>Kcal</th>
-                                <th scope="col" style={{width: "15%"}}>Tłuscze/białka</th>
-                                <th scope="col" style={{width: "15%"}}>Węglowodany</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Data</th>
+                                <th scope="col">Kcal</th>
+                                <th scope="col">Tłuscze/białka</th>
+                                <th scope="col">Węglowodany</th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.state.meals.map((row, idx) => {
-                                    return (
-                                        <tr key={row.id}>
-                                            <th scope="row">{idx+1}</th>
-                                            <td>{moment(row.date).format("YYYY-MM-DD HH:mm:ss")}</td>
-                                            <td><input type="number" placeholder={row.kcal} 
-                                            onBlur={e => {this.mealUpdate("kcal", e.target.value, row.id)}}/></td>
-                                            <td><input type="number" placeholder={row.fats} 
-                                            onBlur={e => {this.mealUpdate("fats", e.target.value, row.id)}}/></td>
-                                            <td><input type="number" placeholder={row.carbohydrates} 
-                                            onBlur={e => {this.mealUpdate("carbohydrates", e.target.value, row.id)}}/></td>
-                                            <td><button type="button" onClick={() => this.mealDelete(row.id)}
-                                            className="btn glukose-main">Usuń</button></td>
-                                        </tr>
-                                    )
+                                {this.state.meal.values.map((row, idx) => {
+                                    var date = new Date(row.date);
+                                    return (<tr key={row.id}>
+                                        <th scope="row">{idx+1}</th>
+                                        <td>{date.toLocaleString()}</td>
+                                        <td><input type="number" placeholder={row.kcal} 
+                                        onChange={e => {this.mealUpdate("kcal", e.target.value, row.id)}}/></td>
+                                        <td><input type="number" placeholder={row.fats} 
+                                        onChange={e => {this.mealUpdate("fats", e.target.value, row.id)}}/></td>
+                                        <td><input type="number" placeholder={row.carbohydrates} 
+                                        onChange={e => {this.mealUpdate("carbohydrates", e.target.value, row.id)}}/></td>
+                                        <td><button type="button" onClick={() => this.mealDelete(row.id)}
+                                        className="btn glukose-main">Usuń</button></td>
+                                    </tr>)
                                 })}
                             </tbody>
-                        </table>
-                    </div>
+                            </table>
+                        </div>
+                    </ContentFrame>
                 </div>
-                </div>}
             </div>
         )
     }

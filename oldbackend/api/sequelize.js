@@ -3,8 +3,8 @@ const config = require("../config.json").development;
 const UserModel = require("../database/models/user");
 const UserInfoModel = require("../database/models/userinfo");
 const SugarModel = require("../database/models/sugar");
-const DoseModel = require("../database/models/dose");
-const MealModel = require("../database/models/meal");
+const DoseModel = require("../database/models/Dose");
+const MealModel = require("../database/models/Meal");
 
 const sequelize = new Sequelize(config.database, config.username, config.password, {
   host: config.host,
