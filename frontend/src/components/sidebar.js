@@ -8,7 +8,7 @@ import NewRecord from './newRecord';
 import SidebarButton from './sidebarButton';
 import SidebarTitle from './sidebarTitle';
 import UserInfo from './userinfo.js';
-import Account from './account.js';
+import Account from './accountPanel';
 import Statistics from './statistics.js';
 import Export from './export.js';
 import Home from './home';
@@ -52,13 +52,13 @@ class Index extends Component {
 
     logout() {
         localStorage.clear();
-        Axios.post(server + "/api/auth/logout");
+        Axios.post(server + "auth/logout");
         this.setState({redirect: <Redirect to="/login"/>});
     }
 
     async componentDidUpdate(prevProps) {
         try {
-            await Axios.post(server + "/api/auth/check");
+            await Axios.post(server + "auth/check");
         }
         catch(e)
         {
@@ -80,31 +80,31 @@ class Index extends Component {
                 <div className="row h-100">
                     <div className="col-12 p-0">
                         <img className="mx-auto mt-2 sidebar-logo" width="220px" height="60px" 
-                        src={process.env.PUBLIC_URL + '/images/logo2.svg'} alt="logo"/>
+                            src={process.env.PUBLIC_URL + '/images/logo2.svg'} alt="logo"/>
                         <button className="btn mb-3 mx-auto p-0 logout w-100"
-                        onClick={() => this.logout()}>
+                            onClick={() => this.logout()}>
                         <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button>
                         <hr className="hr-light"/>
                         <SidebarButton name="Strona główna" link="/" icon="fa fas fa-home"/>
                         <hr className="hr-title" />
                         <SidebarTitle name="Statystyka" />
-                        <SidebarButton name="Dzienna" link="/dailystats" icon="fa fas fa-bar-chart"/>
-                        <SidebarButton name="Ogólna" link="/stats" icon="fa fas fa-bar-chart"/>
+                        <SidebarButton name="Dzienna" link="/dailystats" icon="fa fas fa-bar-chart" />
+                        <SidebarButton name="Ogólna" link="/stats" icon="fa fas fa-bar-chart"  />
                         <hr className="hr-title" />
                         <SidebarTitle name="Rekordy" />
-                        <SidebarButton name="Dodaj rekod" link="/add_record" icon="fa fas fa-plus"/>
+                        <SidebarButton name="Dodaj rekord" link="/add_record" icon="fa fas fa-plus" />
                         <hr className="hr-title" />
                         <SidebarTitle name="Ustawienia" />
-                        <SidebarButton name="Konto" link="/account" icon="fa fas fa-cog"/>
-                        <SidebarButton name="Użytkownik" link="/userinfo" icon="fa fas fa-user"/>
-                        <hr className="hr-title" />
-                        <SidebarTitle name="Dane" />
-                        <SidebarButton name="Eksport" link="/export" icon="fa fas fa-download"/>
+                        <SidebarButton name="Konto" link="/account" icon="fa fas fa-cog" />
+                        <SidebarButton name="Użytkownik" link="/userinfo" icon="fa fas fa-user" />
+                        {/* <hr className="hr-title" /> */}
+                        {/* <SidebarTitle name="Dane" /> */}
+                        {/* <SidebarButton name="Eksport" link="/export" icon="fa fas fa-download"/> */}
                         {/* <SidebarButton name="Import" link="/import" icon="fa fas fa-upload"/> */}
                     </div>
                     <div className="col-12 mt-auto footer">
                         <hr/>
-                        <p>Glukose 1.1a</p>
+                        <p>Glukose 1.2a</p>
                     </div>
                 </div>
             </div>
@@ -114,26 +114,25 @@ class Index extends Component {
                 sidebar={sidebar}
                 children={
                     <div className="h-100">
-                        <button style={this.state.sidebarDocked ? {display: "none"} : {display: "inline-block"}} 
-                        className="btn glukose-main sidebar-slide p-0" type="submit" 
-                        onClick={() => this.setState({sidebarOpen: true})}>
-                        <i className="fa fa-2x fas fa-arrow-right"></i>
-                        </button>
+                        {/* <button style={this.state.sidebarDocked ? {display: "none"} : {}} 
+                            className="btn sidebar-slide p-0 ml-2 mt-2" type="submit" 
+                            onClick={() => this.setState({sidebarOpen: true})}>
+                        <i className="fa fa-2x fas fa-bars"></i>
+                        </button> */}
                             <Route path="/" exact component={Home} />
                             <Route path="/dailystats" exact component={DailyStatistics} />
                             <Route path="/userinfo" exact component={UserInfo} />
                             <Route path="/add_record" exact component={NewRecord} />
-                            <Route path="/account" exact component={Account}/>
-                            <Route path="/stats" exact component={Statistics}/>
-                            <Route path="/export" exact component={Export}/>
+                            <Route path="/account" exact component={Account} />
+                            <Route path="/stats" exact component={Statistics} />
+                            <Route path="/export" exact component={Export} />
                     </div>
                 }
-                sidebarClassName={
-                    "glukose-main"
-                }
+                sidebarClassName={"glukose-main"}
                 open={this.state.sidebarOpen}
                 docked={this.state.sidebarDocked}
                 onSetOpen={this.onSetSidebarOpen}
+                touch={true}
             >
             </Sidebar>
             );

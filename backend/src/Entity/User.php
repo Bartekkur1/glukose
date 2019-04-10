@@ -156,7 +156,7 @@ class User implements UserInterface, \Serializable
             $this->username,
             $this->email,
             $this->password,
-            // $this->token
+            $this->token
         ]);
     }
 

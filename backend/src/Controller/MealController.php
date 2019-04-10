@@ -35,9 +35,7 @@ class MealController extends AbstractController implements TokenAuthenticatedCon
         isset($data["kcal"]) ? $meal->setKcal($data["kcal"]) : "";
         isset($data["fats"]) ? $meal->setFats($data["fats"]) : "";
         isset($data["carbohydrates"]) ? $meal->setCarbohydrates($data["carbohydrates"]) : "";
-        $date = new \DateTime($data["date"]);
-        $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
-        isset($data["date"]) ? $meal->setDate($date) : "";
+        isset($data["date"]) ? $meal->setDate(new \DateTime($data["date"])) : "";
         $errors = $validator->validate($meal);
         if(count($errors) > 0)
             return Responses::BadRequest($errors[0]->getMessage());

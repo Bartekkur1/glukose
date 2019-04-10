@@ -32,14 +32,14 @@ class Export extends Component {
       
     async componentDidMount() {
         try {
-            let res = await Axios.post(server + "/api/data");
+            let res = await Axios.post(server + "data");
             this.setState({
                 data: res["data"],
                 loading: false
             });
         }
         catch(e) {
-            console.log(e);
+            // console.log(e);
         }
     }
 

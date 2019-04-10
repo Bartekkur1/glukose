@@ -5,8 +5,6 @@ const meal = require("../sequelize").meal;
 const dose = require("../sequelize").dose;
 const sequelize = require("../sequelize").sequelize;
 
-// SELECT AVG(`amount`) as 'avg' FROM `doses` WHERE DATE_FORMAT(`date`, '%k') >= 23 AND DATE_FORMAT(`date`, '%k') < 24 AND `user_id` = 1
-//dopisać WHERE user_id = req.userId
 async function getDbAvg(sequelize, name, t1, t2, model, valName, user_id) {
     var ans = await sequelize.query(
         "SELECT AVG(`"+valName+"`) as 'avg' FROM `" +name+ "` WHERE DATE_FORMAT(`date`, '%k') >= " + t1 + " AND DATE_FORMAT(`date`, '%k') < " + t2 + " AND `user_id` = " + user_id,

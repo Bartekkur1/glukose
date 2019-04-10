@@ -6,6 +6,11 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../mailer").sendEmail;
 const config = require("../../config");
+const dose = require("../sequelize").dose;
+
+app.get("/", async(req,res,next) => {
+    
+})
 
 app.post("/", async (req,res,next) => {
     req.check("email")

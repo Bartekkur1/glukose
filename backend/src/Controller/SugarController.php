@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Sugar;
 use App\Entity\User;
 use App\Responses\Responses;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class SugarController extends AbstractController implements TokenAuthenticatedController
@@ -36,9 +35,7 @@ class SugarController extends AbstractController implements TokenAuthenticatedCo
         $sugar->setUser($user);
         if(!empty($data["amount"]))
             isset($data["amount"]) ? $sugar->setAmount($data["amount"]) : "";
-        $date = new \DateTime($data["date"]);
-        $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
-        isset($data["date"]) ? $sugar->setDate($date) : "";
+        isset($data["date"]) ? $sugar->setDate(new \DateTime($data["date"])) : "";
         $errors = $validator->validate($sugar);
         if(count($errors) > 0)
             return Responses::BadRequest(["error" => $errors[0]->getMessage(), "name" => $errors[0]->getPropertyPath()]);  

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import {server} from '../../package.json';
 import Error from './error';
+import { now } from 'moment';
+import moment from 'moment';
 
 class RecordTitle extends Component {
     render() {
@@ -21,6 +23,11 @@ class RecordForm extends Component {
             dateToday: true,
             carbohydrates: this.props.carbohydrates,
         }
+    }
+
+    componentDidMount() {
+        var kek = moment(now());
+        console.log(kek);
     }
 
     render() {
@@ -55,6 +62,8 @@ class NewRecord extends Component {
             loading: false,
             error: null,
             sugarAmount: 110,
+            hightlight: null,
+            insulinType: "Posiłek"
         }
     }
 
@@ -74,27 +83,32 @@ class NewRecord extends Component {
         var api = "";
         if(this.state.segment === "Cukier") {
             payload["amount"] = this.state.sugarAmount;
-            api = "/api/sugar";
+            api = "sugar";
         }
         else if(this.state.segment === "Insulina") {
             payload["amount"] = this.state.insulinAmount;
-            payload["type"] = "Humalog";
-            api = "/api/dose";
+            payload["type"] = this.state.insulinType;
+            api = "dose";
         }
         else if(this.state.segment === "Posiłek") {
             payload["kcal"] = this.state.kcal;
             payload["fats"] = this.state.fats;
             payload["carbohydrates"] = 100 - this.state.fats;
-            api = "/api/meal";
+            api = "meal";
         }
         if(this.state.date) {
-            var d = new Date(this.state.date);
-            d.setTime(d.getTime() + d.getTimezoneOffset() * -1 * 60 * 1000);
-            payload["date"] = d.toString();
+            // var d = new Date(this.state.date);
+            payload["date"] = moment(this.state.date);
+        }
+        else 
+        {
+            payload["date"] = moment(now());
         }
         try {
+            this.setState({loading: true});
             let res = await Axios.post(server + api, payload);
             res["title"] = "rekord dodany pomyślnie";
+            // console.log(res);
             this.setState({
                 error: res,
                 loading: false
@@ -105,22 +119,28 @@ class NewRecord extends Component {
                 error: e,
                 loading: false
             })
+            if(e.response.data.name)
+                this.setState({hightlight: e.response.data.name});
         }
     }
 
     render() {
+        if(this.state.loading)
+            return (                
+                <div className="row m-0 h-100 glukose-off">
+                    <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
+                </div>)
         return (
             <div className="container-fluid sidebar-small h-100">
                 <div className="row">
-                    <Error error={this.state.error} close={() => this.setState({error: false})} />
                     <div className="col-12 text-center mt-5">
                         <h3>Tutaj możesz dodać nowy rekord</h3>
                         <h5>Dodane rekordy można zobaczyć w zakładce statystyki</h5>
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-sm-12 col-md-6 col-xl-4 mx-auto record-panel">
-                        <div className="jumbotron pt-0 mt-5 pl-3 pr-3 pb-3 mb-0">
+                    <div className="col-sm-12 col-md-6 col-xl-3 mx-auto record-panel box-shadow p-0 mt-5">
+                        <div className="jumbotron mt-0 mb-0 pt-3 pb-3" style={{"backgroundColor": "white"}}>
                             <div className="row text-center">
                                 <RecordTitle name="Cukier" segment={this.state.segment} 
                                 segmentChange={() => this.setState({segment: "Cukier"})} />
@@ -128,9 +148,10 @@ class NewRecord extends Component {
                                 segmentChange={() => this.setState({segment: "Insulina"})} />
                                 <RecordTitle name="Posiłek" segment={this.state.segment} 
                                 segmentChange={() => this.setState({segment: "Posiłek"})} />
-                            </div>
+                            </div>  
                             <div className="row">
                                 <div className="col-12 p-2 mx-auto record-panel">
+                                <Error error={this.state.error} close={() => this.setState({error: false})} />
                                 {this.state.segment === "Cukier" ? 
                                 <RecordForm 
                                 formSubmit={(e) => this.submit(e)}
@@ -138,7 +159,7 @@ class NewRecord extends Component {
                                 form={(
                                     <div className="form-group">
                                         <label>Ilość cukru:</label>
-                                        <input type="number" name="sugarAmount" className="form-control" 
+                                        <input type="number" name="sugarAmount" className="form-control" style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}} 
                                         placeholder={this.state.sugarAmount} onChange={e => this.change(e)}/>
                                     </div>
                                 )} /> : null}
@@ -147,9 +168,18 @@ class NewRecord extends Component {
                                 formSubmit={(e) => this.submit(e)}
                                 change={(e) => this.change(e)}
                                 form={(
-                                    <div className="form-group">
-                                        <label>Ilość j. insuliny:</label>
-                                        <input type="number" name="insulinAmount" className="form-control" onChange={e => this.change(e)}/>
+                                    <div>
+                                        <div className="form-group">
+                                            <label>Ilość j. insuliny:</label>
+                                            <input type="number" name="insulinAmount" className="form-control" onChange={e => this.change(e)} style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}} />
+                                        </div>
+                                        <div className="form-group pt-2">
+                                            <label>Typ insuliny:</label>
+                                            <select name="insulinType" className="form-control" onChange={e => this.change(e)}>
+                                                <option value="Posiłek">Posiłek</option>
+                                                <option value="Korekta">Korekta</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 )}
                                 /> : null}
@@ -161,11 +191,12 @@ class NewRecord extends Component {
                                     <div>
                                         <div className="form-group">
                                             <label>Ilość kalorii:</label>
-                                            <input type="number" name="kcal" className="form-control" onChange={e => this.change(e)}/>
+                                            <input type="number" name="kcal" className="form-control" onChange={e => this.change(e)} 
+                                                style={this.state.hightlight === "kcal" ? {"borderColor": "Red"} : {}} />
                                         </div>
                                         <div className="form-group">
                                             <label>Procentowa zawartość białek i tłuszczy:</label>
-                                            <input type="number" name="fats" min="0" max="100" value={this.state.fats} className="form-control" onChange={e => this.change(e)}/>
+                                            <input type="number" name="fats" min="0" max="100" value={this.state.fats} className="form-control" onChange={e => this.change(e)} />
                                         </div>
                                         <div className="form-group">
                                             <label>Procentowa zawartość węglowodanów:</label>
