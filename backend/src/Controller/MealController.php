@@ -10,8 +10,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Meal;
 use App\Entity\User;
+use App\Entity\MealPart;
 use App\Responses\Responses;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class MealController extends AbstractController implements TokenAuthenticatedController
 {
@@ -29,23 +31,38 @@ class MealController extends AbstractController implements TokenAuthenticatedCon
     {
         $user = new User();
         $meal = new Meal();
+        $entityManager = $this->getDoctrine()->getManager();
+        $users = $entityManager->getRepository(User::class);
         $user->unserialize($request->request->get("user"));
+        $owner = $users->findOneBy(["id" => $user->getId()]);
         $data = json_decode($request->getContent(), true);
-        $meal->setUser($user);
+        $meal->setUser($owner);
         isset($data["kcal"]) ? $meal->setKcal($data["kcal"]) : "";
         isset($data["fats"]) ? $meal->setFats($data["fats"]) : "";
         isset($data["carbohydrates"]) ? $meal->setCarbohydrates($data["carbohydrates"]) : "";
-        isset($data["date"]) ? $meal->setDate(new \DateTime($data["date"])) : "";
+        $date = new \DateTime($data["date"]);
+        $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
+        isset($data["date"]) ? $meal->setDate($date) : "";
         $errors = $validator->validate($meal);
         if(count($errors) > 0)
             return Responses::BadRequest($errors[0]->getMessage());
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $meals = $entityManager->getRepository(Meal::class);
-        // dziwne
-        $entityManager->merge($meal);
+        $entityManager->persist($meal);
         $entityManager->flush();
-        return Responses::Ok();
+
+        if(isset($data["meal"]))
+        {
+            foreach($data["meal"] as $part) {
+                $mealPart = new MealPart();
+                $mealPart->setKcal($part["kcal"]);
+                $mealPart->setName($part["name"]);
+                $mealPart->setWeight($part["weight"]);
+                $mealPart->setMeal($meal);
+                $entityManager->merge($mealPart);
+            }
+            $entityManager->flush();
+        }
+        return new Response("", 200);
     }
     
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -44,6 +46,16 @@ class Meal implements \JsonSerializable
      * @Assert\NotBlank(message = "Data nie może być pusta")
      */
     private $date;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\MealPart", mappedBy="meal", cascade={"remove"})
+     */
+    private $mealParts;
+
+    public function __construct()
+    {
+        $this->mealParts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -119,5 +131,36 @@ class Meal implements \JsonSerializable
             "date" => $this->date->format("Y-m-d H:i:s"),
             "id" => $this->id
         ];
+    }
+
+    /**
+     * @return Collection|MealPart[]
+     */
+    public function getMealParts(): Collection
+    {
+        return $this->mealParts;
+    }
+
+    public function addMealPart(MealPart $mealPart): self
+    {
+        if (!$this->mealParts->contains($mealPart)) {
+            $this->mealParts[] = $mealPart;
+            $mealPart->setMeal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMealPart(MealPart $mealPart): self
+    {
+        if ($this->mealParts->contains($mealPart)) {
+            $this->mealParts->removeElement($mealPart);
+            // set the owning side to null (unless already changed)
+            if ($mealPart->getMeal() === $this) {
+                $mealPart->setMeal(null);
+            }
+        }
+
+        return $this;
     }
 }

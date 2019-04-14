@@ -12,6 +12,7 @@ import Account from './accountPanel';
 import Statistics from './statistics.js';
 import Export from './export.js';
 import Home from './home';
+import DataEdit from './dataedit';
 
 const mql = window.matchMedia(`(min-width: 800px)`);
 
@@ -93,14 +94,11 @@ class Index extends Component {
                         <hr className="hr-title" />
                         <SidebarTitle name="Rekordy" />
                         <SidebarButton name="Dodaj rekord" link="/add_record" icon="fa fas fa-plus" />
+                        <SidebarButton name="Edycja danych" link="/dataedit" icon="fa fas fa-wrench" />
                         <hr className="hr-title" />
                         <SidebarTitle name="Ustawienia" />
                         <SidebarButton name="Konto" link="/account" icon="fa fas fa-cog" />
                         <SidebarButton name="Użytkownik" link="/userinfo" icon="fa fas fa-user" />
-                        {/* <hr className="hr-title" /> */}
-                        {/* <SidebarTitle name="Dane" /> */}
-                        {/* <SidebarButton name="Eksport" link="/export" icon="fa fas fa-download"/> */}
-                        {/* <SidebarButton name="Import" link="/import" icon="fa fas fa-upload"/> */}
                     </div>
                     <div className="col-12 mt-auto footer">
                         <hr/>
@@ -126,6 +124,7 @@ class Index extends Component {
                             <Route path="/account" exact component={Account} />
                             <Route path="/stats" exact component={Statistics} />
                             <Route path="/export" exact component={Export} />
+                            <Route path="/dataedit" exact component={DataEdit} />
                     </div>
                 }
                 sidebarClassName={"glukose-main"}

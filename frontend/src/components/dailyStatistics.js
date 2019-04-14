@@ -49,7 +49,8 @@ class DailyStatistics extends Component {
                 mid: 0,
                 high: 0
             },
-            error: null
+            error: null,
+            mealParts: {}
         }
     }
 
@@ -58,11 +59,12 @@ class DailyStatistics extends Component {
             if(key.code === "ArrowRight") {
                 this.setState({date: moment(this.state.date).add("days", 1).format("YYYY-MM-DD"),
                                range: moment(this.state.range).add("days", 1).format("YYYY-MM-DD")});
+                this.getData();
             } else if(key.code === "ArrowLeft") {
                 this.setState({date: moment(this.state.date).subtract("days", 1).format("YYYY-MM-DD"),
                                range: moment(this.state.range).subtract("days", 1).format("YYYY-MM-DD")});
+                this.getData();
             }
-            this.getData();
         }, false);
     }
     
@@ -77,6 +79,18 @@ class DailyStatistics extends Component {
             })
         if(e.target.name === "date" || e.target.name === "range")
             this.getData();
+    }
+
+    async mealDelete(id) {
+        try {
+            await Axios.patch(server + "delete_record/meal/" + id);
+            this.getData();
+        }
+        catch(e) {
+            this.setState({
+                error: e,
+            })
+        }
     }
 
     async mealUpdate(type, value, id) {
@@ -163,6 +177,12 @@ class DailyStatistics extends Component {
             let dose = await Axios.get(server + "find_record/dose/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
             let meal = await Axios.get(server + "find_record/meal/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
             let sugar = await Axios.get(server + "find_record/sugar/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
+            meal.data.values.map(async (row) => {
+                var kek = await Axios.get(server + "mealpart/" + row.id);
+                this.state.mealParts[row.date] = kek.data;
+                this.setState({mealParts: this.state.mealParts});
+            });
+            console.log(this.state.mealParts);
             this.setState({
                 sugars: sugar.data.values,
                 doses: dose.data.values,
@@ -435,103 +455,6 @@ class DailyStatistics extends Component {
                             </div>
                         </div>
                     </div>
-                <hr></hr>
-                <div className="row">
-                    <div className="col-sm-12 col-lg-6 col-md-6 col-xl-6 text-center table-responsive">
-                        <h2>Cukry:</h2>
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col" style={{width: "5%"}}>#</th>
-                                    <th scope="col" style={{width: "25%"}}>Data</th>
-                                    <th scope="col" style={{width: "15%"}}>Ilość</th>
-                                    <th scope="col" style={{width: "1%"}}></th>
-                                    <th scope="col" style={{width: "1%"}}></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.sugars.map((row, idx) => {
-                                    return (
-                                        <tr key={idx}>
-                                            <th scope="row">{idx+1}</th>
-                                            <td>{moment(row.date).format("YYYY-MM-DD HH:mm:ss")}</td>
-                                            <td><input type="number" placeholder={row.amount} 
-                                            onBlur={e => {this.sugarUpdate(e.target.value, row.id)}}/></td>
-                                            <td><button type="button" onClick={() => this.sugarDelete(row.id)}
-                                            className="btn glukose-main">Usuń</button></td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="col-sm-12 col-lg-6 col-md-6 col-xl-6 text-center table-responsive">
-                        <h2>Insulina:</h2>
-                        <table className="table text-center">
-                            <thead>
-                                <tr>
-                                    <th scope="col" style={{width: "5%"}}>#</th>
-                                    <th scope="col" style={{width: "25%"}}>Data</th>
-                                    <th scope="col" style={{width: "15%"}}>Ilość</th>
-                                    <th scope="col" style={{width: "15%"}}>Typ</th>
-                                    <th scope="col" style={{width: "1%"}}></th>
-                                    <th scope="col" style={{width: "1%"}}></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.doses.map((row, idx) => {
-                                    return (
-                                        <tr key={row.id}>
-                                            <th scope="row">{idx+1}</th>
-                                            <td>{moment(row.date).format("YYYY-MM-DD HH:mm:ss")}</td>
-                                            <td><input type="number" placeholder={row.amount} 
-                                            onBlur={e => {this.doseUpdate(e.target.value, row.type, row.id)}}/></td>
-                                            <td>{row.type}</td>
-                                            <td><button type="button" onClick={() => this.doseDelete(row.id)}
-                                            className="btn glukose-main">Usuń</button></td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-sm-12 col-lg-7 col-md-7 col-xl-7 text-center table-responsive">
-                        <h2>Posiłki:</h2>
-                        <table className="table text-center">
-                            <thead>
-                                <tr>
-                                <th scope="col" style={{width: "5%"}}>#</th>
-                                <th scope="col" style={{width: "20%"}}>Data</th>
-                                <th scope="col" style={{width: "15%"}}>Kcal</th>
-                                <th scope="col" style={{width: "15%"}}>Tłuscze/białka</th>
-                                <th scope="col" style={{width: "15%"}}>Węglowodany</th>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.meals.map((row, idx) => {
-                                    return (
-                                        <tr key={row.id}>
-                                            <th scope="row">{idx+1}</th>
-                                            <td>{moment(row.date).format("YYYY-MM-DD HH:mm:ss")}</td>
-                                            <td><input type="number" placeholder={row.kcal} 
-                                            onBlur={e => {this.mealUpdate("kcal", e.target.value, row.id)}}/></td>
-                                            <td><input type="number" placeholder={row.fats} 
-                                            onBlur={e => {this.mealUpdate("fats", e.target.value, row.id)}}/></td>
-                                            <td><input type="number" placeholder={row.carbohydrates} 
-                                            onBlur={e => {this.mealUpdate("carbohydrates", e.target.value, row.id)}}/></td>
-                                            <td><button type="button" onClick={() => this.mealDelete(row.id)}
-                                            className="btn glukose-main">Usuń</button></td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
                 </div>}
             </div>
         )

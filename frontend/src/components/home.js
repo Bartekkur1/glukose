@@ -16,7 +16,6 @@ class Home extends Component {
         try {
             var res = await Axios.get(server + "find_record/sugar/latest")
             var duration = moment.duration(moment(now()).diff(moment(res.data.date)));
-            // console.log(duration);
             duration.add(moment.duration("-01:00:00"))
         }
         catch(e) {

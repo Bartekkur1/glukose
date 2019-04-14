@@ -125,7 +125,7 @@ class MealRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('m')
             ->select('avg(m.kcal) as value')
-            ->andWhere('m.date > :date')
+            ->andWhere('m.date = :date')
             ->andWhere('m.user = :user')
             ->setParameter('user', $user)
             ->setParameter('date', $date)
@@ -165,7 +165,7 @@ class MealRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->andWhere('m.user = :user')
             ->setParameter('user', $user)
-            ->andWhere('m.date > :date')
+            ->andWhere('m.date = :date')
             ->setParameter('date', $date)
             ->orderBy('m.date', 'ASC')
             ->getQuery()

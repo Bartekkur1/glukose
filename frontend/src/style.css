@@ -219,3 +219,19 @@ td input[type="number"] {
 table {
     font-size: 1.2rem;
 }
+
+.mealNewPart {
+    background: #e9ecef;
+    border: 0;
+    text-align: center;
+    font-size: 3vh;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    outline:none;
+    box-shadow:none;
+}
+
+.search-bar input select {
+    font-size: 2vh;
+}

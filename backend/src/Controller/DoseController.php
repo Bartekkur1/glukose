@@ -33,7 +33,9 @@ class DoseController extends AbstractController implements TokenAuthenticatedCon
         if(!empty($data["amount"]))
             isset($data["amount"]) ? $dose->setAmount($data["amount"]) : "";
         isset($data["type"]) ? $dose->setType($data["type"]) : "";
-        isset($data["date"]) ? $dose->setDate(new \DateTime($data["date"])) : "";
+        $date = new \DateTime($data["date"]);
+        $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
+        isset($data["date"]) ? $dose->setDate($date) : "";
         $errors = $validator->validate($dose);
         if(count($errors) > 0)
             return Responses::BadRequest(["error" => $errors[0]->getMessage(), "name" => $errors[0]->getPropertyPath()]);  

@@ -64,6 +64,7 @@ class AuthController extends AbstractController implements TokenAuthenticatedCon
 
         $token = JWT::encode(array([
             "user" => $foundUser->serialize(),
+            "loginTime" => time(),
             // "exp" => time() + 30 * 60,
         ]), $_ENV["JWT_KEY"]);
         $foundUser->setToken($token);

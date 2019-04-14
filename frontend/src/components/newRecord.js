@@ -25,11 +25,6 @@ class RecordForm extends Component {
         }
     }
 
-    componentDidMount() {
-        var kek = moment(now());
-        console.log(kek);
-    }
-
     render() {
         return (
             <form onSubmit={e => this.props.formSubmit(e)}>
@@ -63,7 +58,9 @@ class NewRecord extends Component {
             error: null,
             sugarAmount: 110,
             hightlight: null,
-            insulinType: "Posiłek"
+            insulinType: "Posiłek",
+            mealParts: [],
+            meal: {},
         }
     }
 
@@ -94,10 +91,11 @@ class NewRecord extends Component {
             payload["kcal"] = this.state.kcal;
             payload["fats"] = this.state.fats;
             payload["carbohydrates"] = 100 - this.state.fats;
+            if(this.state.meal[0])
+                payload["meal"] = this.state.meal;
             api = "meal";
         }
         if(this.state.date) {
-            // var d = new Date(this.state.date);
             payload["date"] = moment(this.state.date);
         }
         else 
@@ -107,11 +105,12 @@ class NewRecord extends Component {
         try {
             this.setState({loading: true});
             let res = await Axios.post(server + api, payload);
+            console.log(res);
             res["title"] = "rekord dodany pomyślnie";
-            // console.log(res);
             this.setState({
                 error: res,
-                loading: false
+                loading: false,
+                meal: {}
             })
         }
         catch(e) {
@@ -122,6 +121,40 @@ class NewRecord extends Component {
             if(e.response.data.name)
                 this.setState({hightlight: e.response.data.name});
         }
+    }
+
+    mealAppend(index, value, type) {
+        var arr = this.state.meal;
+        if(!arr[index])
+            arr[index] = {}
+        arr[index][type] = value;
+        this.setState({meal: this.state.meal});
+    }
+
+    getMealPart(index) {
+        return (
+            <div key={index} className="row pl-3 pr-3 p-1">
+                <div className="col-6 p-0">
+                    <input onChange={e => {this.mealAppend(index, e.target.value, "name")}} 
+                        type="text" className="form-control" placeholder="Nazwa" required={true}/>
+                </div>
+                <div className="col-3 p-0">
+                    <input onChange={e => {this.mealAppend(index, e.target.value, "weight")}} 
+                        type="number" className="form-control" placeholder="Waga (g)" required={true}/>
+                </div>
+                <div className="col-2 p-0">
+                    <input onChange={e => {this.mealAppend(index, e.target.value, "kcal")}} 
+                        type="number" className="form-control" placeholder="Kalorie" required={true}/>
+                </div>
+                <div className="col-1 p-0">
+                    <i className="p-1 fa-2x fa fa-trash" aria-hidden="true" onClick={() => {
+                        delete this.state.mealParts[index];
+                        delete this.state.meal[index];
+                        this.setState({mealParts: this.state.mealParts, meal: this.state.meal});
+                    }}></i>
+                </div>
+            </div>
+        )
     }
 
     render() {
@@ -201,6 +234,19 @@ class NewRecord extends Component {
                                         <div className="form-group">
                                             <label>Procentowa zawartość węglowodanów:</label>
                                             <input type="number" name="carbohydrates" readOnly={true} value={100 - this.state.fats} className="form-control" onChange={e => this.change(e)}/>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Skład:</label>
+                                            {this.state.mealParts.map((element) => {
+                                                return element;
+                                            })}<br/>
+                                            <div className="text-center">
+                                                <i className="fa fa-2x fas fa-plus" onClick={() => {
+                                                    var arr = this.state.mealParts;
+                                                    arr.push(this.getMealPart(arr.length));
+                                                    this.setState({mealParts: arr});
+                                                }}></i>
+                                            </div>
                                         </div>
                                     </div>
                                 )}

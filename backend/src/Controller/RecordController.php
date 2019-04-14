@@ -106,7 +106,7 @@ class RecordController extends AbstractController implements TokenAuthenticatedC
                 return new JsonResponse([
                     "avg" => $object->AvgByDate($date, $user->getId())[0],
                     "max" => $object->MaxDate($user->getId(), $date)[0],
-                    "min" => $object->Min($user->getId(), $date)[0],
+                    "min" => $object->MinDate($user->getId(), $date)[0],
                     "values" => $object->AllByDate($date, $user->getId())
                 ], JsonResponse::HTTP_OK);
         }

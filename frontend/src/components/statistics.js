@@ -141,6 +141,7 @@ class Statistics extends Component {
     fillHours(arr) {
         for(var i = 0; i <= 24; i+=1) {
             if(arr[i])
+                // eslint-disable-next-line
                 if(arr[i].hour != i) {
                     arr.splice(i, 0, {value: "0", hour: i.toString()});
                     arr.join();
@@ -312,7 +313,7 @@ class Statistics extends Component {
                                             {
                                                 label: 'kcal',
                                                 yAxisID: 'kcal',
-                                                backgroundColor: ["yellow", "yellow", "yellow", "yellow"],
+                                                backgroundColor: ["blue", "blue", "blue", "blue"],
                                                 data: this.dailyParse(this.state.meals, "meal")
                                             },
                                             ]
