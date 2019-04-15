@@ -125,7 +125,7 @@ class SugarRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('s')
             ->select('avg(s.amount) as value')
-            ->andWhere('s.date > :date')
+            ->andWhere('s.date = :date')
             ->setParameter('date', $date)
             ->andWhere('s.user = :user')
             ->setParameter('user', $user)
@@ -164,7 +164,7 @@ class SugarRepository extends ServiceEntityRepository
     public function AllByDate($date, $user)
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.date > :date')
+            ->andWhere('s.date = :date')
             ->andWhere('s.user = :user')
             ->setParameter('user', $user)
             ->setParameter('date', $date)

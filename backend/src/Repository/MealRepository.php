@@ -162,12 +162,12 @@ class MealRepository extends ServiceEntityRepository
 
     public function AllByDate($date, $user)
     {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.user = :user')
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.date = :date')
+            ->andWhere('s.user = :user')
             ->setParameter('user', $user)
-            ->andWhere('m.date = :date')
             ->setParameter('date', $date)
-            ->orderBy('m.date', 'ASC')
+            ->orderBy('s.date', 'ASC')
             ->getQuery()
             ->execute();
     }

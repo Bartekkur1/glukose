@@ -92,6 +92,7 @@ class MealPart implements \JsonSerializable
     public function jsonSerialize() : array
     {
         return [
+            "id" => $this->id,
             "kcal" => $this->kcal,
             "weight" => $this->weight,
             "name" => $this->name

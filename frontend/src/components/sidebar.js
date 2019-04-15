@@ -13,6 +13,9 @@ import Statistics from './statistics.js';
 import Export from './export.js';
 import Home from './home';
 import DataEdit from './dataedit';
+import Meal from './meal';
+import Sugar from './sugar';
+import Dose from './dose';
 
 const mql = window.matchMedia(`(min-width: 800px)`);
 
@@ -125,6 +128,9 @@ class Index extends Component {
                             <Route path="/stats" exact component={Statistics} />
                             <Route path="/export" exact component={Export} />
                             <Route path="/dataedit" exact component={DataEdit} />
+                            <Route path="/meal/:id" component={Meal} />
+                            <Route path="/sugar/:id" component={Sugar} />
+                            <Route path="/dose/:id" component={Dose} />
                     </div>
                 }
                 sidebarClassName={"glukose-main"}

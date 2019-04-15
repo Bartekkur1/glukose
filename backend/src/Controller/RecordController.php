@@ -102,21 +102,24 @@ class RecordController extends AbstractController implements TokenAuthenticatedC
                     "min" => min($arr),
                 ]);
             }
-            else
-                return new JsonResponse([
-                    "avg" => $object->AvgByDate($date, $user->getId())[0],
-                    "max" => $object->MaxDate($user->getId(), $date)[0],
-                    "min" => $object->MinDate($user->getId(), $date)[0],
-                    "values" => $object->AllByDate($date, $user->getId())
-                ], JsonResponse::HTTP_OK);
+
+            return new JsonResponse([
+                "avg" => $object->AvgByDate($date, $user->getId())[0],
+                "max" => $object->MaxDate($user->getId(), $date)[0],
+                "min" => $object->MinDate($user->getId(), $date)[0],
+                "values" => $object->AllByDate($date, $user->getId())
+            ], JsonResponse::HTTP_OK);
         }
         else if($date && $range)
-            return new JsonResponse([
-                "avg" => $object->AvgByRange($date, $range, $user->getId())[0],
-                "max" => $object->MaxDateRange($user->getId(), $date, $range)[0],
-                "min" => $object->MinDateRange($user->getId(), $date, $range)[0],
-                "values" => $object->AllByRange($date, $range, $user->getId())
-            ], JsonResponse::HTTP_OK);
+            if($date == "id")
+                return new JsonResponse(["value" => $object->findOneBy(["id" => $range])]);
+            else
+                return new JsonResponse([
+                    "avg" => $object->AvgByRange($date, $range, $user->getId())[0],
+                    "max" => $object->MaxDateRange($user->getId(), $date, $range)[0],
+                    "min" => $object->MinDateRange($user->getId(), $date, $range)[0],
+                    "values" => $object->AllByRange($date, $range, $user->getId())
+                ], JsonResponse::HTTP_OK);
 
         return Responses::BadRequest();
     }

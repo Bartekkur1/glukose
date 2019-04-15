@@ -3,6 +3,7 @@ import Axios from 'axios';
 import moment from 'moment';
 import {server} from '../../package.json';
 import now from 'moment';
+import { Redirect } from "react-router-dom";
 
 class DataEdit extends Component {
     constructor(props) {
@@ -15,51 +16,64 @@ class DataEdit extends Component {
         }
     }
 
+    redirect(id) {
+        var link = "/" + this.state.type + "/" + id
+        this.setState({
+            redirect: <Redirect to={link} />
+        })
+    }
+
+    async deleteRecord(id) {
+        try {
+            let res = await Axios.get(server + "delete_record/" + this.state.type + "/" + id);
+            delete this.state.found[id];
+            this.setState({found: this.state.found});
+        }
+        catch(e) {
+            console.log(e);
+        }
+    }
+
     renderSearch() {
-        if(this.state.type === "meal") {
-            return (
-                <div className="table-responsive row p-3 stats-info">
-                    <table className="table text-center stats-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Data</th>
-                                <th scope="col">Kcal</th>
-                                <th scope="col">Tłuszcze</th>
-                                <th scope="col">Węglowodany</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.found.map((item, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{++index}</td>
-                                        <td>{item.date}</td>
-                                        <td>{item.kcal}</td>
-                                        <td>{item.fats}</td>
-                                        <td>{item.carbohydrates}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-            );
-        }
-        else if(this.state.type === "sugar") {
-
-        }
-        else if(this.state.type === "dose") {
-
-        }
+        return (
+            <div className="table-responsive row p-3 stats-info">
+                {this.state.redirect}
+                <table className="table text-center stats-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Identyfikator</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">#</th>
+                            <th scope="col">#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.state.found.map((item, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td>{++index}</td>
+                                    <td>{item.date}</td>
+                                    <td><input type="button" className="btn glukose-main" value="Edytuj" onClick={() => this.redirect(item.id)}/></td>
+                                    <td><input type="button" className="btn btn-danger" value="Usuń" onClick={() => this.deleteRecord(item.id)}/></td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        );
     }
 
     async searchRecords() {
         this.setState({loading: true, found: null});
         try {
-            let res = await Axios.get(server + "find_record/" + this.state.type + "/" + this.state.date);
-            this.setState({found: res.data.values});
-            console.log(res);
+            let res = await Axios.get(server + "find_record/" + this.state.type + "/" + this.state.date + "/" + moment(this.state.date).add(1, "days").format("YYYY-MM-DD"));
+            var arr = [];
+            res.data.values.map((value) => {
+                arr[value.id] = value;
+            });
+            this.setState({found: arr});
+            this.renderSearch();
         }
         catch(e) {
             console.log(e);
@@ -68,10 +82,11 @@ class DataEdit extends Component {
     }
 
     change(e) {
+        if(e.target.name === "type")
+            this.setState({found: null});
         this.setState({ 
             [e.target.name]: e.target.value
         });
-        console.log(this.state);
     }
 
     render() {
@@ -110,7 +125,7 @@ class DataEdit extends Component {
                 <div className="row">
                     <div className="col-sm-12 col-lg-9 col-md-9 col-xl-12 mx-auto mt-3">
                         {this.state.found ? 
-                            <div className="home_box mt-5">
+                            <div className=" mt-5">
                                 {this.renderSearch()}
                             </div>
                         : ""}

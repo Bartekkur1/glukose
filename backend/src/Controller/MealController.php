@@ -75,6 +75,7 @@ class MealController extends AbstractController implements TokenAuthenticatedCon
         $data = json_decode($request->getContent(), true);
         $entityManager = $this->getDoctrine()->getManager();
         $meals = $entityManager->getRepository(Meal::class);
+        
         if(!isset($data["id"]))
             return Responses::BadRequest("Nie podano id");
         if(!$meal = $meals->findOneBy(["id" => $data["id"]]))
@@ -84,6 +85,7 @@ class MealController extends AbstractController implements TokenAuthenticatedCon
             return Responses::PermisionDenied();
     
         !empty($data["kcal"]) ? $meal->setKcal($data["kcal"]) : "";
+        !empty($data["date"]) ? $meal->setDate($data["date"]) : "";
         !empty($data["fats"]) ? $meal->setFats($data["fats"]) : "";
         !empty($data["carbohydrates"]) ? $meal->setCarbohydrates($data["carbohydrates"]) : "";
         $entityManager->persist($meal);
