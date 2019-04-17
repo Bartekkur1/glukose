@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Entity\Sugar;
 use App\Entity\Dose;
 use App\Entity\Meal;
+use App\Entity\MealPart;
 use App\Responses\Responses;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -41,6 +42,8 @@ class RecordController extends AbstractController implements TokenAuthenticatedC
             $object = $entityManager->getRepository(Dose::class);
         else if($type == "meal")
             $object = $entityManager->getRepository(Meal::class);
+        else if($type == "mealPart")
+            $object = $entityManager->getRepository(MealPart::class);
         else
             return Responses::BadRequest();
 

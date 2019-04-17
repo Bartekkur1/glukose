@@ -48,7 +48,7 @@ class Meal implements \JsonSerializable
     private $date;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MealPart", mappedBy="meal", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\MealPart", mappedBy="meal", cascade={"persist"})
      */
     private $mealParts;
 
@@ -129,7 +129,8 @@ class Meal implements \JsonSerializable
             "fats" => $this->fats,
             "carbohydrates" => $this->carbohydrates,
             "date" => $this->date->format("Y-m-d H:i:s"),
-            "id" => $this->id
+            "id" => $this->id,
+            "mealParts" => [$this->mealParts]
         ];
     }
 

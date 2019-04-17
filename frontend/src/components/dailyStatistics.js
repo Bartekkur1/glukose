@@ -81,93 +81,6 @@ class DailyStatistics extends Component {
             this.getData();
     }
 
-    async mealDelete(id) {
-        try {
-            await Axios.patch(server + "delete_record/meal/" + id);
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
-    async mealUpdate(type, value, id) {
-        var data = {}
-        if(type === "kcal")
-            data["kcal"] = value
-        if(type === "fats")
-            data["fats"] = value
-        if(type === "carbohydrates")
-            data["carbohydrates"] = value
-        data["id"] = id
-        try {
-            await Axios.patch(server + "meal", data);
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
-    async doseUpdate(amount, type, id) {
-        try {
-            await Axios.patch(server + "dose", {
-                amount: amount,
-                type: type,
-                id: id
-            });
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
-    async doseDelete(id) {
-        try {
-            await Axios.delete(server + "delete_record/dose/" + id);
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
-    async sugarUpdate(amount, id) {
-        try {
-            await Axios.patch(server + "sugar", {
-                amount: amount,
-                id: id
-            });
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
-    async sugarDelete(id) {
-        try {
-            await Axios.delete(server + "delete_record/sugar/" + id);
-            this.getData();
-        }
-        catch(e) {
-            this.setState({
-                error: e,
-            })
-        }
-    }
-
     async getData() {
         this.setState({
             miniloading: true
@@ -177,12 +90,6 @@ class DailyStatistics extends Component {
             let dose = await Axios.get(server + "find_record/dose/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
             let meal = await Axios.get(server + "find_record/meal/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
             let sugar = await Axios.get(server + "find_record/sugar/" + this.state.date + "/" + moment(this.state.range).add("days", 1).format("YYYY-MM-DD"));
-            meal.data.values.map(async (row) => {
-                var kek = await Axios.get(server + "mealpart/" + row.id);
-                this.state.mealParts[row.date] = kek.data;
-                this.setState({mealParts: this.state.mealParts});
-            });
-            console.log(this.state.mealParts);
             this.setState({
                 sugars: sugar.data.values,
                 doses: dose.data.values,
@@ -203,15 +110,16 @@ class DailyStatistics extends Component {
                     meal: meal.data.max
                 },
             });
+            console.log(this.state.meals);
             var low = 0;
             var mid = 0;
             var high = 0;
             this.state.sugars.forEach(record => {
                 if(record.amount < 70 && record.amount > 0)
                     low++;
-                if(record.amount < 140 && record.amount > 70)
+                if(record.amount < 180 && record.amount > 70)
                     mid++;
-                if(record.amount > 140)
+                if(record.amount > 180)
                     high++;
             });
             this.setState({
@@ -221,6 +129,7 @@ class DailyStatistics extends Component {
                     high: high
                 }
             });
+            // console.log(this.state.mealParts);
         }
         catch(e)
         {
@@ -455,10 +364,29 @@ class DailyStatistics extends Component {
                             </div>
                         </div>
                     </div>
+                    <div className="row">
+                    </div>
                 </div>}
             </div>
         )
     }
 }
 
+{/* <div className="col-sm-12 col-lg-5 col-md-5 col-xl-5 mx-auto box-shadow mt-5">
+<h4 className="p-2">Posiłek z {moment(mealPart.date).format("YYYY-MM-DD HH:mm")}</h4>
+<div className="table-responsive">
+    <table className="table text-center">
+        <thead >
+            <th style={{fontWeight: "normal"}}>Nazwa</th>
+            <th style={{fontWeight: "normal"}}>Waga</th>
+            <th style={{fontWeight: "normal"}}>Kalorie</th>
+        </thead>
+        <tbody>
+            <td>Kek</td>
+            <td>123</td>
+            <td>123</td>
+        </tbody>
+    </table>
+</div>
+</div> */}
 export default DailyStatistics;

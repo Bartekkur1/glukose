@@ -105,8 +105,7 @@ class NewRecord extends Component {
         try {
             this.setState({loading: true});
             let res = await Axios.post(server + api, payload);
-            console.log(res);
-            res["title"] = "rekord dodany pomyślnie";
+            res["title"] = "Rekord dodany pomyślnie";
             this.setState({
                 error: res,
                 loading: false,
@@ -183,7 +182,7 @@ class NewRecord extends Component {
                                 segmentChange={() => this.setState({segment: "Posiłek"})} />
                             </div>  
                             <div className="row">
-                                <div className="col-12 p-2 mx-auto record-panel">
+                                <div className="col-12 p-0 pt-2 mx-auto record-panel">
                                 <Error error={this.state.error} close={() => this.setState({error: false})} />
                                 {this.state.segment === "Cukier" ? 
                                 <RecordForm 

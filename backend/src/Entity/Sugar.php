@@ -81,7 +81,7 @@ class Sugar implements \JsonSerializable
         return [
             "amount" => $this->amount,
             "date" => $this->date->format("Y-m-d H:i:s"),
-            "id" => $this->id
+            "id" => $this->id,
         ];
     }
 }

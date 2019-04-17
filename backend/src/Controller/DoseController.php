@@ -67,6 +67,9 @@ class DoseController extends AbstractController implements TokenAuthenticatedCon
         if($dose->getUser()->getId() != $user->getId())
             return Responses::PermisionDenied();
 
+        $date = new \DateTime($data["date"]);
+        $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
+        isset($data["date"]) ? $dose->setDate($date) : "";
         $dose->setAmount($data["amount"]);
         $dose->setType($data["type"]);
         $entityManager->persist($dose);

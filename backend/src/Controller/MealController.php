@@ -84,8 +84,10 @@ class MealController extends AbstractController implements TokenAuthenticatedCon
         if($meal->getUser()->getId() != $user->getId())
             return Responses::PermisionDenied();
     
+        $date = new \DateTime($data["date"]);
+        $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
         !empty($data["kcal"]) ? $meal->setKcal($data["kcal"]) : "";
-        !empty($data["date"]) ? $meal->setDate($data["date"]) : "";
+        !empty($data["date"]) ? $meal->setDate($date) : "";
         !empty($data["fats"]) ? $meal->setFats($data["fats"]) : "";
         !empty($data["carbohydrates"]) ? $meal->setCarbohydrates($data["carbohydrates"]) : "";
         $entityManager->persist($meal);

@@ -71,6 +71,9 @@ class SugarController extends AbstractController implements TokenAuthenticatedCo
             return Responses::PermisionDenied();
 
         $sugar->setAmount($data["amount"]);
+        $date = new \DateTime($data["date"]);
+        $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
+        isset($data["date"]) ? $sugar->setDate($date) : "";
         $entityManager->persist($sugar);
         $entityManager->flush();
         return Responses::Ok();

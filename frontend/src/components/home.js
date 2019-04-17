@@ -67,7 +67,7 @@ class Home extends Component {
                             </div>
                             :
                             <div className="home_box p-4">
-                                <span style={{"fontWeight": "bold", "fontSize": "10vh"}}>
+                                <span style={{"fontWeight": "bold", "fontSize": "7em"}}>
                                     {this.state.duration}
                                 </span>
                                 <h4>

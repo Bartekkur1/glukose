@@ -12,6 +12,7 @@ class DataEdit extends Component {
             date: moment(now()).format("YYYY-MM-DD"),
             type: "sugar",
             loading: false,
+            bigLoading: false,
             found: null,
         }
     }
@@ -25,9 +26,10 @@ class DataEdit extends Component {
 
     async deleteRecord(id) {
         try {
+            this.setState({bigLoading: true});
             let res = await Axios.get(server + "delete_record/" + this.state.type + "/" + id);
             delete this.state.found[id];
-            this.setState({found: this.state.found});
+            this.setState({found: this.state.found, bigLoading: false});
         }
         catch(e) {
             console.log(e);
@@ -51,8 +53,8 @@ class DataEdit extends Component {
                         {this.state.found.map((item, index) => {
                             return (
                                 <tr key={index}>
-                                    <td>{++index}</td>
-                                    <td>{item.date}</td>
+                                    <td>{index}</td>
+                                    <td>{moment(item.date).format("YYYY-MM-DD HH:mm")}</td>
                                     <td><input type="button" className="btn glukose-main" value="Edytuj" onClick={() => this.redirect(item.id)}/></td>
                                     <td><input type="button" className="btn btn-danger" value="Usuń" onClick={() => this.deleteRecord(item.id)}/></td>
                                 </tr>
@@ -65,7 +67,7 @@ class DataEdit extends Component {
     }
 
     async searchRecords() {
-        this.setState({loading: true, found: null});
+        this.setState({bigLoading: true, found: null});
         try {
             let res = await Axios.get(server + "find_record/" + this.state.type + "/" + this.state.date + "/" + moment(this.state.date).add(1, "days").format("YYYY-MM-DD"));
             var arr = [];
@@ -78,7 +80,7 @@ class DataEdit extends Component {
         catch(e) {
             console.log(e);
         }
-        this.setState({loading: false});
+        this.setState({bigLoading: false});
     }
 
     change(e) {
@@ -90,16 +92,16 @@ class DataEdit extends Component {
     }
 
     render() {
+        if(this.state.bigLoading)
+            return(                
+                <div className="row m-0 h-100 glukose-off">
+                    <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
+                </div>)
         return(
             <div className="container-fluid sidebar-small h-100">
                 <div className="row text-center p-2">
                     <div className="col-sm-12 col-lg-9 col-md-9 col-xl-4 mx-auto mt-3">
                         <div className="home_box p-4 mt-5">
-                            {this.state.loading ? 
-                                <div className="row m-0 h-100">
-                                    <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
-                                </div>
-                            :
                             <div>
                                 <h2>
                                     Znajdz rekord
@@ -118,7 +120,7 @@ class DataEdit extends Component {
                                     <input type="button" value="Szukaj" className="btn glukose-main mt-3" 
                                         onClick={() => {this.searchRecords()}}/>
                                 </div>
-                            </div>}
+                            </div>
                         </div>
                     </div>
                 </div>
