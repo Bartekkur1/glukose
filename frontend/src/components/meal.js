@@ -163,7 +163,7 @@ class Meal extends Component {
                             <div className="col-9 mx-auto userinfo-panel box-shadow mt-1 mb-5 pl-0 pr-0 mr-0 ml-0">
                                 <div className="jumbotron pt-3 pb-3 mb-0" style={{"backgroundColor": "white"}} >
                                     <div className="text-right">
-                                        <i class="fa fa-2x fa-trash" onClick={() => {this.mealPartDelete(mealPart.id)}} />
+                                        <i className="fa fa-2x fa-trash" onClick={() => {this.mealPartDelete(mealPart.id)}} />
                                     </div>
                                     <div className="form-group">
                                         <label>Nazwa:</label>

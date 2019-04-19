@@ -54,6 +54,37 @@ class DailyStatistics extends Component {
         }
     }
 
+    renderMealPart(meal) {
+        console.log(meal.mealParts);
+        return(
+            <div key={meal.id} className="row">
+                <div className="col-sm-12 col-md-6 col-xl-6 mx-auto box-shadow p-0 mt-5">
+                    <h4 className="p-2">Posiłek z {meal.date}</h4>
+                        <div className="table-responsive row m-0">
+                        <table className="table text-center small-table">
+                            <thead className="small-table">
+                                <tr className="p-0">
+                                    <th scope="col">Nazwa</th>
+                                    <th scope="col">Waga (g)</th>
+                                    <th scope="col">Kalorie</th>
+                                </tr>
+                            </thead>
+                            <tbody className="p-0">
+                                {meal.mealParts.map((mealPart) => {
+                                    return(<tr key={mealPart.id}>
+                                        <td>{mealPart.name}</td>
+                                        <td>{mealPart.weight}</td>
+                                        <td>{mealPart.kcal}</td>
+                                    </tr>)
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     componentWillMount() {
         window.addEventListener("keydown", (key) => {
             if(key.code === "ArrowRight") {
@@ -110,7 +141,6 @@ class DailyStatistics extends Component {
                     meal: meal.data.max
                 },
             });
-            console.log(this.state.meals);
             var low = 0;
             var mid = 0;
             var high = 0;
@@ -129,11 +159,9 @@ class DailyStatistics extends Component {
                     high: high
                 }
             });
-            // console.log(this.state.mealParts);
         }
         catch(e)
         {
-            // console.log(e.response);
             this.setState({error: e});
             this.setState({loading: false});
         }  
@@ -364,29 +392,13 @@ class DailyStatistics extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="row">
-                    </div>
+                        {this.state.meals.map((meal) => {
+                            return this.renderMealPart(meal);
+                        })}
                 </div>}
             </div>
         )
     }
 }
 
-{/* <div className="col-sm-12 col-lg-5 col-md-5 col-xl-5 mx-auto box-shadow mt-5">
-<h4 className="p-2">Posiłek z {moment(mealPart.date).format("YYYY-MM-DD HH:mm")}</h4>
-<div className="table-responsive">
-    <table className="table text-center">
-        <thead >
-            <th style={{fontWeight: "normal"}}>Nazwa</th>
-            <th style={{fontWeight: "normal"}}>Waga</th>
-            <th style={{fontWeight: "normal"}}>Kalorie</th>
-        </thead>
-        <tbody>
-            <td>Kek</td>
-            <td>123</td>
-            <td>123</td>
-        </tbody>
-    </table>
-</div>
-</div> */}
 export default DailyStatistics;

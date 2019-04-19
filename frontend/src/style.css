@@ -236,3 +236,15 @@ table {
 .search-bar input select {
     font-size: 2vh;
 }
+
+.small-table td{
+    padding: 4px;
+    font-size: 18px !important;
+    font-weight: normal !important;
+}
+
+.small-table th{
+    padding: 4px;
+    font-size: 18px !important;
+    font-weight: normal !important;
+}

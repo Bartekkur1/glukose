@@ -130,7 +130,7 @@ class Meal implements \JsonSerializable
             "carbohydrates" => $this->carbohydrates,
             "date" => $this->date->format("Y-m-d H:i:s"),
             "id" => $this->id,
-            "mealParts" => [$this->mealParts]
+            "mealParts" => $this->mealParts->toArray()
         ];
     }
 
