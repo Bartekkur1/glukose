@@ -149,7 +149,16 @@ class User implements UserInterface, \Serializable
 
     }
 
-    public function serialize() 
+    public static function fromRegisterForm($data)
+    {
+        $user = new User();
+        $user->setUsername($data["username"]);
+        $user->setEmail($data["email"]);
+        $user->setToken("");
+        return $user;
+    }
+
+    public function serialize()
     {
         return serialize([
             $this->id,

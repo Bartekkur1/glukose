@@ -9,7 +9,9 @@
         "doctrine/annotations": "^1.6",
         "firebase/php-jwt": "^5.0",
         "nelmio/cors-bundle": "^1.5",
+        "phpunit/phpunit": "^8.1",
         "symfony/apache-pack": "^1.0",
+        "symfony/browser-kit": "4.2.*",
         "symfony/console": "4.2.*",
         "symfony/dotenv": "4.2.*",
         "symfony/flex": "^1.1",
@@ -66,6 +68,7 @@
         }
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^3.1"
+        "doctrine/doctrine-fixtures-bundle": "^3.1",
+        "symfony/web-server-bundle": "4.2.*"
     }
 }

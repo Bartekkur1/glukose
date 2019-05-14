@@ -5,7 +5,7 @@ namespace App\Responses;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class Responses 
+class Responses
 {
     public static function BadRequest($error)
     {
@@ -18,9 +18,9 @@ class Responses
             JSON_UNESCAPED_UNICODE), 401);
     }
 
-    public static function Ok()
+    public static function Ok($message = "")
     {
-        return new Response("", 200);
+        return new Response($message, 200);
     }
 
     public static function NotFound()
