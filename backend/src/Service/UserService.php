@@ -14,12 +14,14 @@ class UserService
     private $em;
     private $encoder;
     private $validator;
+    private $userRepo;
 
     public function __construct(EntityManagerInterface $em, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder)
     {
         $this->em = $em;
         $this->encoder = $encoder;
         $this->validator = $validator;
+        $this->userRepo = $this->em->getRepository(User::class);
     }
 
     public function createUser($data)
@@ -50,8 +52,7 @@ class UserService
     {
         $unserialized = new User();
         $unserialized->unserialize($serialized);
-        $userRepo = $this->em->getRepository(User::class);
-        if(!$user = $userRepo->findOneBy(["username" => $unserialized->getUsername()]))
+        if(!$user = $this->userRepo->findOneBy(["username" => $unserialized->getUsername()]))
             return null;
         if(!$this->encoder->isPasswordValid($user, $unserialized->getPassword()))
             return null;
@@ -71,16 +72,14 @@ class UserService
 
     public function isUserEmailFree($email)
     {
-        $userRepo = $this->em->getRepository(User::class);
-        if($emailFound = $userRepo->findOneBy(["email" => $email]))
+        if($emailFound = $this->userRepo->findOneBy(["email" => $email]))
             return false;
         return true;
     }
 
     public function isUsernameFree($username)
     {
-        $userRepo = $this->em->getRepository(User::class);
-        if($nameFound = $userRepo->findOneBy(["username" => $username]))
+        if($nameFound = $this->userRepo->findOneBy(["username" => $username]))
             return false;
         return true;
     }

@@ -6,16 +6,6 @@
 parameters:
 
 services:
-    application_frontend.listener.player:
-        class: App\EventListener\ExceptionListener
-        arguments: ['@doctrine.orm.entity_manager']
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
-    error.exception_listener:
-        class: App\EventListener\ExceptionListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
-    # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.

@@ -90,7 +90,7 @@ class User implements UserInterface, \Serializable
         return $this->username;
     }
 
-    public function setUsername(string $username): self
+    public function setUsername($username)
     {
         $this->username = $username;
 
@@ -114,7 +114,7 @@ class User implements UserInterface, \Serializable
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail($email)
     {
         $this->email = $email;
 
@@ -136,7 +136,7 @@ class User implements UserInterface, \Serializable
     public function getRoles() 
     {
         return [
-            "ROLE_USER"
+            "ROLE_ADMIN"
         ];
     }
     public function getSalt() 
@@ -164,7 +164,7 @@ class User implements UserInterface, \Serializable
             $this->id,
             $this->username,
             $this->email,
-            $this->password,
+            // $this->password,
             // $this->token
         ]);
     }
@@ -173,8 +173,7 @@ class User implements UserInterface, \Serializable
     {
         list($this->id,
             $this->username,
-            $this->email,
-            $this->password) = unserialize($serialized);
+            $this->email) = unserialize($serialized);
     }
 
     /**

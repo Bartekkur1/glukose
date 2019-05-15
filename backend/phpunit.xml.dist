@@ -16,7 +16,8 @@
 
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+            <file>tests/Controller/UserControllerTest.php</file>
+            <file>tests/Controller/AuthControllerTest.php</file>
         </testsuite>
     </testsuites>
 
