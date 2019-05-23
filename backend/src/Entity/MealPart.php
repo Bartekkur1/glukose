@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MealPartRepository")
  */
-class MealPart implements \JsonSerializable
+class MealPart implements \JsonSerializable, IUpdateable
 {
     /**
      * @ORM\Id()
@@ -97,6 +97,13 @@ class MealPart implements \JsonSerializable
             "weight" => $this->weight,
             "name" => $this->name
         ];
+    }
+
+    public function updateFromInput($input)
+    {
+        !empty($input["name"]) ? $this->setName($input["name"]) : "";
+        !empty($input["kcal"]) ? $this->setKcal($input["kcal"]) : "";
+        !empty($input["weight"]) ? $this->setWeight($input["weight"]) : "";
     }
 
 }

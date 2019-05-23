@@ -15,11 +15,15 @@ use Symfony\Component\HttpFoundation\Request;
 class MealPartController extends AbstractController
 {
 
-    private $entityManager;
-
-    function __construct(EntityManagerInterface $entityManager)
+    private $em;
+    private $mealPartRepo;
+    private $mealRepo;
+    
+    function __construct(EntityManagerInterface $em)
     {
-        $this->entityManager = $entityManager;
+        $this->em = $em;
+        $this->mealPartRepo = $this->em->getRepository(MealPart::class);
+        $this->mealRepo = $this->em->getRepository(Meal::class);
     }
 
     /**
@@ -33,12 +37,10 @@ class MealPartController extends AbstractController
         $mealPart->setName("");
         $mealPart->setWeight(0);
         $meal = new Meal();
-        $entityManager = $this->getDoctrine()->getManager();
-        $meals = $entityManager->getRepository(Meal::class);
-        $owner = $meals->findOneBy(["id" => $data["id"]]);
+        $owner = $this->mealRepo->findOneBy(["id" => $data["id"]]);
         $mealPart->setMeal($owner);
-        $entityManager->persist($mealPart);
-        $entityManager->flush();
+        $this->em->persist($mealPart);
+        $this->em->flush();
         return Responses::Ok();
     }
 
@@ -49,25 +51,20 @@ class MealPartController extends AbstractController
     {
         if(!$id)
             return Responses::BadRequest(["error" => "Nie podano id"]);
-        $user = new User();
-        $user->unserialize($request->request->get("user"));
-        $entityManager = $this->getDoctrine()->getManager();
 
-        $mealParts = $entityManager->getRepository(MealPart::class);
-        
-        if(!$foundObject = $mealParts->findOneBy(["id" => $id]))
+        if(!$foundObject = $this->mealPartRepo->findOneBy(["id" => $id]))
             return Responses::BadRequest(["error" => "Rekord nie istnieje"]);
 
         $meal = $foundObject->getMeal();
         $owner = $meal->getUser();
 
-        if($owner->getId() != $user->getId())
+        if($owner->getId() != $this->getUser()->getId())
             return Responses::PermisionDenied();
 
         $meal->removeMealPart($foundObject);
-        $entityManager->persist($meal);
-        $entityManager->remove($foundObject);
-        $entityManager->flush();
+        $this->em->persist($meal);
+        $this->em->remove($foundObject);
+        $this->em->flush();
         return Responses::Ok();
     }
 
@@ -78,11 +75,8 @@ class MealPartController extends AbstractController
     {
         if(!$id)
             return Responses::BadRequest(["error" => "Nie podano id"]);
-        $entityManager = $this->getDoctrine()->getManager();
-        $meals = $entityManager->getRepository(Meal::class);
-        $mealparts = $entityManager->getRepository(MealPart::class);
-        $meal = $meals->findOneBy(["id" => $id]);
-        $mps = $mealparts->findBy(["meal" => $meal]);
+        $meal = $this->mealRepo->findOneBy(["id" => $id]);
+        $mps = $this->mealPartRepo->findBy(["meal" => $meal]);
         return new JsonResponse($mps);
     }
 
@@ -91,26 +85,20 @@ class MealPartController extends AbstractController
      */
     public function update(Request $request) 
     {
-        $user = new User();
-        $user->unserialize($request->request->get("user"));
         $data = json_decode($request->getContent(), true);
-        $entityManager = $this->getDoctrine()->getManager();
-        $mealparts = $entityManager->getRepository(MealPart::class);
 
         if(!isset($data["id"]))
             return Responses::BadRequest("Nie podano id");
-        if(!$meal = $mealparts->findOneBy(["id" => $data["id"]]))
+        if(!$meal = $this->mealPartRepo->findOneBy(["id" => $data["id"]]))
             return Responses::BadRequest("Rekord nie istnieje");
 
         $owner = $meal->getMeal();
-        if($owner->getUser()->getId() != $user->getId())
+        if($owner->getUser()->getId() != $this->getUser()->getId())
             return Responses::PermisionDenied();
 
-        !empty($data["name"]) ? $meal->setName($data["name"]) : "";
-        !empty($data["kcal"]) ? $meal->setKcal($data["kcal"]) : "";
-        !empty($data["weight"]) ? $meal->setWeight($data["weight"]) : "";
-        $entityManager->persist($meal);
-        $entityManager->flush();
+        $meal->updateFromInput($data);
+        $this->em->persist($meal);
+        $this->em->flush();
         return Responses::Ok();
     }
 }
