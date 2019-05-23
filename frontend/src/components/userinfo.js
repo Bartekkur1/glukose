@@ -50,18 +50,18 @@ class UserInfo extends Component {
             try {
                 let res = await Axios.post(server + "userinfo", {
                     age: this.state.age,
-                    gender: this.state.gender,
-                    height: this.state.height,
-                    weight: this.state.weight,
-                    insulinType: this.state.insulinType,
-                    dailyInsulinType: this.state.dailyInsulinType,
-                    dailyInsulinAmount: this.state.dailyInsulinAmount
+                    gender: this.state.gender || "Kobieta",
+                    height: this.state.height || 0,
+                    weight: this.state.weight || 0,
+                    insulinType: this.state.insulinType || "Humalog",
+                    dailyInsulinType: this.state.dailyInsulinType || "Lantus",
+                    dailyInsulinAmount: this.state.dailyInsulinAmount || 0
                 });
                 res["title"] = "informacje zaktualizowano pomyślnie";
                 this.setState({
                     error: res,
                     loading: false
-                })
+                });
             }
             catch(e)
             {

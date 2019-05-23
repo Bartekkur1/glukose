@@ -43,7 +43,7 @@ class Meal extends Component {
     async updateMeal() {
         this.setState({loading: true});
         try {
-            var res = await Axios.patch(server + "meal", {
+            var res = await Axios.patch(server + "update_record/meal", {
                 id: this.state.id,
                 date: moment(this.state.date),
                 kcal: this.state.kcal,

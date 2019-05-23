@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MealRepository")
  */
-class Meal implements \JsonSerializable
+class Meal implements \JsonSerializable, IUpdateable
 {
     /**
      * @ORM\Id()
@@ -163,5 +163,18 @@ class Meal implements \JsonSerializable
         }
 
         return $this;
+    }
+
+    public function updateFromInput($input)
+    {
+        !empty($input["kcal"]) ? $this->setKcal($input["kcal"]) : "";
+        !empty($input["fats"]) ? $this->setFats($input["fats"]) : "";
+        !empty($input["carbohydrates"]) ? $this->setCarbohydrates($input["carbohydrates"]) : "";
+        if(isset($input["date"]))
+        {
+            $date = new \DateTime($input["date"]);
+            $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
+            $this->setDate($date);
+        }
     }
 }

@@ -98,4 +98,5 @@ class MealPart implements \JsonSerializable
             "name" => $this->name
         ];
     }
+
 }

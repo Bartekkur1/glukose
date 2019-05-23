@@ -74,7 +74,7 @@ class UserTest extends WebTestCase
     private function deleteAccount()
     {
         $client = static::createClient();
-        $client->request('POST', '/api/user/deletemyaccount', [], [],
+        $client->request('POST', '/user/deletemyaccount', [], [],
         ["HTTP_user" => $this->user->serialize()]);
         return $client->getResponse();
     }
@@ -83,7 +83,7 @@ class UserTest extends WebTestCase
     {
         $client = static::createClient();
         $client->request(
-            'POST', '/api/user/register', array(), array(), ['CONTENT_TYPE' => 'application/json'],
+            'POST', '/user/register', array(), array(), ['CONTENT_TYPE' => 'application/json'],
             json_encode($data)
         );
         return $client->getResponse();

@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "server": "http://glukose.szymekk.me:9000/",
+  "server": "http://127.0.0.1:8000/",
   "dependencies": {
     "axios": "^0.18.0",
     "chart.js": "^2.7.3",

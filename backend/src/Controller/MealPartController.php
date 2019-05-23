@@ -12,7 +12,7 @@ use App\Responses\Responses;
 use App\Entity\MealPart;
 use Symfony\Component\HttpFoundation\Request;
 
-class MealPartController extends AbstractController implements TokenAuthenticatedController
+class MealPartController extends AbstractController
 {
 
     private $entityManager;

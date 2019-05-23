@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\DoseRepository")
  */
-class Dose implements \JsonSerializable
+class Dose implements \JsonSerializable, IUpdateable
 {
     /**
      * @ORM\Id()
@@ -103,4 +103,16 @@ class Dose implements \JsonSerializable
             "id" => $this->id
         ];
     }  
+
+    public function updateFromInput($input)
+    {
+        $this->setAmount($input["amount"]);
+        $this->setType($input["type"]);
+        if(isset($input["date"]))
+        {
+            $date = new \DateTime($input["date"]);
+            $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
+            $this->setDate($date);
+        }
+    }
 }

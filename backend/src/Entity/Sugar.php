@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SugarRepository")
  */
-class Sugar implements \JsonSerializable
+class Sugar implements \JsonSerializable, IUpdateable
 {
     /**
      * @ORM\Id()
@@ -83,5 +83,16 @@ class Sugar implements \JsonSerializable
             "date" => $this->date->format("Y-m-d H:i:s"),
             "id" => $this->id,
         ];
+    }
+
+    public function updateFromInput($input)
+    {
+        $this->setAmount($input["amount"]);
+        if(isset($input["date"]))
+        {
+            $date = new \DateTime($input["date"]);
+            $date->setTimezone(new \DateTimeZone("Europe/Warsaw"));
+            $this->setDate($date);
+        }
     }
 }

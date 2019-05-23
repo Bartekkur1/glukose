@@ -19,7 +19,7 @@ class Sugar extends Component {
     async updateSugar() {
         this.setState({loading: true});
         try {
-            await Axios.patch(server + "sugar", {
+            await Axios.patch(server + "update_record/sugar", {
                 id: this.state.id,
                 amount: this.state.amount,
                 date: moment(this.state.date)

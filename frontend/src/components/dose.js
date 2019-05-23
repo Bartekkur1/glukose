@@ -19,7 +19,7 @@ class Dose extends Component {
     async updateDose() {
         this.setState({loading: true});
         try {
-            await Axios.patch(server + "dose", {
+            await Axios.patch(server + "update_record/dose", {
                 id: this.state.id,
                 amount: this.state.amount,
                 type: this.state.type,

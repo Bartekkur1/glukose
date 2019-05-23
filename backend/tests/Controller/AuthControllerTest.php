@@ -30,7 +30,7 @@ class AuthTest extends WebTestCase
             "password" => $this->user->getPassword(),
         ];
         $client->request(
-            'POST', '/api/auth/login', array(), array(), ['CONTENT_TYPE' => 'application/json'],
+            'POST', '/auth/login', array(), array(), ['CONTENT_TYPE' => 'application/json'],
             json_encode($data)
         );
         $response = $client->getResponse();

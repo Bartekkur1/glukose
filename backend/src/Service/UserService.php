@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Responses\Responses;
 use App\Entity\User;
+use App\Responses\Responses;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -28,7 +28,7 @@ class UserService
     {
         $data = json_decode($data, true);
         if($data["password"] != $data["confirmPassword"])
-            return Responses::BadRequest("Hasła muszą być takie same!");
+            throw new BadRequestHttpException("Hasła muszą być identyczne");
         
         $user = User::fromRegisterForm($data);
         $user->setPassword($this->encoder->encodePassword($user, $data["password"]));
@@ -41,7 +41,6 @@ class UserService
             throw new BadRequestHttpException("Nazwa użytkownika jest już zajęta");
         if(!$this->isUserEmailFree($data["email"]))
             throw new BadRequestHttpException("Adres email jest już zajęty");
-
 
         $this->em->persist($user);
         $this->em->flush();

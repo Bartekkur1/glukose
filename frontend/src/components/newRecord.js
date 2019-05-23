@@ -104,7 +104,7 @@ class NewRecord extends Component {
         }
         try {
             this.setState({loading: true});
-            let res = await Axios.post(server + api, payload);
+            let res = await Axios.post(server + "new_record/" + api, payload);
             res["title"] = "Rekord dodany pomyślnie";
             this.setState({
                 error: res,

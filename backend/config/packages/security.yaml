@@ -15,8 +15,8 @@ security:
             security: false
 
         main:
-            anonymous: ~
-            pattern: ^/api
+            anonymous: false
+            pattern: ^/
             logout: 
                 path: app_logout
             guard:
@@ -25,6 +25,5 @@ security:
                     - App\Security\UserAuthenticator
                     - App\Security\JwtAuthenticator
     access_control:
-        - { path: ^/api/user/register$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/user/register$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/api/auth, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        # - { path: ^/api/data, role: ROLE_ADMIN }

@@ -170,4 +170,12 @@ class UserInfo implements \JsonSerializable
             "dailyInsulinAmount" => $this->dailyInsulinAmount,
         ];
     }
+
+    public function updateFromInput($input)
+    {
+        foreach($input as $key => $value)
+        {
+            empty($value) ? $this->$key = "" : $this->$key = $value;
+        }
+    }
 }
