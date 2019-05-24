@@ -85,9 +85,6 @@ class Index extends Component {
                     <div className="col-12 p-0">
                         <img className="mx-auto mt-2 sidebar-logo" width="220px" height="60px" 
                             src={process.env.PUBLIC_URL + '/images/logo2.svg'} alt="logo"/>
-                        <button className="btn mb-3 mx-auto p-0 logout w-100"
-                            onClick={() => this.logout()}>
-                        <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button>
                         <hr className="hr-light"/>
                         <SidebarButton name="Strona główna" link="/" icon="fa fas fa-home"/>
                         <hr className="hr-title" />
@@ -104,6 +101,9 @@ class Index extends Component {
                         <SidebarButton name="Użytkownik" link="/userinfo" icon="fa fas fa-user" />
                     </div>
                     <div className="col-12 mt-auto footer">
+                        <button className="btn mx-auto p-0 logout w-100"
+                            onClick={() => this.logout()}>
+                        <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button>
                         <hr/>
                         <p>Glukose 1.2a</p>
                     </div>

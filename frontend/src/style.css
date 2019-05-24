@@ -24,6 +24,14 @@ body {
     background-color: #64e864;
 }
 
+input.glukose-main:hover {
+    background-color: #9ae29a;
+}
+
+button.glukose-main:hover {
+    background-color: #9ae29a;
+}
+
 .glukose-off {
     background-color: #e9ecef;
 }
@@ -143,7 +151,7 @@ body {
 .record-header {
     padding-top: 10px !important;
     padding-bottom: 10px !important;
-    cursor: default;
+    cursor: pointer;
 }
 
 .record-panel input[type="number"] {

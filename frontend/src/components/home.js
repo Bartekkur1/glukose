@@ -59,15 +59,15 @@ class Home extends Component {
                     </div>
                 </div>
                 <div className="row text-center p-2" style={{"height": "70vh"}}>
-                    <div className="col-sm-12 col-lg-9 col-md-9 col-xl-4 mx-auto my-auto">
+                    <div className="col-sm-12 col-lg-9 col-md-9 col-xl-9 mx-auto my-auto">
                             {this.state.message ?
-                            <div className="home_box pb-4 pt-5" style={{"fontSize": "5vh", "color": "red", "fontWeight": "bold"}}>
+                            <div className="pb-4 pt-5" style={{"fontSize": "5vh", "color": "red", "fontWeight": "bold"}}>
                                 <i className="fa fa-2x fas fa-exclamation-triangle"></i>
                                 <p className="m-0">{this.state.message}</p>
                             </div>
                             :
-                            <div className="home_box p-4">
-                                <span style={{"fontWeight": "bold", "fontSize": "10vh"}}>
+                            <div className="p-4">
+                                <span style={{"fontWeight": "bold", "fontSize": "13vh"}}>
                                     {this.state.duration}
                                 </span>
                                 <h4>

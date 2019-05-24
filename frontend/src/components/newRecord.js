@@ -132,25 +132,29 @@ class NewRecord extends Component {
 
     getMealPart(index) {
         return (
-            <div key={index} className="row pl-3 pr-3 p-1">
-                <div className="col-6 p-0">
-                    <input onChange={e => {this.mealAppend(index, e.target.value, "name")}} 
-                        type="text" className="form-control" placeholder="Nazwa" required={true}/>
+            <div key={index} className="pt-2">
+                <div className="row pb-1">
+                    <div className="col pr-0">
+                        <input onChange={e => {this.mealAppend(index, e.target.value, "name")}} 
+                            type="text" className="form-control" placeholder="Nazwa" required={true}/>
+                    </div>
+                    <div className="col-2 text-center">
+                        <i className="fa-1x fa fa-trash" style={{"cursor": "pointer", "fontSize": "30px"}} aria-hidden="true" onClick={() => {
+                            delete this.state.mealParts[index];
+                            delete this.state.meal[index];
+                            this.setState({mealParts: this.state.mealParts, meal: this.state.meal});
+                        }}></i>
+                    </div>
                 </div>
-                <div className="col-3 p-0">
-                    <input onChange={e => {this.mealAppend(index, e.target.value, "weight")}} 
-                        type="number" className="form-control" placeholder="Waga (g)" required={true}/>
-                </div>
-                <div className="col-2 p-0">
-                    <input onChange={e => {this.mealAppend(index, e.target.value, "kcal")}} 
-                        type="number" className="form-control" placeholder="Kalorie" required={true}/>
-                </div>
-                <div className="col-1 p-0">
-                    <i className="p-1 fa-2x fa fa-trash" aria-hidden="true" onClick={() => {
-                        delete this.state.mealParts[index];
-                        delete this.state.meal[index];
-                        this.setState({mealParts: this.state.mealParts, meal: this.state.meal});
-                    }}></i>
+                <div className="row pb-1">
+                    <div className="col pr-1">
+                        <input onChange={e => {this.mealAppend(index, e.target.value, "weight")}} 
+                            type="number" className="form-control" placeholder="Waga (g)" required={true}/>
+                    </div>
+                    <div className="col pl-1">
+                        <input onChange={e => {this.mealAppend(index, e.target.value, "kcal")}} 
+                            type="number" className="form-control" placeholder="Kalorie" required={true}/>
+                    </div>                    
                 </div>
             </div>
         )
@@ -165,14 +169,8 @@ class NewRecord extends Component {
         return (
             <div className="container-fluid sidebar-small h-100">
                 <div className="row">
-                    <div className="col-12 text-center mt-5">
-                        <h3>Tutaj możesz dodać nowy rekord</h3>
-                        <h5>Dodane rekordy można zobaczyć w zakładce statystyki</h5>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-sm-12 col-md-6 col-xl-3 mx-auto record-panel box-shadow p-0 mt-5">
-                        <div className="jumbotron mt-0 mb-0 pt-3 pb-3" style={{"backgroundColor": "white"}}>
+                    <div className="col-sm-12 col-md-6 col-xl-3 mx-auto record-panel box-shadow p-0 mt-5" style={{"minWidth": "400px"}}>
+                        <div className="jumbotron mt-0 mb-0 pt-3 pb-3" style={{"backgroundColor": "white", "borderRadius": "5px"}}>
                             <div className="row text-center">
                                 <RecordTitle name="Cukier" segment={this.state.segment} 
                                 segmentChange={() => this.setState({segment: "Cukier"})} />
@@ -191,7 +189,8 @@ class NewRecord extends Component {
                                 form={(
                                     <div className="form-group">
                                         <label>Ilość cukru:</label>
-                                        <input type="number" name="sugarAmount" className="form-control" style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}} 
+                                        <input type="number" name="sugarAmount" className="form-control" style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}}
+                                        style={{"fontSize": "60px"}}
                                         placeholder={this.state.sugarAmount} onChange={e => this.change(e)}/>
                                     </div>
                                 )} /> : null}
@@ -203,7 +202,8 @@ class NewRecord extends Component {
                                     <div>
                                         <div className="form-group">
                                             <label>Ilość j. insuliny:</label>
-                                            <input type="number" name="insulinAmount" className="form-control" onChange={e => this.change(e)} style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}} />
+                                            <input type="number" name="insulinAmount" className="form-control" onChange={e => this.change(e)} style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}} 
+                                            style={{"fontSize": "60px"}}/>
                                         </div>
                                         <div className="form-group pt-2">
                                             <label>Typ insuliny:</label>
@@ -224,15 +224,17 @@ class NewRecord extends Component {
                                         <div className="form-group">
                                             <label>Ilość kalorii:</label>
                                             <input type="number" name="kcal" className="form-control" onChange={e => this.change(e)} 
-                                                style={this.state.hightlight === "kcal" ? {"borderColor": "Red"} : {}} />
+                                                style={this.state.hightlight === "kcal" ? {"borderColor": "Red"} : {}} style={{"fontSize": "60px"}} />
                                         </div>
                                         <div className="form-group">
                                             <label>Procentowa zawartość białek i tłuszczy:</label>
-                                            <input type="number" name="fats" min="0" max="100" value={this.state.fats} className="form-control" onChange={e => this.change(e)} />
+                                            <input type="number" name="fats" min="0" max="100" value={this.state.fats} className="form-control" onChange={e => this.change(e)} 
+                                            style={{"fontSize": "30px"}}/>
                                         </div>
                                         <div className="form-group">
                                             <label>Procentowa zawartość węglowodanów:</label>
-                                            <input type="number" name="carbohydrates" readOnly={true} value={100 - this.state.fats} className="form-control" onChange={e => this.change(e)}/>
+                                            <input type="number" name="carbohydrates" readOnly={true} value={100 - this.state.fats} className="form-control" onChange={e => this.change(e)}
+                                            style={{"fontSize": "30px"}}/>
                                         </div>
                                         <div className="form-group">
                                             <label>Skład:</label>
@@ -240,7 +242,7 @@ class NewRecord extends Component {
                                                 return element;
                                             })}<br/>
                                             <div className="text-center">
-                                                <i className="fa fa-2x fas fa-plus" onClick={() => {
+                                                <i className="fa fa-2x fas fa-plus" style={{"cursor": "pointer"}} onClick={() => {
                                                     var arr = this.state.mealParts;
                                                     arr.push(this.getMealPart(arr.length));
                                                     this.setState({mealParts: arr});

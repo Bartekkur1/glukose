@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {server} from '../../package.json';
 import Axios from 'axios';
-import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 
 class Sugar extends Component {

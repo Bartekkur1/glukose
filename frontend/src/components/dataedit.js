@@ -27,7 +27,7 @@ class DataEdit extends Component {
     async deleteRecord(id) {
         try {
             this.setState({bigLoading: true});
-            let res = await Axios.get(server + "delete_record/" + this.state.type + "/" + id);
+            await Axios.get(server + "delete_record/" + this.state.type + "/" + id);
             delete this.state.found[id];
             this.setState({found: this.state.found, bigLoading: false});
         }
@@ -55,8 +55,8 @@ class DataEdit extends Component {
                                 <tr key={index}>
                                     <td>{index}</td>
                                     <td>{moment(item.date).format("YYYY-MM-DD HH:mm")}</td>
-                                    <td><input type="button" className="btn glukose-main" value="Edytuj" onClick={() => this.redirect(item.id)}/></td>
-                                    <td><input type="button" className="btn btn-danger" value="Usuń" onClick={() => this.deleteRecord(item.id)}/></td>
+                                    <td><input type="button" style={{"width": "60%"}} className="btn glukose-main" value="Edytuj" onClick={() => this.redirect(item.id)}/></td>
+                                    <td><input type="button" style={{"width": "60%"}} className="btn btn-danger" value="Usuń" onClick={() => this.deleteRecord(item.id)}/></td>
                                 </tr>
                             );
                         })}
@@ -72,7 +72,7 @@ class DataEdit extends Component {
             let res = await Axios.get(server + "find_record/" + this.state.type + "/" + this.state.date + "/" + moment(this.state.date).add(1, "days").format("YYYY-MM-DD"));
             var arr = [];
             res.data.values.map((value) => {
-                arr[value.id] = value;
+                return arr[value.id] = value;
             });
             this.setState({found: arr});
             this.renderSearch();
@@ -86,6 +86,7 @@ class DataEdit extends Component {
     change(e) {
         if(e.target.name === "type")
             this.setState({found: null});
+            this.searchRecords();
         this.setState({ 
             [e.target.name]: e.target.value
         });
@@ -97,27 +98,28 @@ class DataEdit extends Component {
                 <div className="row m-0 h-100 glukose-off">
                     <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
                 </div>)
-        return(
+        return( 
             <div className="container-fluid sidebar-small h-100">
-                <div className="row text-center p-2">
-                    <div className="col-sm-12 col-lg-9 col-md-9 col-xl-4 mx-auto mt-3">
-                        <div className="home_box p-4 mt-5">
+                <div className="row text-center p-5">
+                    <div className="col-sm-9 col-lg-9 col-md-9 col-xl-3 mx-auto"
+                        style={{"minWidth": "400px"}}>
+                        <div className="home_box p-4">
                             <div>
-                                <h2>
+                                <h1>
                                     Znajdz rekord
-                                </h2>
+                                </h1>
                                 <span>Z dnia:</span>
                                 <input type="date" name="date" className="stats-input" value={this.state.date}
                                     onChange={e => {this.change(e)}} />
                                 <br/>
-                                <div className="col-6 mx-auto">
+                                <div className="col-12 mx-auto mt-4">
                                     <select className="form-control" name="type" defaultValue={this.state.type}
                                         onChange={e => {this.change(e)}}>
                                         <option value="sugar">Cukier</option>
                                         <option value="meal">Posiłek</option>
                                         <option value="dose">Insulina</option>
                                     </select>
-                                    <input type="button" value="Szukaj" className="btn glukose-main mt-3" 
+                                    <input type="button" value="Szukaj" className="btn glukose-main btn-lg mt-3 mb-3 btn-block" 
                                         onClick={() => {this.searchRecords()}}/>
                                 </div>
                             </div>
@@ -125,7 +127,7 @@ class DataEdit extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-sm-12 col-lg-9 col-md-9 col-xl-12 mx-auto mt-3">
+                    <div className="col-sm-9 col-lg-9 col-md-9 col-xl-9 mx-auto mt-3">
                         {this.state.found ? 
                             <div className=" mt-5">
                                 {this.renderSearch()}

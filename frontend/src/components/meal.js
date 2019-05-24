@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {server} from '../../package.json';
 import Axios from 'axios';
-import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 
 class Meal extends Component {
@@ -25,7 +24,7 @@ class Meal extends Component {
             var mealParts = await Axios.get(server + "mealpart/" + this.state.id);
             var arr = [];
             mealParts.data.map((value) => {
-                arr[value.id] = value;
+                return arr[value.id] = value;
             });
             this.setState({kcal: meal.data.value.kcal, 
                 fats: meal.data.value.fats, 
@@ -43,7 +42,7 @@ class Meal extends Component {
     async updateMeal() {
         this.setState({loading: true});
         try {
-            var res = await Axios.patch(server + "update_record/meal", {
+            await Axios.patch(server + "update_record/meal", {
                 id: this.state.id,
                 date: moment(this.state.date),
                 kcal: this.state.kcal,
@@ -71,7 +70,7 @@ class Meal extends Component {
             var mealParts = await Axios.get(server + "mealpart/" + this.state.id);
             var arr = [];
             mealParts.data.map((value) => {
-                arr[value.id] = value;
+                return arr[value.id] = value;
             });
             this.setState({
                 mealParts: arr
