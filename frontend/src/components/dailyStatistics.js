@@ -55,34 +55,34 @@ class DailyStatistics extends Component {
     }
 
     renderMealPart(meal) {
-        console.log(meal.mealParts);
-        return(
-            <div key={meal.id} className="row">
-                <div className="col-sm-12 col-md-6 col-xl-6 mx-auto box-shadow p-0 mt-5">
-                    <h4 className="p-2">Posiłek z {meal.date}</h4>
-                        <div className="table-responsive row m-0">
-                        <table className="table text-center small-table">
-                            <thead className="small-table">
-                                <tr className="p-0">
-                                    <th scope="col">Nazwa</th>
-                                    <th scope="col">Waga (g)</th>
-                                    <th scope="col">Kalorie</th>
-                                </tr>
-                            </thead>
-                            <tbody className="p-0">
-                                {meal.mealParts.map((mealPart) => {
-                                    return(<tr key={mealPart.id}>
-                                        <td>{mealPart.name}</td>
-                                        <td>{mealPart.weight}</td>
-                                        <td>{mealPart.kcal}</td>
-                                    </tr>)
-                                })}
-                            </tbody>
-                        </table>
+        if(meal.mealParts[0].name)
+            return(
+                <div key={meal.id} className="row">
+                    <div className="col-sm-12 col-md-6 col-xl-6 mx-auto box-shadow p-0 mt-5">
+                        <h4 className="p-2">Posiłek z {meal.date}</h4>
+                            <div className="table-responsive row m-0">
+                            <table className="table text-center small-table">
+                                <thead className="small-table">
+                                    <tr className="p-0">
+                                        <th scope="col">Nazwa</th>
+                                        <th scope="col">Waga (g)</th>
+                                        <th scope="col">Kalorie</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="p-0">
+                                    {meal.mealParts.map((mealPart) => {
+                                        return(<tr key={mealPart.id}>
+                                            <td>{mealPart.name}</td>
+                                            <td>{mealPart.weight}</td>
+                                            <td>{mealPart.kcal}</td>
+                                        </tr>)
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
     }
 
     componentWillMount() {

@@ -26,8 +26,7 @@ class RecordController extends AbstractController
         $data = json_decode($request->getContent(), true);
         try
         {
-            $this->recordService->new($this->getUser(), $type, $data);
-            return new Response();
+            return new JsonResponse(["id" => $this->recordService->new($this->getUser(), $type, $data)]);
         }
         catch(BadRequestHttpException $e)
         {

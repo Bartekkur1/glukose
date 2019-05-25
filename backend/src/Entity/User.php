@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface, \Serializable, IUpdateable
 {
     /**
      * @ORM\Id()
@@ -283,5 +283,11 @@ class User implements UserInterface, \Serializable
         }
 
         return $this;
+    }
+
+    public function updateFromInput($input)
+    {
+        isset($input["password"]) ? $this->password = $input["password"] : "";
+        isset($input["email"]) ? $this->password = $input["email"] : "";
     }
 }

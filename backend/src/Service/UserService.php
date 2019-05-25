@@ -47,6 +47,31 @@ class UserService
         return $user->getId();
     }
 
+    public function updateUser($user, $input)
+    {
+        if(isset($input["password"]) && isset($input["confirmPassword"]))
+            if($input["password"] == $input["confirmPassword"])
+                if(strlen($input["password"]) >= 6)
+                    $user->setPassword($this->encoder->encodePassword($user, $input["password"]));
+                else
+                    throw new BadRequestHttpException("Hasło musi mieć przynajmniej 6 znaków");
+            else
+                throw new BadRequestHttpException("Hasła muszą być identyczne");
+
+        if(isset($input["email"]))
+            if($this->isUserEmailFree($input["email"]))
+                $user->setEmail($input["email"]);
+            else
+                throw new BadRequestHttpException("Adres email jest już zajęty");
+
+        $errors = $this->validateUser($user);
+        if(count($errors) > 0)
+            throw new BadRequestHttpException($errors[0]->getMessage());
+
+        $this->em->persist($user);
+        $this->em->flush();
+    }
+
     public function getUserFromSerialized($serialized)
     {
         $unserialized = new User();

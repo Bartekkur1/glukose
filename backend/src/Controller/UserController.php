@@ -22,6 +22,24 @@ class UserController extends AbstractController
     }
 
     /**
+     * @Route("/user/update", name="user_update")
+     */
+    public function update(Request $request)
+    {
+        $user = $this->getUser();
+        $input = json_decode($request->getContent(), true);
+        try 
+        {
+            $this->userService->updateUser($user, $input);        
+            return new Response();
+        }
+        catch(BadRequestHttpException $e)
+        {
+            return new JsonResponse(["error" => $e->getMessage()], 400);
+        }
+    }
+
+    /**
      * @Route("/user/register", name="user_register")
      */
     public function register(Request $request)

@@ -48,12 +48,12 @@ class Account extends Component {
                     payload["password"] = this.state.password;
                     payload["confirmPassword"] = this.state.confirmPassword
                 }
-                let res = await Axios.post(server + "userinfo", payload);
+                let res = await Axios.post(server + "user/update", payload);
                 res["title"] = "informacje zaktualizowano pomyślnie";
                 this.setState({
                     error: res,
                     loading: false
-                })
+                });
             }
             catch(e)
             {

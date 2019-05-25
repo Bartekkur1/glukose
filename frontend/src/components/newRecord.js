@@ -91,8 +91,7 @@ class NewRecord extends Component {
             payload["kcal"] = this.state.kcal;
             payload["fats"] = this.state.fats;
             payload["carbohydrates"] = 100 - this.state.fats;
-            if(this.state.meal[0])
-                payload["meal"] = this.state.meal;
+
             api = "meal";
         }
         if(this.state.date) {
@@ -105,6 +104,14 @@ class NewRecord extends Component {
         try {
             this.setState({loading: true});
             let res = await Axios.post(server + "new_record/" + api, payload);
+            if(this.state.meal[0])
+            {
+                for(var i in this.state.meal)
+                {
+                    this.state.meal[i]["id"] = res.data["id"];
+                    await Axios.post(server + "mealpart" , this.state.meal[i]);
+                }
+            }
             res["title"] = "Rekord dodany pomyślnie";
             this.setState({
                 error: res,
@@ -117,8 +124,8 @@ class NewRecord extends Component {
                 error: e,
                 loading: false
             })
-            if(e.response.data.name)
-                this.setState({hightlight: e.response.data.name});
+            // if(e.response.data.name)
+            //     this.setState({hightlight: e.response.data.name});
         }
     }
 

@@ -84,9 +84,6 @@ class DataEdit extends Component {
     }
 
     change(e) {
-        if(e.target.name === "type")
-            this.setState({found: null});
-            this.searchRecords();
         this.setState({ 
             [e.target.name]: e.target.value
         });

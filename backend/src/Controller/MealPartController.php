@@ -38,10 +38,13 @@ class MealPartController extends AbstractController
         $mealPart->setWeight(0);
         $meal = new Meal();
         $owner = $this->mealRepo->findOneBy(["id" => $data["id"]]);
+        if(isset($data["weight"]))
+            $mealPart->updateFromInput($data);
+        $mealPart->updateFromInput($data);
         $mealPart->setMeal($owner);
         $this->em->persist($mealPart);
         $this->em->flush();
-        return Responses::Ok();
+        return new JsonResponse();
     }
 
     /**
@@ -50,22 +53,23 @@ class MealPartController extends AbstractController
     public function delete(Request $request, $id)
     {
         if(!$id)
-            return Responses::BadRequest(["error" => "Nie podano id"]);
+            return Responses::BadRequest();
+            return new JsonResponse(["error" => "Nie podano id"]);
 
         if(!$foundObject = $this->mealPartRepo->findOneBy(["id" => $id]))
-            return Responses::BadRequest(["error" => "Rekord nie istnieje"]);
+            return new JsonResponse(["error" => "Rekord nie istnieje"]);
 
         $meal = $foundObject->getMeal();
         $owner = $meal->getUser();
 
         if($owner->getId() != $this->getUser()->getId())
-            return Responses::PermisionDenied();
+            return new JsonResponse("", 401);
 
         $meal->removeMealPart($foundObject);
         $this->em->persist($meal);
         $this->em->remove($foundObject);
         $this->em->flush();
-        return Responses::Ok();
+        return new JsonResponse();
     }
 
     /**
@@ -88,17 +92,17 @@ class MealPartController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if(!isset($data["id"]))
-            return Responses::BadRequest("Nie podano id");
+            return new JsonResponse(["error" => "Nie podano id"]);
         if(!$meal = $this->mealPartRepo->findOneBy(["id" => $data["id"]]))
-            return Responses::BadRequest("Rekord nie istnieje");
+            return new JsonResponse(["error" => "Rekord nie istnieje"]);
 
         $owner = $meal->getMeal();
         if($owner->getUser()->getId() != $this->getUser()->getId())
-            return Responses::PermisionDenied();
+            return new JsonResponse("", 401);
 
         $meal->updateFromInput($data);
         $this->em->persist($meal);
         $this->em->flush();
-        return Responses::Ok();
+        return new JsonResponse();
     }
 }

@@ -44,8 +44,9 @@ class RecordService
         $errors = $this->validator->validate($record);
         if(count($errors) > 0)
             throw new BadRequestHttpException($errors[0]->getMessage());
-        $this->em->merge($record);
+        $this->em->persist($record);
         $this->em->flush();
+        return $record->getId();
     }
 
     public function update($user, $type, $data)

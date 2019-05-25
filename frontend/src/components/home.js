@@ -22,7 +22,7 @@ class Home extends Component {
             // console.log(e)
         }
         var d = moment.duration(this.state.duration)
-        if(d.get("hours") > 4)
+        if(d.get("hours") > 3)
         {
             this.setState({
                 message: "Zmierz cukier!!"
