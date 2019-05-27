@@ -172,8 +172,8 @@ class Statistics extends Component {
                                 <img className="loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
                             </div>
                         :
-                            <div className="col-12">
-                                <div className="col-12 p-4 mx-auto">
+                            <div className="col-sm-11 col-lg-9 col-md-9 col-xl-9 mx-auto">
+                                <div className="col-12 mx-auto">
                                     <Line
                                         height={parseInt("130vh")}
                                         data={{

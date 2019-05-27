@@ -55,34 +55,33 @@ class DailyStatistics extends Component {
     }
 
     renderMealPart(meal) {
-        if(meal.mealParts[0].name)
-            return(
-                <div key={meal.id} className="row">
-                    <div className="col-sm-12 col-md-6 col-xl-6 mx-auto box-shadow p-0 mt-5">
-                        <h4 className="p-2">Posiłek z {meal.date}</h4>
-                            <div className="table-responsive row m-0">
-                            <table className="table text-center small-table">
-                                <thead className="small-table">
-                                    <tr className="p-0">
-                                        <th scope="col">Nazwa</th>
-                                        <th scope="col">Waga (g)</th>
-                                        <th scope="col">Kalorie</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="p-0">
-                                    {meal.mealParts.map((mealPart) => {
-                                        return(<tr key={mealPart.id}>
-                                            <td>{mealPart.name}</td>
-                                            <td>{mealPart.weight}</td>
-                                            <td>{mealPart.kcal}</td>
-                                        </tr>)
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            )
+        // return(
+        //     <div key={meal.id} className="row">
+        //         <div className="col-sm-12 col-md-6 col-xl-6 mx-auto box-shadow p-0 mt-5">
+        //             <h4 className="p-2">Posiłek z {meal.date}</h4>
+        //                 <div className="table-responsive row m-0">
+        //                 <table className="table text-center small-table">
+        //                     <thead className="small-table">
+        //                         <tr className="p-0">
+        //                             <th scope="col">Nazwa</th>
+        //                             <th scope="col">Waga (g)</th>
+        //                             <th scope="col">Kalorie</th>
+        //                         </tr>
+        //                     </thead>
+        //                     <tbody className="p-0">
+        //                         {/* {meal.mealParts.map((mealPart) => {
+        //                             return(<tr key={mealPart.id}>
+        //                                 <td>{mealPart.name}</td>
+        //                                 <td>{mealPart.weight}</td>
+        //                                 <td>{mealPart.kcal}</td>
+        //                             </tr>)
+        //                         })} */}
+        //                     </tbody>
+        //                 </table>
+        //             </div>
+        //         </div>
+        //     </div>
+        // )
     }
 
     componentWillMount() {
@@ -152,6 +151,15 @@ class DailyStatistics extends Component {
                 if(record.amount > 180)
                     high++;
             });
+            this.setState({sugars: this.state.sugars.map((row) => {
+                return {x: row.date, y: row.amount}
+            })});
+            this.setState({doses: this.state.doses.map((row) => {
+                return {x: row.date, y: row.amount}
+            })});
+            this.setState({meals: this.state.meals.map((row) => {
+                return {x: row.date, y: row.kcal}
+            })});
             this.setState({
                 donut: {
                     low: low,
@@ -186,7 +194,7 @@ class DailyStatistics extends Component {
     componentDidMount() {
         this.getData();
     }
-    
+
     render() {
         if(this.state.loading)
             return (                
@@ -194,7 +202,7 @@ class DailyStatistics extends Component {
                     <img className="mx-auto loading-page" src={process.env.PUBLIC_URL + '/images/loading-gray.svg'} alt="Loading"/>
                 </div>)
         return (
-            <div className="container-fluid sidebar-small mb-5">
+            <div className="container-fluid sidebar-small">
                 <div className="row">
                     <Error error={this.state.error} close={() => this.setState({error: false})} />
                 </div>
@@ -206,7 +214,7 @@ class DailyStatistics extends Component {
                     :
                 <div>
                 <div className="row">
-                    <div className="col-12 p-4 mx-auto">
+                    <div className="col-11 p-2 mx-auto">
                         <div className="row text-center">
                             <div className="col-sm-12 col-lg-6 col-md-6 col-xl-6">
                                 <span>od: </span>
@@ -219,18 +227,18 @@ class DailyStatistics extends Component {
                                     name="range" onChange={e => this.change(e)}/>
                             </div>
                         </div>
-
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm-11 col-lg-9 col-md-9 col-xl-9 mx-auto">
                         <Line
-                            height={parseInt("130vh")}
                             data={{
                                 datasets: [
                                     {
                                         label: "Cukier",
                                         type:'line',
                                         yAxisID: 'Cukier',
-                                        data: this.state.sugars.map((row) => {
-                                            return {x: row.date, y: row.amount}
-                                        }),
+                                        data: this.state.sugars,
                                         fill: false,
                                         borderColor: 'rgba(255,0,0,0.4)',
                                         backgroundColor: 'rgba(255,0,0,1)',
@@ -243,9 +251,7 @@ class DailyStatistics extends Component {
                                         label: "Insulina",
                                         type:'line',
                                         yAxisID: 'Insulina',
-                                        data: this.state.doses.map((row) => {
-                                            return {x: row.date, y: row.amount}
-                                        }),
+                                        data: this.state.doses,
                                         fill: false,
                                         borderColor: 'rgba(0,255,0,0.4)',
                                         backgroundColor: 'rgba(0,255,0,1)',
@@ -258,9 +264,7 @@ class DailyStatistics extends Component {
                                         label: "Posiłki",
                                         type:'line',
                                         yAxisID: 'Posiłek',
-                                        data: this.state.meals.map((row) => {
-                                            return {x: row.date, y: row.kcal}
-                                        }),
+                                        data: this.state.meals,
                                         fill: false,
                                         borderColor: 'rgba(0,0,255,0.4)',
                                         backgroundColor: 'rgba(0,0,255,1)',
@@ -326,75 +330,72 @@ class DailyStatistics extends Component {
                         />
                     </div>
                 </div>
-                <hr></hr>
                 <div className="row">
-                    <div className="col-sm-12 col-lg-7 col-md-7 col-xl-7">
-                        <div className="table-responsive row p-3 stats-info">
-                            <table className="table text-center stats-table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Średnia</th>
-                                        <th scope="col">Max</th>
-                                        <th scope="col">Min</th>
-                                        <th scope="col">Ilość</th>
-                                        <th scope="col">Suma</th>
-                                    </tr>
-                                </thead>
-                                    <tbody>
+                    <div className="col-sm-11 col-lg-9 col-md-9 col-xl-9 mx-auto">
+                        <div className="row">
+                            <div className="col-8">
+                                <div className="table-responsive row stats-info">
+                                <table className="table text-center stats-table">
+                                    <thead>
                                         <tr>
-                                            <th scope="row">Cukry</th>
-                                            <td>{Math.round(this.state.avg.sugar.value * 10)/10 || 0}</td>
-                                            <td>{this.state.max.sugar.value || 0}</td>
-                                            <td>{this.state.min.sugar.value || 0}</td>
-                                            <td>{this.state.sugars.length}</td>
-                                            <td>#</td>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Średnia</th>
+                                            <th scope="col">Max</th>
+                                            <th scope="col">Min</th>
+                                            <th scope="col">Ilość</th>
+                                            <th scope="col">Suma</th>
                                         </tr>
-                                        <tr>
-                                            <th scope="row">Posiłki</th>
-                                            <td>{Math.round(this.state.avg.meal.value * 10)/10 || 0}</td>
-                                            <td>{this.state.max.meal.value || 0}</td>
-                                            <td>{this.state.min.meal.value || 0}</td>
-                                            <td>{this.state.meals.length}</td>
-                                            <td>{this.sumArray(this.state.meals) || 0}</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Insulina</th>
-                                            <td>{Math.round(this.state.avg.dose.value * 10)/10 || 0}</td>
-                                            <td>{this.state.max.dose.value || 0}</td>
-                                            <td>{this.state.min.dose.value || 0}</td>
-                                            <td>{this.state.doses.length}</td>
-                                            <td>{this.sumArray(this.state.doses) || 0}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                    </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">Cukry</th>
+                                                <td>{Math.round(this.state.avg.sugar.value * 10)/10 || 0}</td>
+                                                <td>{this.state.max.sugar.value || 0}</td>
+                                                <td>{this.state.min.sugar.value || 0}</td>
+                                                <td>{this.state.sugars.length}</td>
+                                                <td>#</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Posiłki</th>
+                                                <td>{Math.round(this.state.avg.meal.value * 10)/10 || 0}</td>
+                                                <td>{this.state.max.meal.value || 0}</td>
+                                                <td>{this.state.min.meal.value || 0}</td>
+                                                <td>{this.state.meals.length}</td>
+                                                <td>{this.sumArray(this.state.meals) || 0}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Insulina</th>
+                                                <td>{Math.round(this.state.avg.dose.value * 10)/10 || 0}</td>
+                                                <td>{this.state.max.dose.value || 0}</td>
+                                                <td>{this.state.min.dose.value || 0}</td>
+                                                <td>{this.state.doses.length}</td>
+                                                <td>{this.sumArray(this.state.doses) || 0}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                        <div className="col-sm-12 col-lg-5 col-md-5 col-xl-5 text-center">
-                            <h4>Pomiary</h4>
-                            <div>
-                                <Doughnut
-                                    height={parseInt("90vh")}
-                                    data={{
-                                        labels: ["Niskie", "Poprawne", "Wysokie"],
-                                        datasets: [
-                                            {
-                                                label: "Ilość",
-                                                backgroundColor: ["yellow", "green", "red"],
-                                                data: [this.state.donut.low,  this.state.donut.mid, this.state.donut.high]
-                                            }
-                                        ],
-                                    }}
-                                    options={{
-                                        responsive: true
-                                    }}
-                                />
+                            <div className="col-3">
+                                    <Doughnut
+                                        data={{
+                                            labels: ["Niskie", "Poprawne", "Wysokie"],
+                                            datasets: [
+                                                {
+                                                    label: "Ilość",
+                                                    backgroundColor: ["yellow", "green", "red"],
+                                                    data: [this.state.donut.low,  this.state.donut.mid, this.state.donut.high]
+                                                }
+                                            ],
+                                        }}
+                                        options={{
+                                            responsive: true,
+                                            maintainAspectRatio: false
+                                        }}
+                                    />
+                            </div>
                             </div>
                         </div>
                     </div>
-                        {this.state.meals.map((meal) => {
-                            return this.renderMealPart(meal);
-                        })}
                 </div>}
             </div>
         )

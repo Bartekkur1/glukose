@@ -105,7 +105,7 @@ class Index extends Component {
                             onClick={() => this.logout()}>
                         <i className="pr-2 fa fas fa-power-off"></i>Wyloguj</button>
                         <hr/>
-                        <p>Glukose 1.2a</p>
+                        <p>Glukose 1.2b</p>
                     </div>
                 </div>
             </div>
