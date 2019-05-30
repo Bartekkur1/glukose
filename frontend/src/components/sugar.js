@@ -61,7 +61,7 @@ class Sugar extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col-9 mx-auto userinfo-panel box-shadow mt-5 mb-5 pl-0 pr-0 mr-0 ml-0">
-                        <div className="jumbotron pt-3 pb-3 mb-0" style={{"backgroundColor": "white"}} onBlur={() => this.updateSugar()}>
+                        <div className="jumbotron pt-3 pb-3 mb-0" style={{"backgroundColor": "white"}}>
                             <h1>Edycja rekordu id: {this.state.id}</h1>
                             <div className="form-group">
                                 {/* value="2018-06-12T19:30" */}
@@ -72,6 +72,7 @@ class Sugar extends Component {
                                 <label>Ilość cukru:</label>
                                 <input type="number" name="amount" placeholder={this.state.amount} className="form-control" onChange={e => this.change(e)}/>
                             </div>
+                            <button className="btn glukose-main btn-lg mt-3 mb-3 btn-block" type="submit" value="Submit" onClick={() => this.updateSugar()}>Zapisz</button>
                         </div>
                     </div>
                 </div>

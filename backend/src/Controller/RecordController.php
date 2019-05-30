@@ -84,4 +84,18 @@ class RecordController extends AbstractController
             return new JsonResponse(["error" => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * @Route("/all_records", name="all_records")
+     */
+    public function allRecords(Request $request)
+    {  
+        try {
+            return new JsonResponse($this->recordService->getAll($this->getUser()));
+        }
+        catch(BadRequestHttpException $e)
+        {
+            return new JsonResponse(["error" => $e->getMessage()], 400);
+        }
+    }
 }

@@ -34,6 +34,18 @@ class RecordService
             throw new BadRequestHttpException("Podano zły typ danych");
     }
 
+    public function getAll($user)
+    {
+        $res = array();
+        $sugarRepo = $this->getRepository("sugar");
+        $doseRepo = $this->getRepository("dose");
+        $mealRepo = $this->getRepository("meal");
+        $res["sugar"] = $sugarRepo->findBy(["user" => $user]);
+        $res["dose"] = $doseRepo->findBy(["user" => $user]);
+        $res["meal"] = $mealRepo->findBy(["user" => $user]);
+        return $res;
+    }
+
     public function new($user, $type, $data)
     {
         $object = $this->getRepository($type);

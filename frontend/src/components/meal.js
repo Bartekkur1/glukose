@@ -82,19 +82,20 @@ class Meal extends Component {
         this.setState({loading: false})
     }
 
-    async updateMealPart(id, name, weight, kcal) {
+    async updateMealPart(id) {
+        this.setState({loading: true});
         try {
-            var res = await Axios.patch(server + "mealpart", {
+            await Axios.patch(server + "mealpart", {
                 id: id,
-                name: name,
-                weight: weight,
-                kcal: kcal,
+                name: this.state.mealParts[id].name,
+                weight: this.state.mealParts[id].weight,
+                kcal: this.state.mealParts[id].kcal,
             });
-            console.log(res);
         }
         catch(e) {
             console.log(e);
         }
+        this.setState({loading: false});
     }
 
     async mealPartDelete(id) {
@@ -109,6 +110,18 @@ class Meal extends Component {
         catch(e) {
             console.log(e);
         }
+    }
+
+    mealPartModelChange(e, id)
+    {
+        var localMP = this.state.mealParts;
+        if(e.target.name == "name")
+            localMP[id].name = e.target.value;
+        if(e.target.name == "weight")
+            localMP[id].weight = e.target.value;
+        if(e.target.name == "kcal")
+            localMP[id].kcal = e.target.value;
+        this.setState({mealParts: localMP});
     }
 
     change(e) {
@@ -132,7 +145,7 @@ class Meal extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col-9 mx-auto userinfo-panel box-shadow mt-5 mb-5 pl-0 pr-0 mr-0 ml-0">
-                        <div className="jumbotron pt-3 pb-3 mb-0" style={{"backgroundColor": "white"}} onBlur={() => this.updateMeal()}>
+                        <div className="jumbotron pt-3 pb-3 mb-0" style={{"backgroundColor": "white"}} >
                                 <h1>Edycja rekordu id: {this.state.id}</h1>
                                 <div className="form-group">
                                     <label>Data:</label>
@@ -150,6 +163,7 @@ class Meal extends Component {
                                     <label>Procentowa zawartość węglowodanów:</label>
                                     <input type="number" name="carbohydrates" readOnly={true} value={100 - this.state.fats} className="form-control" onChange={e => this.change(e)}/>
                                 </div>
+                                <button className="btn glukose-main btn-lg mt-3 mb-3 btn-block" type="submit" value="Submit" onClick={() => this.updateMeal()}>Zapisz</button>
                         </div>
                     </div>
                 </div>
@@ -166,19 +180,18 @@ class Meal extends Component {
                                     </div>
                                     <div className="form-group">
                                         <label>Nazwa:</label>
-                                        <input type="text" name="name" placeholder={mealPart.name} className="form-control" onChange={e => this.change(e)}
-                                            onBlur={(e) => this.updateMealPart(mealPart.id, e.target.value, mealPart.weight, mealPart.kcal)}/>
+                                        <input type="text" name="name" placeholder={mealPart.name} className="form-control" onChange={e => this.mealPartModelChange(e, mealPart.id)}/>
                                     </div>
                                     <div className="form-group">
                                         <label>Waga (g):</label>
-                                        <input type="number" name="weight" placeholder={mealPart.weight} className="form-control" onChange={e => this.change(e)}
-                                            onBlur={(e) => this.updateMealPart(mealPart.id, mealPart.name, e.target.value, mealPart.kcal)}/>
+                                        <input type="number" name="weight" placeholder={mealPart.weight} className="form-control" onChange={e => this.mealPartModelChange(e, mealPart.id)}/>
                                     </div>
                                     <div className="form-group">
-                                        <label>Ilość kalorii::</label>
-                                        <input type="number" name="kcal" placeholder={mealPart.kcal} className="form-control" onChange={e => this.change(e)}
-                                            onBlur={(e) => this.updateMealPart(mealPart.id, mealPart.name, mealPart.weight, e.target.value)}/>
+                                        <label>Ilość kalorii:</label>
+                                        <input type="number" name="kcal" placeholder={mealPart.kcal} className="form-control" onChange={e => this.mealPartModelChange(e, mealPart.id)}/>
                                     </div>
+                                    <button className="btn glukose-main btn-lg mt-3 mb-3 btn-block" type="submit" value="Submit" 
+                                        onClick={() => this.updateMealPart(mealPart.id)}>Zapisz</button>
                                 </div>
                             </div>
                         </div>

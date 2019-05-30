@@ -124,8 +124,6 @@ class NewRecord extends Component {
                 error: e,
                 loading: false
             })
-            // if(e.response.data.name)
-            //     this.setState({hightlight: e.response.data.name});
         }
     }
 
@@ -176,90 +174,90 @@ class NewRecord extends Component {
         return (
             <div className="container-fluid sidebar-small h-100">
                 <div className="row">
-                    <div className="col-sm-12 col-md-6 col-xl-3 mx-auto record-panel box-shadow p-0 mt-5" style={{"minWidth": "400px"}}>
-                        <div className="jumbotron mt-0 mb-0 pt-3 pb-3" style={{"backgroundColor": "white", "borderRadius": "5px"}}>
-                            <div className="row text-center">
-                                <RecordTitle name="Cukier" segment={this.state.segment} 
-                                segmentChange={() => this.setState({segment: "Cukier"})} />
-                                <RecordTitle name="Insulina"  segment={this.state.segment} 
-                                segmentChange={() => this.setState({segment: "Insulina"})} />
-                                <RecordTitle name="Posiłek" segment={this.state.segment} 
-                                segmentChange={() => this.setState({segment: "Posiłek"})} />
-                            </div>  
-                            <div className="row">
-                                <div className="col-12 p-0 pt-2 mx-auto record-panel">
-                                <Error error={this.state.error} close={() => this.setState({error: false})} />
-                                {this.state.segment === "Cukier" ? 
-                                <RecordForm 
-                                formSubmit={(e) => this.submit(e)}
-                                change={(e) => this.change(e)}
-                                form={(
-                                    <div className="form-group">
-                                        <label>Ilość cukru:</label>
-                                        <input type="number" name="sugarAmount" className="form-control" style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}}
-                                        style={{"fontSize": "60px"}}
-                                        placeholder={this.state.sugarAmount} onChange={e => this.change(e)}/>
-                                    </div>
-                                )} /> : null}
-                                {this.state.segment === "Insulina" ? 
-                                <RecordForm
-                                formSubmit={(e) => this.submit(e)}
-                                change={(e) => this.change(e)}
-                                form={(
-                                    <div>
+                    <div className="col-sm-12 col-md-6 col-xl-3 record-panel p-0 mt-5 mx-auto" >
+                            <div className="jumbotron mt-0 mb-0 p-4 ml-3 mr-3 box-shadow" style={{"backgroundColor": "white", "borderRadius": "5px", "minWidth": 320}}>
+                                <div className="row text-center">
+                                    <RecordTitle name="Cukier" segment={this.state.segment} 
+                                    segmentChange={() => this.setState({segment: "Cukier"})} />
+                                    <RecordTitle name="Insulina"  segment={this.state.segment} 
+                                    segmentChange={() => this.setState({segment: "Insulina"})} />
+                                    <RecordTitle name="Posiłek" segment={this.state.segment} 
+                                    segmentChange={() => this.setState({segment: "Posiłek"})} />
+                                </div>  
+                                <div className="row">
+                                    <div className="col-12 p-0 pt-2 mx-auto record-panel">
+                                    <Error error={this.state.error} close={() => this.setState({error: false})} />
+                                    {this.state.segment === "Cukier" ? 
+                                    <RecordForm 
+                                    formSubmit={(e) => this.submit(e)}
+                                    change={(e) => this.change(e)}
+                                    form={(
                                         <div className="form-group">
-                                            <label>Ilość j. insuliny:</label>
-                                            <input type="number" name="insulinAmount" className="form-control" onChange={e => this.change(e)} style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}} 
-                                            style={{"fontSize": "60px"}}/>
+                                            <label>Ilość cukru:</label>
+                                            <input type="number" name="sugarAmount" className="form-control" style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}}
+                                            style={{"fontSize": "60px"}}
+                                            placeholder={this.state.sugarAmount} onChange={e => this.change(e)}/>
                                         </div>
-                                        <div className="form-group pt-2">
-                                            <label>Typ insuliny:</label>
-                                            <select name="insulinType" className="form-control" onChange={e => this.change(e)}>
-                                                <option value="Posiłek">Posiłek</option>
-                                                <option value="Korekta">Korekta</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                )}
-                                /> : null}
-                                {this.state.segment === "Posiłek" ? 
-                                <RecordForm 
-                                formSubmit={(e) => this.submit(e)}
-                                change={(e) => this.change(e)}
-                                form={(
-                                    <div>
-                                        <div className="form-group">
-                                            <label>Ilość kalorii:</label>
-                                            <input type="number" name="kcal" className="form-control" onChange={e => this.change(e)} 
-                                                style={this.state.hightlight === "kcal" ? {"borderColor": "Red"} : {}} style={{"fontSize": "60px"}} />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Procentowa zawartość białek i tłuszczy:</label>
-                                            <input type="number" name="fats" min="0" max="100" value={this.state.fats} className="form-control" onChange={e => this.change(e)} 
-                                            style={{"fontSize": "30px"}}/>
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Procentowa zawartość węglowodanów:</label>
-                                            <input type="number" name="carbohydrates" readOnly={true} value={100 - this.state.fats} className="form-control" onChange={e => this.change(e)}
-                                            style={{"fontSize": "30px"}}/>
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Skład:</label>
-                                            {this.state.mealParts.map((element) => {
-                                                return element;
-                                            })}<br/>
-                                            <div className="text-center">
-                                                <i className="fa fa-2x fas fa-plus" style={{"cursor": "pointer"}} onClick={() => {
-                                                    var arr = this.state.mealParts;
-                                                    arr.push(this.getMealPart(arr.length));
-                                                    this.setState({mealParts: arr});
-                                                }}></i>
+                                    )} /> : null}
+                                    {this.state.segment === "Insulina" ? 
+                                    <RecordForm
+                                    formSubmit={(e) => this.submit(e)}
+                                    change={(e) => this.change(e)}
+                                    form={(
+                                        <div>
+                                            <div className="form-group">
+                                                <label>Ilość j. insuliny:</label>
+                                                <input type="number" name="insulinAmount" className="form-control" onChange={e => this.change(e)} style={this.state.hightlight === "amount" ? {"borderColor": "Red"} : {}} 
+                                                style={{"fontSize": "60px"}} placeholder={5}/>
+                                            </div>
+                                            <div className="form-group pt-2">
+                                                <label>Typ insuliny:</label>
+                                                <select name="insulinType" className="form-control" onChange={e => this.change(e)}>
+                                                    <option value="Posiłek">Posiłek</option>
+                                                    <option value="Korekta">Korekta</option>
+                                                </select>
                                             </div>
                                         </div>
+                                    )}
+                                    /> : null}
+                                    {this.state.segment === "Posiłek" ? 
+                                    <RecordForm 
+                                    formSubmit={(e) => this.submit(e)}
+                                    change={(e) => this.change(e)}
+                                    form={(
+                                        <div>
+                                            <div className="form-group">
+                                                <label>Ilość kalorii:</label>
+                                                <input type="number" name="kcal" className="form-control" onChange={e => this.change(e)} placeholder={450} 
+                                                    style={this.state.hightlight === "kcal" ? {"borderColor": "Red"} : {}} style={{"fontSize": "60px"}} />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Procentowa zawartość białek i tłuszczy:</label>
+                                                <input type="number" name="fats" min="0" max="100" value={this.state.fats} className="form-control" onChange={e => this.change(e)} 
+                                                style={{"fontSize": "30px"}}/>
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Procentowa zawartość węglowodanów:</label>
+                                                <input type="number" name="carbohydrates" readOnly={true} value={100 - this.state.fats} className="form-control" onChange={e => this.change(e)}
+                                                style={{"fontSize": "30px"}}/>
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Skład:</label>
+                                                {this.state.mealParts.map((element) => {
+                                                    return element;
+                                                })}<br/>
+                                                <div className="text-center">
+                                                    <i className="fa fa-2x fas fa-plus" style={{"cursor": "pointer"}} onClick={() => {
+                                                        var arr = this.state.mealParts;
+                                                        arr.push(this.getMealPart(arr.length));
+                                                        this.setState({mealParts: arr});
+                                                    }}></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    /> : null}
                                     </div>
-                                )}
-                                /> : null}
-                                </div>
                             </div>
                         </div>
                     </div>

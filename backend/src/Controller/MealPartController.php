@@ -53,7 +53,6 @@ class MealPartController extends AbstractController
     public function delete(Request $request, $id)
     {
         if(!$id)
-            return Responses::BadRequest();
             return new JsonResponse(["error" => "Nie podano id"]);
 
         if(!$foundObject = $this->mealPartRepo->findOneBy(["id" => $id]))

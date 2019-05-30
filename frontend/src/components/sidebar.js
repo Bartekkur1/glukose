@@ -95,6 +95,7 @@ class Index extends Component {
                         <SidebarTitle name="Rekordy" />
                         <SidebarButton name="Dodaj rekord" link="/add_record" icon="fa fas fa-plus" />
                         <SidebarButton name="Edycja danych" link="/dataedit" icon="fa fas fa-wrench" />
+                        <SidebarButton name="Eksport danych" link="/export" icon="fa fas fa-download" />
                         <hr className="hr-title" />
                         <SidebarTitle name="Ustawienia" />
                         <SidebarButton name="Konto" link="/account" icon="fa fas fa-cog" />

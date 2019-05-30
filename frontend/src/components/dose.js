@@ -64,7 +64,7 @@ class Dose extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col-9 mx-auto userinfo-panel box-shadow mt-5 mb-5 pl-0 pr-0 mr-0 ml-0">
-                        <div className="jumbotron pt-3 pb-3 mb-0" style={{"backgroundColor": "white"}} onBlur={() => this.updateDose()}>
+                        <div className="jumbotron pt-3 pb-3 mb-0" style={{"backgroundColor": "white"}}>
                             <h1>Edycja rekordu id: {this.state.id}</h1>
                             <div className="form-group">
                                 {/* value="2018-06-12T19:30" */}
@@ -82,6 +82,7 @@ class Dose extends Component {
                                     <option value="Korekta">Korekta</option>
                                 </select>
                             </div>
+                            <button className="btn glukose-main btn-lg mt-3 mb-3 btn-block" type="submit" value="Submit" onClick={() => this.updateDose()}>Zapisz</button>
                         </div>
                     </div>
                 </div>
