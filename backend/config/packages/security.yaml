@@ -14,9 +14,13 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        register:
+            pattern: ^/api/user/register
+            security: false
+
         main:
-            anonymous: false
-            pattern: ^/
+            anonymous: true
+            pattern: ^/api
             logout: 
                 path: app_logout
             guard:
@@ -25,5 +29,5 @@ security:
                     - App\Security\UserAuthenticator
                     - App\Security\JwtAuthenticator
     access_control:
-        - { path: ^/user/register$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        # - { path: ^/api/auth, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, role: ROLE_ADMIN }
+        # - { path: ^/user/register, role: IS_AUTHENTICATED_ANONYMOUSLY }

@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class AuthController extends AbstractController implements AuthenticationEntryPointInterface
 {
     /**
-     * @Route("/auth/login", name="app_login")
+     * @Route("/api/auth/login", name="app_login")
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
@@ -22,7 +22,7 @@ class AuthController extends AbstractController implements AuthenticationEntryPo
     }
 
     /**
-     * @Route("/auth/logout", name="app_logout")
+     * @Route("/api/auth/logout", name="app_logout")
      */
     public function logout()
     {
@@ -30,7 +30,7 @@ class AuthController extends AbstractController implements AuthenticationEntryPo
     }
 
     /**
-     * @Route("/auth/check", name="app_check")
+     * @Route("/api/auth/check", name="app_check")
      */
     public function check()
     {

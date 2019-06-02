@@ -30,7 +30,7 @@ class Register extends Component {
         if(!this.state.loading) {
             this.setState({error: null, loading: true});
             try {
-                let res = await Axios.post(server + "register", {
+                let res = await Axios.post(server + "user/register", {
                     username: this.state.username,
                     password: this.state.password,
                     confirmPassword: this.state.confirmPassword,

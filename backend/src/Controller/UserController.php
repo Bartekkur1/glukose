@@ -22,7 +22,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/update", name="user_update")
+     * @Route("/api/user/update", name="user_update")
      */
     public function update(Request $request)
     {
@@ -40,7 +40,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/register", name="user_register")
+     * @Route("/api/user/register", name="user_register")
      */
     public function register(Request $request)
     {
@@ -55,7 +55,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/deletemyaccount", name="user_delete")
+     * @Route("/api/user/deletemyaccount", name="user_delete")
      */
     public function deleteMyAccount(Request $request)
     {

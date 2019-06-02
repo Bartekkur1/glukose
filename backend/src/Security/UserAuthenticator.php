@@ -30,7 +30,7 @@ class UserAuthenticator extends AbstractGuardAuthenticator
     public function supports(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        return $request->isMethod('POST') && isset($data["username"]) && isset($data["password"]) && $request->getPathInfo() == "/auth/login";
+        return $request->isMethod('POST') && isset($data["username"]) && isset($data["password"]) && $request->getPathInfo() == "/api/auth/login";
     }
 
     public function getCredentials(Request $request)

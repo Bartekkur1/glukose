@@ -27,7 +27,7 @@ class MealPartController extends AbstractController
     }
 
     /**
-     * @Route("/mealpart", name="new_mealPart", methods={"POST"})
+     * @Route("/api/mealpart", name="new_mealPart", methods={"POST"})
      */
     public function new(Request $request) 
     {   
@@ -48,7 +48,7 @@ class MealPartController extends AbstractController
     }
 
     /**
-     * @Route("/mealpart/{id}", name="delete_mealPart", methods={"DELETE"})
+     * @Route("/api/mealpart/{id}", name="delete_mealPart", methods={"DELETE"})
      */
     public function delete(Request $request, $id)
     {
@@ -72,7 +72,7 @@ class MealPartController extends AbstractController
     }
 
     /**
-     * @Route("/mealpart/{id}", name="find_mealPart", methods={"GET"})
+     * @Route("/api/mealpart/{id}", name="find_mealPart", methods={"GET"})
      */
     public function index($id)
     {
@@ -84,7 +84,7 @@ class MealPartController extends AbstractController
     }
 
     /**
-     * @Route("/mealpart", name="update_mealPart", methods={"PATCH"})
+     * @Route("/api/mealpart", name="update_mealPart", methods={"PATCH"})
      */
     public function update(Request $request) 
     {

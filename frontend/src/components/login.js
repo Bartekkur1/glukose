@@ -34,13 +34,13 @@ class Login extends Component {
                     username: this.state.login,
                     password: this.state.password
                 });
+                console.log(res);
                 localStorage.setItem("Authorization", res.data.token);
                 this.props.history.push('/');
             }
             catch(e)
             {
                 this.setState({error: e});
-                // console.log(e.response);
                 if(e.response)
                     if(e.response.data.name)
                         this.setState({"hightlight": e.response.data.name});

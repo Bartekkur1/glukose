@@ -23,7 +23,7 @@ class UserInfoController extends AbstractController
     }
 
     /**
-     * @Route("/userinfo", name="update_userinfo", methods={"POST"})
+     * @Route("/api/userinfo", name="update_userinfo", methods={"POST"})
      */
     public function update(Request $request) 
     {
@@ -41,7 +41,7 @@ class UserInfoController extends AbstractController
     }
 
     /**
-     * @Route("/userinfo", name="get_userinfo", methods={"GET"})
+     * @Route("/api/userinfo", name="get_userinfo", methods={"GET"})
      */
     public function find(Request $request)
     {

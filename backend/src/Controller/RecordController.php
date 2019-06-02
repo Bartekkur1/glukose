@@ -19,7 +19,7 @@ class RecordController extends AbstractController
     }
 
     /**
-     * @Route("/new_record/{type}", name="new_record")
+     * @Route("/api/new_record/{type}", name="new_record")
      */
     public function new(Request $request, $type)
     {
@@ -35,7 +35,7 @@ class RecordController extends AbstractController
     }
 
     /**
-     * @Route("/update_record/{type}", name="update_record")
+     * @Route("/api/update_record/{type}", name="update_record")
      */
     public function update(Request $request, $type)
     {
@@ -52,7 +52,7 @@ class RecordController extends AbstractController
     }
 
     /**
-     * @Route("/delete_record/{type}/{id}", name="delete_record")
+     * @Route("/api/delete_record/{type}/{id}", name="delete_record")
      */
     public function delete(Request $request, $type, $id)
     {
@@ -69,7 +69,7 @@ class RecordController extends AbstractController
 
 
     /**
-     * @Route("/find_record/{type}/{date}/{range}", name="find_record")
+     * @Route("/api/find_record/{type}/{date}/{range}", name="find_record")
      */
     public function find(Request $request, $type, $date = null, $range = null)
     {
@@ -86,7 +86,7 @@ class RecordController extends AbstractController
     }
 
     /**
-     * @Route("/all_records", name="all_records")
+     * @Route("/api/all_records", name="all_records")
      */
     public function allRecords(Request $request)
     {  
