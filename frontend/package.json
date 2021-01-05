@@ -4,7 +4,7 @@
   "private": true,
   "server": "http://127.0.0.1:8000/api/",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "chart.js": "^2.7.3",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
